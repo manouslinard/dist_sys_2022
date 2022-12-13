@@ -6,14 +6,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="teacher")
-public class Teacher implements Serializable {
+@Table(name="lessor")
+public class Lessor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,35 +26,41 @@ public class Teacher implements Serializable {
     @Size(max = 30, message = "Name should not be greater than 30 characters")
     private String firstName;
 
-
     @Column(name = "last_name")
+    @NotBlank(message="Please enter the last name")
     @Size(max = 30, message = "Name should not be greater than 30 characters")
     private String lastName;
 
     @Column(name="email", unique = true)
-    @Email(message = "Please enter a valid email Id")
+    @Email(message = "Please enter a valid email")
+    @NotBlank(message="Please enter your email")
     @Size(max = 50)
     private String email;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="teacher_profile_id")
-    private TeacherProfile teacherprofile;
-
-
-    @OneToMany(mappedBy="teacher",
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @Column(name="afm", unique = true)
+    @NotBlank(message="Please enter your AFM")
+    @Size(min=11, max=11, message = "AFM should be exactly 11 digits")
+    @Pattern(regexp = "[\\s]*[0-9]*[1-9]+",message="Please enter a valid afm")
+    private String afm;
+    
+    @Column(name="phone")
+    @Pattern(regexp = "[\\s]*[0-9]*[1-9]+",message="Please enter a valid phone number")
+    private String phone;
+ 
+    @OneToMany(mappedBy="lessor", cascade= CascadeType.ALL)
     @JsonManagedReference
-    private List<Course> courses;
+    private List<Lease> leases;
 
-    public Teacher() {
+    public Lessor() {
 
     }
 
-    public Teacher(String firstName, String lastName, String email) {
+    public Lessor(String firstName, String lastName, String email, String afm, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.afm = afm;
+        this.phone = phone;
     }
 
     public int getId() {
@@ -88,36 +95,29 @@ public class Teacher implements Serializable {
         this.email = email;
     }
 
-    public TeacherProfile getTeacherprofile() {
-        return teacherprofile;
+
+    public List<Lease> getLeases() {
+        return leases;
     }
 
-    public void setTeacherprofile(TeacherProfile teacherprofile) {
-        this.teacherprofile = teacherprofile;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
+    public void setLeases(List<Lease> leases) {
+        this.leases = leases;
     }
 
     // add convenience methods for bi-directional relation
-    public void add(Course acourse) {
-        if(courses == null) {
-            courses = new ArrayList<>();
+    public void add(Lease alease) {
+        if(leases == null) {
+            leases = new ArrayList<>();
         }
-        courses.add(acourse);
-        acourse.setTeacher(this);
+        leases.add(alease);
+        alease.setLessor(this);
     }
 
 
     @Override
     public String toString() {
-        return "Teacher [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-                + ", teacherprofile=" + teacherprofile + "]";
+        return "Lessor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+                +  "]";
     }
 
 }

@@ -1,13 +1,13 @@
 package gr.hua.dit.dissys.dao;
 
-import gr.hua.dit.dissys.entity.Course;
+import gr.hua.dit.dissys.entity.Lease;
 
 import java.util.List;
 
 public interface CourseDAO {
 
-    public List<Course> findAll();
-    public void save(Course course);
+    public List<Lease> findAll();
+    public void save(Lease course);
 
-    public Course findById(int id);
+    public Lease findById(int id);
 }

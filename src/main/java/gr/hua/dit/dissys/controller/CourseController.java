@@ -1,8 +1,8 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.dao.CourseDAO;
-import gr.hua.dit.dissys.entity.Course;
-import gr.hua.dit.dissys.entity.Teacher;
+import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,27 +22,27 @@ public class CourseController {
     private TeacherService teacherService;
 
     @GetMapping("")
-    List<Course> getall() {
+    List<Lease> getall() {
         return courseDAO.findAll();
     }
 
     @PostMapping("")
-    Course save(@RequestBody Course course) {
+    Lease save(@RequestBody Lease course) {
         course.setId(0);
         courseDAO.save(course);
         return course;
     }
 
     @GetMapping("/{id}")
-    Course get(@PathVariable int id) {
-        Course course = courseDAO.findById(id);
+    Lease get(@PathVariable int id) {
+        Lease course = courseDAO.findById(id);
         return course;
     }
 
     @PostMapping("/{cid}/teacher")
-    Teacher addTeacher(@PathVariable int cid, @RequestBody Teacher teacher) {
+    Lessor addTeacher(@PathVariable int cid, @RequestBody Lessor teacher) {
         int teacherId = teacher.getId();
-        Course course = courseDAO.findById(cid);
+        Lease course = courseDAO.findById(cid);
 
         if (course == null) {
             throw new ResponseStatusException(
@@ -51,13 +51,13 @@ public class CourseController {
         }
 
         if (teacherId != 0) {
-            Teacher ateacher = teacherService.findTeacher(teacherId);
-            course.setTeacher(ateacher);
+            Lessor ateacher = teacherService.findTeacher(teacherId);
+            course.setLessor(ateacher);
             teacherService.saveTeacher(teacher);
             return ateacher;
         }
 
-        course.setTeacher(teacher);
+        course.setLessor(teacher);
         teacherService.saveTeacher(teacher);
         return teacher;
 

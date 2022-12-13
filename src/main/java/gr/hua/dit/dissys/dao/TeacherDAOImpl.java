@@ -1,7 +1,7 @@
 package gr.hua.dit.dissys.dao;
 
-import gr.hua.dit.dissys.entity.Course;
-import gr.hua.dit.dissys.entity.Teacher;
+import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Lessor;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,26 +17,26 @@ public class TeacherDAOImpl implements TeacherDAO{
     private EntityManager entityManager;
 
     @Override
-    public List<Teacher> findAll() {
+    public List<Lessor> findAll() {
         Session session = entityManager.unwrap(Session.class);
-        Query query = session.createQuery("from Teacher", Teacher.class);
-        List<Teacher> teachers = query.getResultList();
+        Query query = session.createQuery("from Teacher", Lessor.class);
+        List<Lessor> teachers = query.getResultList();
         return teachers;
     }
 
     @Override
-    public void save(Teacher teacher) {
-        Teacher ateacher = entityManager.merge(teacher);
+    public void save(Lessor teacher) {
+        Lessor ateacher = entityManager.merge(teacher);
     }
 
     @Override
-    public Teacher findById(int id) {
-        return entityManager.find(Teacher.class, id);
+    public Lessor findById(int id) {
+        return entityManager.find(Lessor.class, id);
     }
 
     @Override
     public void delete(int id) {
-        Teacher teacher = entityManager.find(Teacher.class, id);
+        Lessor teacher = entityManager.find(Lessor.class, id);
         entityManager.remove(teacher);
     }
 

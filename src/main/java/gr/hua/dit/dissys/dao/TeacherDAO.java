@@ -1,16 +1,16 @@
 package gr.hua.dit.dissys.dao;
 
-import gr.hua.dit.dissys.entity.Course;
-import gr.hua.dit.dissys.entity.Teacher;
+import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Lessor;
 
 import java.util.List;
 
 public interface TeacherDAO {
 
-    public List<Teacher> findAll();
-    public void save(Teacher teacher);
+    public List<Lessor> findAll();
+    public void save(Lessor teacher);
 
-    public Teacher findById(int id);
+    public Lessor findById(int id);
 
     public void delete(int id);
 }

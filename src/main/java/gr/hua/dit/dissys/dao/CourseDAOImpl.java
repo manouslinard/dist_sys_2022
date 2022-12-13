@@ -1,6 +1,6 @@
 package gr.hua.dit.dissys.dao;
 
-import gr.hua.dit.dissys.entity.Course;
+import gr.hua.dit.dissys.entity.Lease;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,22 +19,22 @@ public class CourseDAOImpl implements CourseDAO{
 
     @Override
     @Transactional
-    public List<Course> findAll() {
+    public List<Lease> findAll() {
         Session session = entityManager.unwrap(Session.class);
-        Query query = session.createQuery("from Course", Course.class);
-        List<Course> courses = query.getResultList();
+        Query query = session.createQuery("from Course", Lease.class);
+        List<Lease> courses = query.getResultList();
         return courses;
     }
 
     @Override
     @Transactional
-    public void save(Course course) {
-        Course acourse = entityManager.merge(course);
+    public void save(Lease course) {
+        Lease acourse = entityManager.merge(course);
     }
 
     @Override
     @Transactional
-    public Course findById(int id) {
-        return entityManager.find(Course.class, id);
+    public Lease findById(int id) {
+        return entityManager.find(Lease.class, id);
     }
 }

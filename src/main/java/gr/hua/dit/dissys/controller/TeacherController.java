@@ -1,6 +1,6 @@
 package gr.hua.dit.dissys.controller;
 
-import gr.hua.dit.dissys.entity.Teacher;
+import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,20 +18,20 @@ public class TeacherController {
     private TeacherService teacherService;
 
     @GetMapping("")
-    List<Teacher> getall() {
+    List<Lessor> getall() {
         return teacherService.getTeachers();
     }
 
     @PostMapping("")
-    Teacher save(@Valid @RequestBody Teacher teacher) {
+    Lessor save(@Valid @RequestBody Lessor teacher) {
         teacher.setId(0);
         teacherService.saveTeacher(teacher);
         return teacher;
     }
 
     @GetMapping("/{id}")
-    Teacher get(@PathVariable int id) {
-        Teacher teacher = teacherService.findTeacher(id);
+    Lessor get(@PathVariable int id) {
+        Lessor teacher = teacherService.findTeacher(id);
         return teacher;
     }
 
