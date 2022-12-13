@@ -22,14 +22,14 @@ public class LessorController {
     }
 
     @PostMapping("")
-    Lessor save(@Valid @RequestBody Lessor lessor) {
+    public Lessor save(@Valid @RequestBody Lessor lessor) {
         lessor.setId(0);
         lessorService.saveLessor(lessor);
         return lessor;
     }
 
     @GetMapping("/{id}")
-    Lessor get(@PathVariable int id) {
+    public Lessor get(@PathVariable int id) {
         return lessorService.findLessor(id);
     }
 

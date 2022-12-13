@@ -21,7 +21,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    JdbcUserDetailsManager jdbcUserDetailsManager;
+    private JdbcUserDetailsManager jdbcUserDetailsManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

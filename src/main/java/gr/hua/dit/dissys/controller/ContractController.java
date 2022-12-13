@@ -28,14 +28,14 @@ public class ContractController {
     }
 
     @PostMapping("")
-    Contract save(@Valid @RequestBody Contract contract) {
+    public Contract save(@Valid @RequestBody Contract contract) {
         contract.setId(0);
         contractRepository.save(contract);
         return contract;
     }
 
     @GetMapping("/{id}")
-    Contract get(@PathVariable int id) {
+    public Contract get(@PathVariable int id) {
         return contractRepository.findById(id).get();
     }
 

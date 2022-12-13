@@ -14,7 +14,7 @@ import java.util.List;
 public class TenantController {
 
     @Autowired
-    TenantService tenantService;
+    private TenantService tenantService;
 
     @GetMapping("")
     public List<Tenant> getAll()
@@ -23,14 +23,14 @@ public class TenantController {
     }
 
     @PostMapping("")
-    Tenant save(@Valid @RequestBody Tenant tenant) {
+    public Tenant save(@Valid @RequestBody Tenant tenant) {
         tenant.setId(0);
         tenantService.saveTenant(tenant);
         return tenant;
     }
 
     @GetMapping("/{id}")
-    Tenant get(@PathVariable int id) {
+    public Tenant get(@PathVariable int id) {
         return tenantService.findTenant(id);
     }
 

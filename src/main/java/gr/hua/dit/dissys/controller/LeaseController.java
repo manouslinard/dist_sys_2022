@@ -20,7 +20,7 @@ import java.util.List;
 public class LeaseController {
 
     @Autowired
-    LeaseRepository leaseRepository;
+    private LeaseRepository leaseRepository;
 
     @Autowired
     private LessorService lessorService;
@@ -35,14 +35,14 @@ public class LeaseController {
     }
 
     @PostMapping("")
-    Lease save(@Valid @RequestBody Lease lease) {
+    public Lease save(@Valid @RequestBody Lease lease) {
         lease.setId(0);
         leaseRepository.save(lease);
         return lease;
     }
 
     @GetMapping("/{id}")
-    Lease get(@PathVariable int id) {
+    public Lease get(@PathVariable int id) {
         return leaseRepository.findById(id).get();
     }
 
@@ -52,7 +52,7 @@ public class LeaseController {
     }
 
     @PostMapping("/{cid}/lessor")
-    Lessor addLessor(@PathVariable int cid, @RequestBody Lessor lessor) {
+    public Lessor addLessor(@PathVariable int cid, @RequestBody Lessor lessor) {
         int lessorId = lessor.getId();
         Lease lease = leaseRepository.findById(cid).get();
 
@@ -76,7 +76,7 @@ public class LeaseController {
     }
 
     @PostMapping("/{cid}/tenant")
-    Tenant addTenant(@PathVariable int cid, @RequestBody Tenant tenant) {
+    public Tenant addTenant(@PathVariable int cid, @RequestBody Tenant tenant) {
         int tenantId = tenant.getId();
         Lease lease = leaseRepository.findById(cid).get();
 
