@@ -4,12 +4,12 @@ import gr.hua.dit.dissys.entity.Lessor;
 
 import java.util.List;
 
-public interface TeacherService {
+public interface LessorService {
 
-    public List<Lessor> getTeachers();
-    public void saveTeacher(Lessor teacher);
+    public List<Lessor> getLessors();
+    public void saveLessor(Lessor lessor);
 
-    public Lessor findTeacher(int id);
+    public Lessor findLessor(int id);
 
-    public void deleteTeacher(int id);
+    public void deleteLessor(int id);
 }

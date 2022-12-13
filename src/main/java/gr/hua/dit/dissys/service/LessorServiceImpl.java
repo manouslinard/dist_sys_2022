@@ -1,7 +1,8 @@
 package gr.hua.dit.dissys.service;
 
-import gr.hua.dit.dissys.dao.TeacherDAO;
 import gr.hua.dit.dissys.entity.Lessor;
+import gr.hua.dit.dissys.repository.LessorRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,32 +10,32 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-public class TeacherServiceImpl implements TeacherService{
+public class LessorServiceImpl implements LessorService{
 
     @Autowired
-    private TeacherDAO teacherDAO;
+    private LessorRepository lessorRepository;
 
     @Override
     @Transactional
-    public List<Lessor> getTeachers() {
-        return teacherDAO.findAll();
+    public List<Lessor> getLessors() {
+        return lessorRepository.findAll();
     }
 
     @Override
     @Transactional
-    public void saveTeacher(Lessor teacher) {
-        teacherDAO.save(teacher);
+    public void saveLessor(Lessor lessor) {
+        lessorRepository.save(lessor);
     }
 
     @Override
     @Transactional
-    public Lessor findTeacher(int id) {
-      return  teacherDAO.findById(id);
+    public Lessor findLessor(int id) {
+      return  lessorRepository.findById(id).get();
     }
 
     @Override
     @Transactional
-    public void deleteTeacher(int id) {
-        teacherDAO.delete(id);
+    public void deleteLessor(int id) {
+        lessorRepository.deleteById(id);
     }
 }

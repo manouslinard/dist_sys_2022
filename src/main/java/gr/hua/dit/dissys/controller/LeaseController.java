@@ -1,13 +1,12 @@
 package gr.hua.dit.dissys.controller;
 
-import gr.hua.dit.dissys.dao.CourseDAO;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.repository.LeaseRepository;
-import gr.hua.dit.dissys.repository.LessorRepository;
-import gr.hua.dit.dissys.repository.TenantRepository;
-import gr.hua.dit.dissys.service.TeacherService;
+import gr.hua.dit.dissys.service.LessorService;
+import gr.hua.dit.dissys.service.TenantService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +21,12 @@ public class LeaseController {
 
     @Autowired
     LeaseRepository leaseRepository;
-    @Autowired
-    private LessorRepository lessorRepository;
 
     @Autowired
-    private TenantRepository tenantRepository;
+    private LessorService lessorService;
+
+    @Autowired
+    private TenantService tenantService;
 
     @GetMapping("")
     public List<Lease> getAll()
@@ -63,14 +63,14 @@ public class LeaseController {
         }
 
         if (lessorId != 0) {
-            Lessor alessor = lessorRepository.findById(lessorId).get();
+            Lessor alessor = lessorService.findLessor(lessorId);
             lease.setLessor(alessor);
-            lessorRepository.save(alessor);
+            lessorService.saveLessor(alessor);
             return alessor;
         }
 
         lease.setLessor(lessor);
-        lessorRepository.save(lessor);
+        lessorService.saveLessor(lessor);
         return lessor;
 
     }
@@ -87,14 +87,14 @@ public class LeaseController {
         }
 
         if (tenantId != 0) {
-            Tenant atenant = tenantRepository.findById(tenantId).get();
+            Tenant atenant = tenantService.findTenant(tenantId);
             lease.setTenant(atenant);
-            tenantRepository.save(atenant);
+            tenantService.saveTenant(atenant);
             return atenant;
         }
 
         lease.setTenant(tenant);
-        tenantRepository.save(tenant);
+        tenantService.saveTenant(tenant);
         return tenant;
 
     }

@@ -1,10 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.entity.Tenant;
-import gr.hua.dit.dissys.repository.LessorRepository;
-import gr.hua.dit.dissys.repository.TenantRepository;
-import gr.hua.dit.dissys.service.TeacherService;
+import gr.hua.dit.dissys.service.LessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,29 +13,29 @@ import java.util.List;
 public class LessorController {
 
     @Autowired
-    LessorRepository lessorRepository;
+    private LessorService lessorService;
 
     @GetMapping("")
     public List<Lessor> getAll()
     {
-        return lessorRepository.findAll();
+        return lessorService.getLessors();
     }
 
     @PostMapping("")
     Lessor save(@Valid @RequestBody Lessor lessor) {
         lessor.setId(0);
-        lessorRepository.save(lessor);
+        lessorService.saveLessor(lessor);
         return lessor;
     }
 
     @GetMapping("/{id}")
     Lessor get(@PathVariable int id) {
-        return lessorRepository.findById(id).get();
+        return lessorService.findLessor(id);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
-        lessorRepository.deleteById(id);
+        lessorService.deleteLessor(id);
     }
 }
 
