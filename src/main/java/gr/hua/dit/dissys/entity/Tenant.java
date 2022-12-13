@@ -45,9 +45,10 @@ public class Tenant {
     @Pattern(regexp = "[\\s]*[0-9]*[1-9]+",message="Please enter a valid phone number")
     private String phone;
 
-    @OneToMany(mappedBy="lessor", cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="tenant", cascade= CascadeType.ALL)
     @JsonManagedReference
     private List<Lease> leases;
+
 
     public Tenant() {
 
