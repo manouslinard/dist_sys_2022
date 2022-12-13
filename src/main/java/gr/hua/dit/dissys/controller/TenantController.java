@@ -1,7 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Tenant;
-import gr.hua.dit.dissys.repository.StudentRepository;
+import gr.hua.dit.dissys.repository.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +14,11 @@ import java.util.List;
 public class StudentController {
 
     @Autowired
-    StudentRepository studentRepository;
+    TenantRepository tenantRepository;
 
     @GetMapping("")
     public List<Tenant> getAll()
     {
-        return studentRepository.findAll();
+        return tenantRepository.findAll();
     }
 }
