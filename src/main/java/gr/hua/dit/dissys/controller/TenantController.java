@@ -4,7 +4,10 @@ import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import gr.hua.dit.dissys.entity.Lease;
 
 import javax.validation.Valid;
