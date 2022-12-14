@@ -23,7 +23,7 @@ public interface LessorContrInterface {
 
 	public void createLease(Lease lease, int id);
 
-	public void createTenant(Tenant tenant);
+	public Tenant createTenant(Tenant tenant);
 
 	public List<Contract> getAllLessorContracts( int id);
 

@@ -141,17 +141,30 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("/createTenant")
-	public void createTenant(@RequestBody Tenant tenant) {
+	public Tenant createTenant(@RequestBody Tenant tenant) {
 
 		List<Tenant> tenantList = tenantService.getTenants();
 		for (Tenant oldTenant : tenantList) {
 			if (oldTenant.getEmail().equals(tenant.getEmail())) {
-				// TODO: Kostas: OLA TA IF
-				return;
+				if (!checkNullEmptyBlank(tenant.getAfm())) {
+					oldTenant.setAfm(tenant.getAfm());
+				}
+				if(!checkNullEmptyBlank(tenant.getFirstName())) {
+					oldTenant.setFirstName(tenant.getFirstName());
+				}
+				if(!checkNullEmptyBlank(tenant.getLastName())) {
+					oldTenant.setLastName(tenant.getLastName());
+				}
+				if(!checkNullEmptyBlank(tenant.getPhone())) {
+					oldTenant.setPhone(tenant.getPhone());
+				}
+				tenantService.saveTenant(oldTenant);
+				return oldTenant;
 			}
 		}
-
+		tenant.setId(0);
 		tenantService.saveTenant(tenant);
+		return tenant;
 	}
 
 	@Override
