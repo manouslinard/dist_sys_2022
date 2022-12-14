@@ -110,7 +110,83 @@ public class LessorController {
     public void delete(@PathVariable int id) {
         lessorService.deleteLessor(id);
     }
+
+
+    @PostMapping("/{id}/leases/{lid}")
+    public void update(@RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
+    	    
+    	Lease oldLease = getLessorLease(id, lid);
+    	
+    	if (!checkNullEmptyBlank(lease.getAddress() )) {
+    		oldLease.setAddress(lease.getAddress());
+    	}
+    	if (!checkNullEmptyBlank(lease.getDei())) {
+    		oldLease.setDei(lease.getDei());
+    	}
+    	if (!checkNullEmptyBlank(lease.getDimos())) {
+    		oldLease.setDimos(lease.getDimos());
+    	}
+    	if (!checkNullEmptyBlank(lease.getEndDate())) {
+    		oldLease.setEndDate(lease.getEndDate());
+    	}
+    	if (!checkNullEmptyBlank(lease.getStartDate())) {
+    		oldLease.setStartDate(lease.getStartDate());
+    	}
+    	if(!checkNullEmptyBlank(lease.getReason())) {
+    		oldLease.setReason(lease.getReason());
+    	}
+    	if (!checkNullEmptyBlank(lease.getSp_con())) {
+    		oldLease.setSp_con(lease.getSp_con());
+    	}
+    	if (!checkNullEmptyBlank(lease.getTitle())) {
+    		oldLease.setTitle(lease.getTitle());
+    	}
+    	if (!checkNullEmptyBlank(lease.getTk())) {
+    		oldLease.setTk(lease.getTk());
+    	}
+    	if (!checkNullEmptyBlank(String.valueOf(lease.getCost()))) {
+    		oldLease.setCost(lease.getCost());
+    	}
+    	
+    	leaseRepo.save(oldLease);
+
+    }
+
+    private boolean checkNullEmptyBlank(String strToCheck) {  
+        // check whether the given string is null or empty or blank  
+    	if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {  
+    		return true;  
+    	}        
+    	else{  
+    		return false;  
+    	}  
+    }
+    
+    @PostMapping("/{id}/createLease")
+    public void createLease(@RequestBody Lease lease, @PathVariable int id) {
+    	
+    	Lessor l= lessorService.findLessor(id);
+    	if (l == null) {
+        	throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+             );
+        }
+    	lease.setLessor(l);
+    	leaseRepo.save(lease);
+    }
+    
+    @PostMapping("/createTenant")
+    public void createTenant(@RequestBody Tenant tenant) {
+    	
+    	List <Tenant> tenantList= tenantService.getTenants();
+    	for (Tenant oldTenant:tenantList) {
+    		if (oldTenant.getEmail().equals(tenant.getEmail())) {
+    			//OLA TA IF
+    			return ;
+    		} 
+    	}
+    	
+    	tenantService.saveTenant(tenant);
+    }
+
 }
-
-
-

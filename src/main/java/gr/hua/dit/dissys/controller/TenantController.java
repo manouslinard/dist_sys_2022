@@ -1,6 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Lessor;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,6 +22,9 @@ public class TenantController {
     @Autowired
     private TenantService tenantService;
 
+    @Autowired
+    private LessorService lessorService;
+    
     @GetMapping("")
     public List<Tenant> getAll()
     {
@@ -64,4 +69,11 @@ public class TenantController {
     public void delete(@PathVariable int id) {
         tenantService.deleteTenant(id);
     }
+    
+    
+   @GetMapping("/getAllLessors")
+    public List<Lessor> getAllLessors(){
+		return lessorService.getLessors();
+    }
+
 }
