@@ -79,7 +79,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("/{id}/leases/{lid}")
-	public void updateLease(@RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
+	public void updateLease(@Valid @RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
 
 		Lease oldLease = getLessorLease(id, lid);
 
@@ -129,7 +129,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("/{id}/createLease")
-	public void createLease(@RequestBody Lease lease, @PathVariable int id) {
+	public void createLease(@Valid @RequestBody Lease lease, @PathVariable int id) {
 
 		Lessor l = lessorService.findLessor(id);
 		if (l == null) {
@@ -141,7 +141,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("/createTenant")
-	public Tenant createTenant(@RequestBody Tenant tenant) {
+	public Tenant createTenant(@Valid @RequestBody Tenant tenant) {
 
 		List<Tenant> tenantList = tenantService.getTenants();
 		for (Tenant oldTenant : tenantList) {

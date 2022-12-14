@@ -7,93 +7,79 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name="lease")
+@Table(name = "lease")
 public class Lease {
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="id")
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
+	private int id;
 
-    @Column(name="title")
-    @NotBlank(message="Please enter the lease's title")
-    private String title;
+	@Column(name = "title")
+	@NotBlank(message = "Please enter the lease's title")
+	private String title;
 
-    @Column(name="address")
-    @NotBlank(message="Please enter the address")
-    private String address;
+	@Column(name = "address")
+	@NotBlank(message = "Please enter the address")
+	private String address;
 
+	@Column(name = "tk")
+	@NotBlank(message = "Please enter your postal code")
+	@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
+	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid postal code")
+	private String tk;
 
-    @Column(name="tk")
-    @NotBlank(message="Please enter your postal code")
-    @Size(min=5, max=5, message = "Postal code should be exactly 5 digits")
-    @Pattern(regexp = "[\\s]*[0-9]*[1-9]+",message="Please enter a valid postal code")
-    private String tk;
-    
+	@Column(name = "dimos")
+	@NotBlank(message = "Please enter your municipality")
+	private String dimos;
 
-    @Column(name="dimos")
-    @NotBlank(message="Please enter your municipality")
-    private String dimos;
+	@Column(name = "reason")
+	private String reason;
 
+	@Column(name = "cost")
+	@NotBlank(message = "Please enter the cost")
+	private double cost;
 
-    @Column(name="reason")
-    private String reason;
+	@Column(name = "start_date")
+	@NotBlank(message = "Please enter the contract's start date")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	private String startDate;
 
+	@Column(name = "end_date")
+	@NotBlank(message = "Please enter the last name")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	private String endDate;
 
-    @Column(name="cost")
-    @NotBlank(message="Please enter the cost")
-    private double cost;
+	// special conditions:
+	@Column(name = "sp_con")
+	private String sp_con;
 
-    @Column(name = "start_date")
-    @NotBlank(message="Please enter the contract's start date")
-    @Size(max = 30, message = "Name should not be greater than 30 characters")
-    private String startDate;
+	@Column(name = "dei")
+	@NotBlank(message = "Please enter DEI account number")
+	private String dei;
 
-    @Column(name = "end_date")
-    @NotBlank(message="Please enter the last name")
-    @Size(max = 30, message = "Name should not be greater than 30 characters")
-    private String endDate;
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "lessor_id")
+	@JsonBackReference
+	private Lessor lessor;
 
-    // special conditions:
-    @Column(name="sp_con")
-    private String sp_con;
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "tenant_id")
+	@JsonBackReference
+	private Tenant tenant;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "tenant_answer_id")
+	private TenantAnswer tenantAnswer;
 
-    @Column(name="dei")
-    @NotBlank(message="Please enter DEI account number")
-    private String dei;
-    
-       
-    @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="lessor_id")
-    @JsonBackReference
-    private Lessor lessor;
+	public Lease() {
 
-    @OneToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="contract_id")
-    private Contract contract;
+	}
 
-    @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="tenant_id")
-    @JsonBackReference
-    private Tenant tenant;
-
-    @Column(name="tenant_com")    
-    private String tenantComment;
-    
-    public Lease() {
-
-    }
-
-    public Lease(String title, String address, String tk, String dimos, String reason, double cost, String startDate, String endDate, String sp_con, String dei) {
-    	this.title = title;
+	public Lease(String title, String address, String tk, String dimos, String reason, double cost, String startDate,
+			String endDate, String sp_con, String dei) {
+		this.title = title;
 		this.address = address;
 		this.tk = tk;
 		this.dimos = dimos;
@@ -103,40 +89,39 @@ public class Lease {
 		this.endDate = endDate;
 		this.sp_con = sp_con;
 		this.dei = dei;
-    }
-    
-	// define getters and setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Lessor getLessor() {
-        return lessor;
-    }
-
-    public void setLessor(Lessor lessor) {
-        this.lessor = lessor;
-    }
-
-    
-    public Contract getContract() {
-		return contract;
 	}
 
-	public void setContract(Contract contract) {
-		this.contract = contract;
+	// define getters and setters
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public TenantAnswer getTenantAnswer() {
+		return tenantAnswer;
+	}
+
+	public void setTenantAnswer(TenantAnswer tenantAnswer) {
+		this.tenantAnswer = tenantAnswer;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Lessor getLessor() {
+		return lessor;
+	}
+
+	public void setLessor(Lessor lessor) {
+		this.lessor = lessor;
 	}
 
 	public String getAddress() {
@@ -179,7 +164,6 @@ public class Lease {
 		this.cost = cost;
 	}
 
-	
 	public String getStartDate() {
 		return startDate;
 	}
@@ -219,19 +203,11 @@ public class Lease {
 	public void setTenant(Tenant tenant) {
 		this.tenant = tenant;
 	}
-	
-	public String getTenantComment() {
-		return tenantComment;
-	}
-
-	public void setTenantComment(String tenantComment) {
-		this.tenantComment = tenantComment;
-	}
 
 	// define toString
-    @Override
-    public String toString() {
-        return "Lease [id=" + id + ", title=" + title + "]";
-    }
+	@Override
+	public String toString() {
+		return "Lease [id=" + id + ", title=" + title + "]";
+	}
 
 }

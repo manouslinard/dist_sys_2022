@@ -1,6 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.TenantAnswer;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -68,6 +69,12 @@ public class TenantController implements TenantContrInterface {
 		return null;
 	}
 
+	@Override
+	@PostMapping("/{id}/leases/{lid}/answer")
+	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer) {
+		// TODO: Chris
+	}
+
 	// TODO: check if needed:
 	@Override
 	@PostMapping("")
@@ -88,4 +95,5 @@ public class TenantController implements TenantContrInterface {
 	public void delete(@PathVariable int id) {
 		tenantService.deleteTenant(id);
 	}
+
 }

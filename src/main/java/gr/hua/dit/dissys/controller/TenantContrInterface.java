@@ -6,6 +6,7 @@ import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.TenantAnswer;
 
 public interface TenantContrInterface {
 
@@ -18,6 +19,8 @@ public interface TenantContrInterface {
 	public List<Contract> getAllTenantContracts(int id);
 
 	public Contract getTenantContract(int id, int cid);
+	
+	public void submitTenantAnswer(TenantAnswer tenantAnswer);
 
 	// TODO: check if needed:
 	public Tenant save(Tenant tenant);
@@ -26,5 +29,4 @@ public interface TenantContrInterface {
 
 	public void delete(int id);
 
-	// TODO: submitTenantAnswer
 }
