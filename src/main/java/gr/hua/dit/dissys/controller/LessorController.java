@@ -1,7 +1,10 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Lessor;
+import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.service.LessorService;
+import gr.hua.dit.dissys.service.TenantService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,16 +12,19 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lessors")
+@RequestMapping("/lessor")
 public class LessorController {
 
     @Autowired
     private LessorService lessorService;
+    
+    @Autowired
+    private TenantService tenantService;
 
-    @GetMapping("")
-    public List<Lessor> getAll()
+    @GetMapping("/getAllTenants")
+    public List<Tenant> getAll()
     {
-        return lessorService.getLessors();
+    	return tenantService.getTenants();
     }
 
     @PostMapping("")
