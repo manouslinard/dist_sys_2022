@@ -1,5 +1,6 @@
 package gr.hua.dit.dissys.controller;
 
+import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.Tenant;
@@ -17,176 +18,175 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/lessor")
-public class LessorController {
+public class LessorController implements LessorContrInterface {
 
-    @Autowired
-    private LessorService lessorService;
-    
-    @Autowired
-    private TenantService tenantService;
+	@Autowired
+	private LessorService lessorService;
 
-    @Autowired
-    private LeaseRepository leaseRepo;
-    
-    @GetMapping("/getAllTenants")
-    public List<Tenant> getAllTenants()
-    {
-    	return tenantService.getTenants();
-    }
+	@Autowired
+	private TenantService tenantService;
 
-    @GetMapping("/{id}/leases")
-    public List<Lease> getAllLeases(@PathVariable int id) {
-        Lessor l = (Lessor) lessorService.findLessor(id);
-        if (l == null) {
-        	throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found"
-             );
-        }
-        return l.getLeases();
-    }
-   
-    @GetMapping("/{id}/leases/{lid}")
-    public Lease getLessorLease(@PathVariable int id, @PathVariable int lid) {
-        List<Lease> lessorLeases = getAllLeases(id);
-        for(Lease lease : lessorLeases) {
-        	if(lease.getId() == lid) {
-        		return lease;
-        	}
-        }
-       	throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "entity not found"
-        );
-    }
-    
-    @DeleteMapping("{id}/leases/{lid}")
-    public void deleteLease(@PathVariable int id, @PathVariable int lid) {
-    	Lease lease = getLessorLease(id, lid);
-    	leaseRepo.delete(lease);
-    }
-    @GetMapping("/{id}/leases/{lid}")
-    public Lease getLessorLeaseById(@PathVariable int id,@PathVariable int lid){
-        List<Lease> leases = getAllLeases(id);
-        for(Lease lease:leases){
-            if(lease.getId()==lid){
-                return lease;
-            }
-        }
-        return null;
-    }
+	@Autowired
+	private LeaseRepository leaseRepo;
 
+	@GetMapping("/getAllTenants")
+	public List<Tenant> getAllTenants() {
+		return tenantService.getTenants();
+	}
 
-    /*/lessor/{id}/assignTenantToLease/{tid}/{lid}  (POST)		X
-    κάνει Assign εναν Tenant (tid) σε ένα Lease (lid) από αυτά που έχει διαθέσιμα ο lessor (id)*/
+	@Override
+	@GetMapping("/{id}/leases")
+	public List<Lease> getAllLessorLeases(@PathVariable int id) {
+		Lessor l = (Lessor) lessorService.findLessor(id);
+		if (l == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		}
+		return l.getLeases();
+	}
 
-    @GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
-    public boolean assignTenantToLease(@PathVariable int tid,@PathVariable int lid,@PathVariable int id){
-        Lessor lessor = lessorService.findLessor(id);
-        Tenant tenant = tenantService.findTenant(tid);
-        List<Lease> leases = getAllLeases(id);
-        for(Lease loop:leases){
-            if(loop.getId()==lid){
-                loop.setTenant(tenant);
-                return true;
-            }
-        }
-        return false;
-    }
+	@Override
+	@GetMapping("/{id}/leases/{lid}")
+	public Lease getLessorLease(@PathVariable int id, @PathVariable int lid) {
+		List<Lease> lessorLeases = getAllLessorLeases(id);
+		for (Lease lease : lessorLeases) {
+			if (lease.getId() == lid) {
+				return lease;
+			}
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+	}
 
+	@Override
+	@DeleteMapping("{id}/leases/{lid}")
+	public void deleteLessorLease(@PathVariable int id, @PathVariable int lid) {
+		Lease lease = getLessorLease(id, lid);
+		leaseRepo.delete(lease);
+	}
 
+	@Override
+	@GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
+	public boolean assignTenantToLease(@PathVariable int tid, @PathVariable int lid, @PathVariable int id) {
+		Tenant tenant = tenantService.findTenant(tid);
+		List<Lease> leases = getAllLessorLeases(id);
+		for (Lease loop : leases) {
+			if (loop.getId() == lid) {
+				loop.setTenant(tenant);
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @PostMapping("")
-    public Lessor save(@Valid @RequestBody Lessor lessor) {
-        lessor.setId(0);
-        lessorService.saveLessor(lessor);
-        return lessor;
-    }
+	@Override
+	@PostMapping("/{id}/leases/{lid}")
+	public void updateLease(@RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
 
-    @GetMapping("/{id}")
-    public Lessor get(@PathVariable int id) {
-        return lessorService.findLessor(id);
-    }
+		Lease oldLease = getLessorLease(id, lid);
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
-        lessorService.deleteLessor(id);
-    }
+		if (!checkNullEmptyBlank(lease.getAddress())) {
+			oldLease.setAddress(lease.getAddress());
+		}
+		if (!checkNullEmptyBlank(lease.getDei())) {
+			oldLease.setDei(lease.getDei());
+		}
+		if (!checkNullEmptyBlank(lease.getDimos())) {
+			oldLease.setDimos(lease.getDimos());
+		}
+		if (!checkNullEmptyBlank(lease.getEndDate())) {
+			oldLease.setEndDate(lease.getEndDate());
+		}
+		if (!checkNullEmptyBlank(lease.getStartDate())) {
+			oldLease.setStartDate(lease.getStartDate());
+		}
+		if (!checkNullEmptyBlank(lease.getReason())) {
+			oldLease.setReason(lease.getReason());
+		}
+		if (!checkNullEmptyBlank(lease.getSp_con())) {
+			oldLease.setSp_con(lease.getSp_con());
+		}
+		if (!checkNullEmptyBlank(lease.getTitle())) {
+			oldLease.setTitle(lease.getTitle());
+		}
+		if (!checkNullEmptyBlank(lease.getTk())) {
+			oldLease.setTk(lease.getTk());
+		}
+		if (!checkNullEmptyBlank(String.valueOf(lease.getCost()))) {
+			oldLease.setCost(lease.getCost());
+		}
 
+		leaseRepo.save(oldLease);
 
-    @PostMapping("/{id}/leases/{lid}")
-    public void update(@RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
-    	    
-    	Lease oldLease = getLessorLease(id, lid);
-    	
-    	if (!checkNullEmptyBlank(lease.getAddress() )) {
-    		oldLease.setAddress(lease.getAddress());
-    	}
-    	if (!checkNullEmptyBlank(lease.getDei())) {
-    		oldLease.setDei(lease.getDei());
-    	}
-    	if (!checkNullEmptyBlank(lease.getDimos())) {
-    		oldLease.setDimos(lease.getDimos());
-    	}
-    	if (!checkNullEmptyBlank(lease.getEndDate())) {
-    		oldLease.setEndDate(lease.getEndDate());
-    	}
-    	if (!checkNullEmptyBlank(lease.getStartDate())) {
-    		oldLease.setStartDate(lease.getStartDate());
-    	}
-    	if(!checkNullEmptyBlank(lease.getReason())) {
-    		oldLease.setReason(lease.getReason());
-    	}
-    	if (!checkNullEmptyBlank(lease.getSp_con())) {
-    		oldLease.setSp_con(lease.getSp_con());
-    	}
-    	if (!checkNullEmptyBlank(lease.getTitle())) {
-    		oldLease.setTitle(lease.getTitle());
-    	}
-    	if (!checkNullEmptyBlank(lease.getTk())) {
-    		oldLease.setTk(lease.getTk());
-    	}
-    	if (!checkNullEmptyBlank(String.valueOf(lease.getCost()))) {
-    		oldLease.setCost(lease.getCost());
-    	}
-    	
-    	leaseRepo.save(oldLease);
+	}
 
-    }
+	private boolean checkNullEmptyBlank(String strToCheck) {
+		// check whether the given string is null or empty or blank
+		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    private boolean checkNullEmptyBlank(String strToCheck) {  
-        // check whether the given string is null or empty or blank  
-    	if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {  
-    		return true;  
-    	}        
-    	else{  
-    		return false;  
-    	}  
-    }
-    
-    @PostMapping("/{id}/createLease")
-    public void createLease(@RequestBody Lease lease, @PathVariable int id) {
-    	
-    	Lessor l= lessorService.findLessor(id);
-    	if (l == null) {
-        	throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found"
-             );
-        }
-    	lease.setLessor(l);
-    	leaseRepo.save(lease);
-    }
-    
-    @PostMapping("/createTenant")
-    public void createTenant(@RequestBody Tenant tenant) {
-    	
-    	List <Tenant> tenantList= tenantService.getTenants();
-    	for (Tenant oldTenant:tenantList) {
-    		if (oldTenant.getEmail().equals(tenant.getEmail())) {
-    			//OLA TA IF
-    			return ;
-    		} 
-    	}
-    	
-    	tenantService.saveTenant(tenant);
-    }
+	@Override
+	@PostMapping("/{id}/createLease")
+	public void createLease(@RequestBody Lease lease, @PathVariable int id) {
+
+		Lessor l = lessorService.findLessor(id);
+		if (l == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		}
+		lease.setLessor(l);
+		leaseRepo.save(lease);
+	}
+
+	@Override
+	@PostMapping("/createTenant")
+	public void createTenant(@RequestBody Tenant tenant) {
+
+		List<Tenant> tenantList = tenantService.getTenants();
+		for (Tenant oldTenant : tenantList) {
+			if (oldTenant.getEmail().equals(tenant.getEmail())) {
+				// TODO: Kostas: OLA TA IF
+				return;
+			}
+		}
+
+		tenantService.saveTenant(tenant);
+	}
+
+	@Override
+	@GetMapping("/{id}/contracts")
+	public List<Contract> getAllLessorContracts(@PathVariable int id) {
+		// TODO: Manousos
+		return null;
+	}
+
+	@Override
+	@GetMapping("/{id}/contracts/{cid}")
+	public Contract getLessorContract(@PathVariable int id, @PathVariable int cid) {
+		// TODO: Kostas
+		return null;
+	}
+
+	// TODO: check if needed:
+	@Override
+	@PostMapping("")
+	public Lessor save(@Valid @RequestBody Lessor lessor) {
+		lessor.setId(0);
+		lessorService.saveLessor(lessor);
+		return lessor;
+	}
+
+	@Override
+	@GetMapping("/{id}")
+	public Lessor get(@PathVariable int id) {
+		return lessorService.findLessor(id);
+	}
+
+	@Override
+	@DeleteMapping("/{id}")
+	public void delete(@PathVariable int id) {
+		lessorService.deleteLessor(id);
+	}
 
 }

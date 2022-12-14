@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 
@@ -17,63 +18,74 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tenants")
-public class TenantController {
+public class TenantController implements TenantContrInterface {
 
-    @Autowired
-    private TenantService tenantService;
+	@Autowired
+	private TenantService tenantService;
 
-    @Autowired
-    private LessorService lessorService;
-    
-    @GetMapping("")
-    public List<Tenant> getAll()
-    {
-        return tenantService.getTenants();
-    }
+	@Autowired
+	private LessorService lessorService;
 
-    @PostMapping("")
-    public Tenant save(@Valid @RequestBody Tenant tenant) {
-        tenant.setId(0);
-        tenantService.saveTenant(tenant);
-        return tenant;
-    }
-    @GetMapping("/{id}/leases/{lid}")
-    public Lease getTenantsLeaseById(@PathVariable int id,@PathVariable int lid){
-        List<Lease> leases = getTenantLeasesById(id);
-        for(Lease lease:leases){
-            if(lease.getId()==lid){
-                return lease;
-            }
-        }
-        return null;
-    }
+	@Override
+	@GetMapping("/{id}/leases/{lid}")
+	public Lease getTenantLease(@PathVariable int id, @PathVariable int lid) {
+		List<Lease> leases = getAllTenantLeases(id);
+		for (Lease lease : leases) {
+			if (lease.getId() == lid) {
+				return lease;
+			}
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+	}
 
-    @GetMapping("/{id}/leases")
-    public List<Lease> getTenantLeasesById(@PathVariable int id)
-    {
-        Tenant tenant = (Tenant) tenantService.findTenant(id);
-        if (tenant == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "entity not found"
-            );
-        }
-        return tenant.getLeases();
-    }
+	@Override
+	@GetMapping("/{id}/leases")
+	public List<Lease> getAllTenantLeases(@PathVariable int id) {
+		Tenant tenant = (Tenant) tenantService.findTenant(id);
+		if (tenant == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		}
+		return tenant.getLeases();
+	}
 
-    @GetMapping("/{id}")
-    public Tenant get(@PathVariable int id) {
-        return tenantService.findTenant(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
-        tenantService.deleteTenant(id);
-    }
-    
-    
-   @GetMapping("/getAllLessors")
-    public List<Lessor> getAllLessors(){
+	@Override
+	@GetMapping("/getAllLessors")
+	public List<Lessor> getAllLessors() {
 		return lessorService.getLessors();
-    }
+	}
 
+	@Override
+	@GetMapping("/{id}/contracts")
+	public List<Contract> getAllTenantContracts(@PathVariable int id) {
+		// TODO: Chris
+		return null;
+	}
+
+	@Override
+	@GetMapping("/{id}/contracts/{cid}")
+	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
+		// TODO: Chris
+		return null;
+	}
+
+	// TODO: check if needed:
+	@Override
+	@PostMapping("")
+	public Tenant save(@Valid @RequestBody Tenant tenant) {
+		tenant.setId(0);
+		tenantService.saveTenant(tenant);
+		return tenant;
+	}
+
+	@Override
+	@GetMapping("/{id}")
+	public Tenant get(@PathVariable int id) {
+		return tenantService.findTenant(id);
+	}
+
+	@Override
+	@DeleteMapping("/{id}")
+	public void delete(@PathVariable int id) {
+		tenantService.deleteTenant(id);
+	}
 }
