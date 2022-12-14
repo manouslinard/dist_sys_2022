@@ -5,6 +5,7 @@ import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import gr.hua.dit.dissys.entity.Lease;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,6 +28,28 @@ public class TenantController {
         tenant.setId(0);
         tenantService.saveTenant(tenant);
         return tenant;
+    }
+    @GetMapping("/{id}/leases/{lid}")
+    public Lease getTenantsLeaseById(@PathVariable int id,@PathVariable int lid){
+        List<Lease> leases = getTenantLeasesById(id);
+        for(Lease lease:leases){
+            if(lease.getId()==lid){
+                return lease;
+            }
+        }
+        return null;
+    }
+
+    @GetMapping("/{id}/leases")
+    public List<Lease> getTenantLeasesById(@PathVariable int id)
+    {
+        Tenant tenant = (Tenant) tenantService.findTenant(id);
+        if (tenant == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+        return tenant.getLeases();
     }
 
     @GetMapping("/{id}")

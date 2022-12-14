@@ -63,9 +63,37 @@ public class LessorController {
     	Lease lease = getLessorLease(id, lid);
     	leaseRepo.delete(lease);
     }
-    
-    
-    
+    @GetMapping("/{id}/leases/{lid}")
+    public Lease getLessorLeaseById(@PathVariable int id,@PathVariable int lid){
+        List<Lease> leases = getAllLeases(id);
+        for(Lease lease:leases){
+            if(lease.getId()==lid){
+                return lease;
+            }
+        }
+        return null;
+    }
+
+
+    /*/lessor/{id}/assignTenantToLease/{tid}/{lid}  (POST)		X
+    κάνει Assign εναν Tenant (tid) σε ένα Lease (lid) από αυτά που έχει διαθέσιμα ο lessor (id)*/
+
+    @GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
+    public boolean assignTenantToLease(@PathVariable int tid,@PathVariable int lid,@PathVariable int id){
+        Lessor lessor = lessorService.findLessor(id);
+        Tenant tenant = tenantService.findTenant(tid);
+        List<Lease> leases = getAllLeases(id);
+        for(Lease loop:leases){
+            if(loop.getId()==lid){
+                loop.setTenant(tenant);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     @PostMapping("")
     public Lessor save(@Valid @RequestBody Lessor lessor) {
         lessor.setId(0);
