@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,8 +24,9 @@ public class TenantAnswer {
 	@Column(name = "tenant_agree")
 	private boolean hasAgreed;
 
-	@OneToOne(mappedBy = "tenant_answer", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+				CascadeType.REFRESH })
+	@JoinColumn(name = "lease_id")
 	private Lease lease;
 
 	public TenantAnswer() {

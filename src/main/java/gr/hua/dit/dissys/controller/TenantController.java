@@ -2,9 +2,6 @@ package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.entity.TenantAnswer;
-import gr.hua.dit.dissys.repository.LeaseRepository;
-import gr.hua.dit.dissys.repository.TenantRepository;
-import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -21,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tenants")
+@RequestMapping("/tenant")
 public class TenantController implements TenantContrInterface {
 
 	@Autowired
@@ -29,10 +26,7 @@ public class TenantController implements TenantContrInterface {
 
 	@Autowired
 	private LessorService lessorService;
-	@Autowired
-	private TenantRepository tenantRepository;
-	@Autowired
-	private LeaseRepository leaseRepository;
+	
 
 	@Override
 	@GetMapping("/{id}/leases/{lid}")
@@ -74,28 +68,25 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{id}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
-		// TODO: Chris
-		Tenant tenant = new Tenant();
-		tenant = tenantService.findTenant(id);
+		Tenant tenant = tenantService.findTenant(id);
 		List<Contract> contracts =tenant.getContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
 				return loop;
 			}
 		}
-		return null;
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 	
 	@Override
 	@PostMapping("/{id}/leases/{lid}/answer")
-	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer) {
+	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable int id, @PathVariable int lid) {
 		// TODO: Chris
 		Lease lease = new Lease();
 		lease = tenantAnswer.getLease();
 		lease.setTenantAnswer(tenantAnswer);
 	}
 
-	// TODO: check if needed:
 	@Override
 	@PostMapping("")
 	public Tenant save(@Valid @RequestBody Tenant tenant) {

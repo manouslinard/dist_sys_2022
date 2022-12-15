@@ -11,6 +11,8 @@ public interface LessorContrInterface {
 
 	public List<Tenant> getAllTenants();
 
+	public List<Lessor> getAllLessors();
+	
 	public List<Lease> getAllLessorLeases(int id);
 
 	public Lease getLessorLease(int id, int lid);
@@ -29,7 +31,6 @@ public interface LessorContrInterface {
 
 	public Contract getLessorContract( int id,  int cid);
 	
-	// TODO: check if needed:
 	public Lessor save(Lessor lessor);
 
 	public Lessor get(int id);

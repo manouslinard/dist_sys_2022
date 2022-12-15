@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
@@ -35,20 +36,24 @@ public class Tenant {
 	@Size(max = 50)
 	private String email;
 
+	@JsonIgnore
 	@Column(name = "afm", unique = true)
 	@NotBlank(message = "Please enter your AFM")
 	@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
 	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
+	@JsonIgnore
 	@Column(name = "phone")
 	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Lease> leases;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "tenant", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	@JsonManagedReference
@@ -122,7 +127,6 @@ public class Tenant {
 		this.leases = leases;
 	}
 
-	
 	public List<Contract> getContracts() {
 		return contracts;
 	}

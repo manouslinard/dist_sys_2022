@@ -20,9 +20,8 @@ public interface TenantContrInterface {
 
 	public Contract getTenantContract(int id, int cid);
 	
-	public void submitTenantAnswer(TenantAnswer tenantAnswer);
+	public void submitTenantAnswer(TenantAnswer tenantAnswer, int id, int lid);
 
-	// TODO: check if needed:
 	public Tenant save(Tenant tenant);
 
 	public Tenant get(int id);

@@ -69,8 +69,7 @@ public class Lease {
 	@JsonBackReference
 	private Tenant tenant;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tenant_answer_id")
+	@OneToOne(mappedBy = "lease", cascade = CascadeType.ALL)
 	private TenantAnswer tenantAnswer;
 
 	public Lease() {

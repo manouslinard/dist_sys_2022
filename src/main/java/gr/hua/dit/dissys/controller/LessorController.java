@@ -33,6 +33,7 @@ public class LessorController implements LessorContrInterface {
 	@Autowired
 	private ContractRepository contractRepository;
 
+	@Override
 	@GetMapping("/getAllTenants")
 	public List<Tenant> getAllTenants() {
 		return tenantService.getTenants();
@@ -192,7 +193,6 @@ public class LessorController implements LessorContrInterface {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 
-	// TODO: check if needed:
 	@Override
 	@PostMapping("")
 	public Lessor save(@Valid @RequestBody Lessor lessor) {
@@ -211,6 +211,12 @@ public class LessorController implements LessorContrInterface {
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable int id) {
 		lessorService.deleteLessor(id);
+	}
+
+	@Override
+	@GetMapping("/getAllLessors")
+	public List<Lessor> getAllLessors() {
+		return lessorService.getLessors();
 	}
 
 }
