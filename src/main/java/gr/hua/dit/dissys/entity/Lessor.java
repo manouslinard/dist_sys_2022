@@ -50,6 +50,10 @@ public class Lessor implements Serializable {
     @OneToMany(mappedBy="lessor", cascade= CascadeType.ALL)
     @JsonManagedReference
     private List<Lease> leases;
+    
+    @OneToMany(mappedBy="lessor", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+    @JsonManagedReference
+    private List<Contract> contracts;
 
     public Lessor() {
 
