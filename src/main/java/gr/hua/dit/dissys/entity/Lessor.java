@@ -108,7 +108,34 @@ public class Lessor implements Serializable {
         this.leases = leases;
     }
 
-    // add convenience methods for bi-directional relation
+    
+    
+    public String getAfm() {
+		return afm;
+	}
+
+	public void setAfm(String afm) {
+		this.afm = afm;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public List<Contract> getContracts() {
+		return contracts;
+	}
+
+	public void setContracts(List<Contract> contracts) {
+		this.contracts = contracts;
+	}
+
+	/*
+	// add convenience methods for bi-directional relation
     public void add(Lease alease) {
         if(leases == null) {
             leases = new ArrayList<>();
@@ -117,6 +144,16 @@ public class Lessor implements Serializable {
         alease.setLessor(this);
     }
 
+    // add convenience methods for bi-directional relation
+    public void addContract(Contract contract) {
+        if(contracts == null) {
+        	contracts = new ArrayList<>();
+        }
+        contracts.add(contract);
+        contract.setLessor(this);
+    }
+
+    */
 
     @Override
     public String toString() {

@@ -122,6 +122,15 @@ public class Tenant {
 		this.leases = leases;
 	}
 
+	
+	public List<Contract> getContracts() {
+		return contracts;
+	}
+
+	public void setContracts(List<Contract> contracts) {
+		this.contracts = contracts;
+	}
+
 	@Override
 	public String toString() {
 		return "Tenant [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + "]";
