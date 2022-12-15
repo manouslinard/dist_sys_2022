@@ -4,6 +4,7 @@ import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -28,6 +29,9 @@ public class LessorController implements LessorContrInterface {
 
 	@Autowired
 	private LeaseRepository leaseRepo;
+	
+	@Autowired
+	private ContractRepository contractRepository;
 
 	@GetMapping("/getAllTenants")
 	public List<Tenant> getAllTenants() {
@@ -170,15 +174,22 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{id}/contracts")
 	public List<Contract> getAllLessorContracts(@PathVariable int id) {
-		// TODO: Manousos
-		return null;
+		Lessor lessor= lessorService.findLessor(id);
+		return lessor.getContracts();
 	}
 
 	@Override
 	@GetMapping("/{id}/contracts/{cid}")
 	public Contract getLessorContract(@PathVariable int id, @PathVariable int cid) {
-		// TODO: Kostas
-		return null;
+		Lessor lessor= get(id);
+		Contract contract= contractRepository.findById(cid).get();
+		
+		for (int i=0; i<lessor.getContracts().size(); i++) {
+			if (contract.getId() == cid) {
+				return contract;
+			}
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 
 	// TODO: check if needed:

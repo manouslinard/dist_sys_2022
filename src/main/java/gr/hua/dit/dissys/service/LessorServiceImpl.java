@@ -30,7 +30,7 @@ public class LessorServiceImpl implements LessorService{
     @Override
     @Transactional
     public Lessor findLessor(int id) {
-      return  lessorRepository.findById(id).get();
+    	return lessorRepository.findById(id).get();
     }
 
     @Override
