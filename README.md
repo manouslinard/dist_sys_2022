@@ -1,11 +1,11 @@
 ### Run a postgres database using docker
 
 ```bash
-docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=students --net=host -v pgdata14:/var/lib/postgresql/data  -d postgres:14
+docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v pgdata14:/var/lib/postgresql/data  -d postgres:14
 ```
 run init sql scripts
 ```bash
-docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=students --net=host -v "$(pwd)"/assets/db:/docker-entrypoint-initdb.d -v pgdata14:/var/lib/postgresql/data -d postgres:14
+docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v "$(pwd)"/assets/db:/docker-entrypoint-initdb.d -v pgdata14:/var/lib/postgresql/data -d postgres:14
 ```
 
 ## remove db data
@@ -17,7 +17,7 @@ docker volume rm pgdata14
 
 ```bash
 sudo apt install postgresl-client
-psql -h localhost -U postgres -d students -p 5432 -W
+psql -h localhost -U postgres -d realestate -p 5432 -W
 ```
 
 # Branches:
