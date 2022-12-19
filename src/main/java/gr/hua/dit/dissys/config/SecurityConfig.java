@@ -25,27 +25,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
-    DataSource dataSource;
-    @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager() throws Exception {
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-        jdbcUserDetailsManager.setDataSource(dataSource);
-        return jdbcUserDetailsManager;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-        	.cors().and().csrf().disable()
+        http.cors().and().csrf().disable()
         	.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/api/auth/**").permitAll()
         	.antMatchers("/lessor/**").hasAnyAuthority(ERole.ROLE_LESSOR.toString(),ERole.ROLE_ADMIN.toString())
         	//.antMatchers("/tenant/**").hasAnyRole("USER","ADMIN")
         	.antMatchers("/tenant/**").hasAnyAuthority(ERole.ROLE_TENANT.toString(),ERole.ROLE_ADMIN.toString())
-            .anyRequest().authenticated()
-        	.and()
-        	.httpBasic();
+            .anyRequest().authenticated();
         return http.build();
     }
 
