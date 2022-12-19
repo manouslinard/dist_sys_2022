@@ -1,6 +1,5 @@
 package gr.hua.dit.dissys.service;
 
-import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.UserRepository;
 

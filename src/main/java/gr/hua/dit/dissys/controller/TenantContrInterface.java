@@ -4,9 +4,8 @@ import java.util.List;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.entity.TenantAnswer;
+import gr.hua.dit.dissys.entity.UserRegistration;
 
 public interface TenantContrInterface {
 
@@ -14,7 +13,7 @@ public interface TenantContrInterface {
 
 	public List<Lease> getAllTenantLeases(int id);
 
-	public List<Lessor> getAllLessors();
+	public List<UserRegistration> getAllLessors();
 
 	public List<Contract> getAllTenantContracts(int id);
 
@@ -22,9 +21,9 @@ public interface TenantContrInterface {
 	
 	public void submitTenantAnswer(TenantAnswer tenantAnswer, int id, int lid);
 
-	public Tenant save(Tenant tenant);
+	public UserRegistration save(UserRegistration tenant);
 
-	public Tenant get(int id);
+	public UserRegistration get(int id);
 
 	public void delete(int id);
 

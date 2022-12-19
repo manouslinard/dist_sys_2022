@@ -4,37 +4,36 @@ import java.util.List;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.UserRegistration;
 
 public interface LessorContrInterface {
 
-	public List<Tenant> getAllTenants();
+	public List<UserRegistration> getAllTenants();
 
-	public List<Lessor> getAllLessors();
+	public List<UserRegistration> getAllLessors();
 	
-	public List<Lease> getAllLessorLeases(int id);
+	public List<Lease> getAllLessorLeases(String lessorUsername);
 
-	public Lease getLessorLease(int id, int lid);
+	public Lease getLessorLease(String lessorUsername, int lid);
 
-	public void deleteLessorLease(int id, int lid);
+	public void deleteLessorLease(String lessorUsername, int lid);
 
-	public boolean assignTenantToLease(int tid, int lid, int id);
+	public boolean assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 
-	public void updateLease(Lease lease, int id, int lid);
+	public void updateLease(Lease lease, String lessorUsername, int lid);
 
-	public void createLease(Lease lease, int id);
+	public void createLease(Lease lease, String lessorUsername);
 
-	public Tenant createTenant(Tenant tenant);
+	public UserRegistration createTenant(UserRegistration tenant);
 
-	public List<Contract> getAllLessorContracts( int id);
+	public List<Contract> getAllLessorContracts(String lessorUsername);
 
-	public Contract getLessorContract( int id,  int cid);
+	public Contract getLessorContract(String lessorUsername,  int cid);
 	
-	public Lessor save(Lessor lessor);
+	public UserRegistration save(UserRegistration lessor);
 
-	public Lessor get(int id);
+	public UserRegistration get(String lessorUsername);
 
-	public void delete(int id);
+	public void delete(String lessorUsername);
 
 }

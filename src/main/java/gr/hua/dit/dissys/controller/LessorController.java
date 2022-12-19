@@ -4,6 +4,7 @@ import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Lessor;
 import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.service.LessorService;
@@ -35,13 +36,13 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@GetMapping("/getAllTenants")
-	public List<Tenant> getAllTenants() {
+	public List<UserRegistration> getAllTenants() {
 		return tenantService.getTenants();
 	}
 
 	@Override
-	@GetMapping("/{id}/leases")
-	public List<Lease> getAllLessorLeases(@PathVariable int id) {
+	@GetMapping("/{lessorUsername}/leases")
+	public List<Lease> getAllLessorLeases(@PathVariable String lessorUsername) {
 		Lessor l = (Lessor) lessorService.findLessor(id);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");

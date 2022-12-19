@@ -1,7 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
 import java.util.List;
-import gr.hua.dit.dissys.entity.Lessor;
+import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.service.LessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,21 +21,21 @@ public class TeacherFormController {
 
     @GetMapping("/teacherform")
     public String showTeacherForm(Model model) {
-        Lessor teacher = new Lessor();
+    	UserRegistration teacher = new UserRegistration();
         model.addAttribute("teacher", teacher);
         return "add-teacher";
     }
 
     @GetMapping("/teacherlist")
     public String showTeacherList(Model model) {
-        List<Lessor> teachers = lessorService.getLessors();
+        List<UserRegistration> teachers = lessorService.getLessors();
         model.addAttribute("teachers", teachers);
         return "list-teachers";
 
     }
 
     @PostMapping(path = "/teacherform")
-    public String saveTeacher(@ModelAttribute("teacher") Lessor teacher) {
+    public String saveTeacher(@ModelAttribute("teacher") UserRegistration teacher) {
         lessorService.saveLessor(teacher);
         return "redirect:/";
 
