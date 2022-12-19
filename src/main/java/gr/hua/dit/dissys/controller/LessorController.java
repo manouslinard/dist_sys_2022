@@ -2,8 +2,6 @@ package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
@@ -43,17 +41,17 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}/leases")
 	public List<Lease> getAllLessorLeases(@PathVariable String lessorUsername) {
-		Lessor l = (Lessor) lessorService.findLessor(id);
+		UserRegistration l = (UserRegistration) lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return l.getLeases();
+		return l.getLessorLeases();
 	}
 
 	@Override
-	@GetMapping("/{id}/leases/{lid}")
-	public Lease getLessorLease(@PathVariable int id, @PathVariable int lid) {
-		List<Lease> lessorLeases = getAllLessorLeases(id);
+	@GetMapping("/{lessorUsername}/leases/{lid}")
+	public Lease getLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		List<Lease> lessorLeases = getAllLessorLeases(lessorUsername);
 		for (Lease lease : lessorLeases) {
 			if (lease.getId() == lid) {
 				return lease;
@@ -63,17 +61,17 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@DeleteMapping("{id}/leases/{lid}")
-	public void deleteLessorLease(@PathVariable int id, @PathVariable int lid) {
-		Lease lease = getLessorLease(id, lid);
+	@DeleteMapping("{lessorUsername}/leases/{lid}")
+	public void deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		Lease lease = getLessorLease(lessorUsername, lid);
 		leaseRepo.delete(lease);
 	}
 
 	@Override
-	@GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
-	public boolean assignTenantToLease(@PathVariable int tid, @PathVariable int lid, @PathVariable int id) {
-		Tenant tenant = tenantService.findTenant(tid);
-		List<Lease> leases = getAllLessorLeases(id);
+	@GetMapping("/{lessorUsername}/assignTenantToLease/{tenantUsername}/{lid}")
+	public boolean assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
+		UserRegistration tenant = tenantService.findTenant(tenantUsername);
+		List<Lease> leases = getAllLessorLeases(lessorUsername);
 		for (Lease loop : leases) {
 			if (loop.getId() == lid) {
 				loop.setTenant(tenant);
@@ -84,10 +82,10 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@PostMapping("/{id}/leases/{lid}")
-	public void updateLease(@Valid @RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
+	@PostMapping("/{lessorUsername}/leases/{lid}")
+	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
 
-		Lease oldLease = getLessorLease(id, lid);
+		Lease oldLease = getLessorLease(lessorUsername, lid);
 
 		if (!checkNullEmptyBlank(lease.getAddress())) {
 			oldLease.setAddress(lease.getAddress());
@@ -121,6 +119,7 @@ public class LessorController implements LessorContrInterface {
 		}
 
 		leaseRepo.save(oldLease);
+		return oldLease;
 
 	}
 
@@ -134,23 +133,24 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@PostMapping("/{id}/createLease")
-	public void createLease(@Valid @RequestBody Lease lease, @PathVariable int id) {
+	@PostMapping("/{lessorUsername}/createLease")
+	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername) {
 
-		Lessor l = lessorService.findLessor(id);
+		UserRegistration l = lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
 		lease.setLessor(l);
 		leaseRepo.save(lease);
+		return lease;
 	}
 
 	@Override
 	@PostMapping("/createTenant")
-	public Tenant createTenant(@Valid @RequestBody Tenant tenant) {
+	public UserRegistration createTenant(@Valid @RequestBody UserRegistration tenant) {
 
-		List<Tenant> tenantList = tenantService.getTenants();
-		for (Tenant oldTenant : tenantList) {
+		List<UserRegistration> tenantList = tenantService.getTenants();
+		for (UserRegistration oldTenant : tenantList) {
 			if (oldTenant.getEmail().equals(tenant.getEmail())) {
 				if (!checkNullEmptyBlank(tenant.getAfm())) {
 					oldTenant.setAfm(tenant.getAfm());
@@ -168,25 +168,26 @@ public class LessorController implements LessorContrInterface {
 				return oldTenant;
 			}
 		}
-		tenant.setId(0);
+		Long id = (long) 0;
+		tenant.setId(id);
 		tenantService.saveTenant(tenant);
 		return tenant;
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts")
-	public List<Contract> getAllLessorContracts(@PathVariable int id) {
-		Lessor lessor= lessorService.findLessor(id);
-		return lessor.getContracts();
+	@GetMapping("/{lessorUsername}/contracts")
+	public List<Contract> getAllLessorContracts(@PathVariable String lessorUsername) {
+		UserRegistration lessor= lessorService.findLessor(lessorUsername);
+		return lessor.getLessorContracts();
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts/{cid}")
-	public Contract getLessorContract(@PathVariable int id, @PathVariable int cid) {
-		Lessor lessor= get(id);
+	@GetMapping("/{lessorUsername}/contracts/{cid}")
+	public Contract getLessorContract(@PathVariable String lessorUsername, @PathVariable int cid) {
+		UserRegistration lessor= get(lessorUsername);
 		Contract contract= contractRepository.findById(cid).get();
 		
-		for (int i=0; i<lessor.getContracts().size(); i++) {
+		for (int i=0; i<lessor.getLessorContracts().size(); i++) {
 			if (contract.getId() == cid) {
 				return contract;
 			}
@@ -196,27 +197,28 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("")
-	public Lessor save(@Valid @RequestBody Lessor lessor) {
-		lessor.setId(0);
+	public UserRegistration save(@Valid @RequestBody UserRegistration lessor) {
+		Long id = (long) 0;
+		lessor.setId(id);
 		lessorService.saveLessor(lessor);
 		return lessor;
 	}
 
 	@Override
-	@GetMapping("/{id}")
-	public Lessor get(@PathVariable int id) {
-		return lessorService.findLessor(id);
+	@GetMapping("/{lessorUsername}")
+	public UserRegistration get(@PathVariable String lessorUsername) {
+		return lessorService.findLessor(lessorUsername);
 	}
 
 	@Override
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable int id) {
-		lessorService.deleteLessor(id);
+	@DeleteMapping("/{lessorUsername}")
+	public void delete(@PathVariable String lessorUsername) {
+		lessorService.deleteLessor(lessorUsername);
 	}
 
 	@Override
 	@GetMapping("/getAllLessors")
-	public List<Lessor> getAllLessors() {
+	public List<UserRegistration> getAllLessors() {
 		return lessorService.getLessors();
 	}
 

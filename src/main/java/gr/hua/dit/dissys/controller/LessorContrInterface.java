@@ -20,9 +20,9 @@ public interface LessorContrInterface {
 
 	public boolean assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 
-	public void updateLease(Lease lease, String lessorUsername, int lid);
+	public Lease updateLease(Lease lease, String lessorUsername, int lid);
 
-	public void createLease(Lease lease, String lessorUsername);
+	public Lease createLease(Lease lease, String lessorUsername);
 
 	public UserRegistration createTenant(UserRegistration tenant);
 
