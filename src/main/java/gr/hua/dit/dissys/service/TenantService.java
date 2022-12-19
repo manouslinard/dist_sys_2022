@@ -2,15 +2,16 @@ package gr.hua.dit.dissys.service;
 
 import java.util.List;
 
-import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.UserRegistration;
+
 
 public interface TenantService {
 
-    public List<Tenant> getTenants();
-    public void saveTenant(Tenant tenant);
+    public List<UserRegistration> getTenants();
+    public void saveTenant(UserRegistration tenant);
 
-    public Tenant findTenant(int id);
+    public UserRegistration findTenant(String id);
 
-    public void deleteTenant(int id);
+    public void deleteTenant(String id);
 	
 }

@@ -1,15 +1,15 @@
 package gr.hua.dit.dissys.service;
 
-import gr.hua.dit.dissys.entity.Lessor;
+import gr.hua.dit.dissys.entity.UserRegistration;
 
 import java.util.List;
 
 public interface LessorService {
 
-    public List<Lessor> getLessors();
-    public void saveLessor(Lessor lessor);
+    public List<UserRegistration> getLessors();
+    public void saveLessor(UserRegistration lessor);
 
-    public Lessor findLessor(int id);
+    public UserRegistration findLessor(String username);
 
-    public void deleteLessor(int id);
+    public void deleteLessor(String username);
 }
