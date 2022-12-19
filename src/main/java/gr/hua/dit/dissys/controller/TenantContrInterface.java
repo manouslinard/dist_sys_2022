@@ -9,22 +9,22 @@ import gr.hua.dit.dissys.entity.UserRegistration;
 
 public interface TenantContrInterface {
 
-	public Lease getTenantLease(int id, int lid);
+	public Lease getTenantLease(String tenantUsername, int lid);
 
-	public List<Lease> getAllTenantLeases(int id);
+	public List<Lease> getAllTenantLeases(String tenantUsername);
 
 	public List<UserRegistration> getAllLessors();
 
-	public List<Contract> getAllTenantContracts(int id);
+	public List<Contract> getAllTenantContracts(String tenantUsername);
 
-	public Contract getTenantContract(int id, int cid);
+	public Contract getTenantContract(String tenantUsername, int cid);
 	
-	public void submitTenantAnswer(TenantAnswer tenantAnswer, int id, int lid);
+	public void submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
 
 	public UserRegistration save(UserRegistration tenant);
 
-	public UserRegistration get(int id);
+	public UserRegistration get(String tenantUsername);
 
-	public void delete(int id);
+	public void delete(String tenantUsername);
 
 }

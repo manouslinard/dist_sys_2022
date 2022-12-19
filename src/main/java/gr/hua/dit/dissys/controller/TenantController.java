@@ -1,10 +1,12 @@
 package gr.hua.dit.dissys.controller;
 
-import gr.hua.dit.dissys.entity.Tenant;
+
 import gr.hua.dit.dissys.entity.TenantAnswer;
+import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,9 +31,9 @@ public class TenantController implements TenantContrInterface {
 	
 
 	@Override
-	@GetMapping("/{id}/leases/{lid}")
-	public Lease getTenantLease(@PathVariable int id, @PathVariable int lid) {
-		List<Lease> leases = getAllTenantLeases(id);
+	@GetMapping("/{tenantUsername}/leases/{lid}")
+	public Lease getTenantLease(@PathVariable String tenantUsername, @PathVariable int lid) {
+		List<Lease> leases = getAllTenantLeases(tenantUsername);
 		for (Lease lease : leases) {
 			if (lease.getId() == lid) {
 				return lease;
@@ -41,35 +43,35 @@ public class TenantController implements TenantContrInterface {
 	}
 
 	@Override
-	@GetMapping("/{id}/leases")
-	public List<Lease> getAllTenantLeases(@PathVariable int id) {
-		Tenant tenant = (Tenant) tenantService.findTenant(id);
+	@GetMapping("/{tenantUsername}/leases")
+	public List<Lease> getAllTenantLeases(@PathVariable String tenantUsername) {
+		UserRegistration tenant = (UserRegistration) tenantService.findTenant(tenantUsername);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return tenant.getLeases();
+		return tenant.getTenantLeases();
 	}
 
 	@Override
 	@GetMapping("/getAllLessors")
-	public List<Lessor> getAllLessors() {
+	public List<UserRegistration> getAllLessors() {
 		return lessorService.getLessors();
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts")
-	public List<Contract> getAllTenantContracts(@PathVariable int id) {
+	@GetMapping("/{tenantUsername}/contracts")
+	public List<Contract> getAllTenantContracts(@PathVariable String tenantUsername) {
 		// TODO: Chris
-		Tenant tenant = new Tenant();
-		tenant = tenantService.findTenant(id);
-		return tenant.getContracts();
+		UserRegistration tenant = new UserRegistration();
+		tenant = tenantService.findTenant(tenantUsername);
+		return tenant.getTenantContracts();
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts/{cid}")
-	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
-		Tenant tenant = tenantService.findTenant(id);
-		List<Contract> contracts =tenant.getContracts();
+	@GetMapping("/{tenantUsername}/contracts/{cid}")
+	public Contract getTenantContract(@PathVariable String tenantUsername, @PathVariable int cid) {
+		UserRegistration tenant = tenantService.findTenant(tenantUsername);
+		List<Contract> contracts =tenant.getTenantContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
 				return loop;
@@ -79,8 +81,8 @@ public class TenantController implements TenantContrInterface {
 	}
 	
 	@Override
-	@PostMapping("/{id}/leases/{lid}/answer")
-	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable int id, @PathVariable int lid) {
+	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
+	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
 		// TODO: Chris
 		Lease lease = new Lease();
 		lease = tenantAnswer.getLease();
@@ -89,22 +91,23 @@ public class TenantController implements TenantContrInterface {
 
 	@Override
 	@PostMapping("")
-	public Tenant save(@Valid @RequestBody Tenant tenant) {
-		tenant.setId(0);
+	public UserRegistration save(@Valid @RequestBody UserRegistration tenant) {
+		Long id = (long) 0;
+		tenant.setId(id);
 		tenantService.saveTenant(tenant);
 		return tenant;
 	}
 
 	@Override
-	@GetMapping("/{id}")
-	public Tenant get(@PathVariable int id) {
-		return tenantService.findTenant(id);
+	@GetMapping("/{tenantUsername}")
+	public UserRegistration get(@PathVariable String tenantUsername) {
+		return tenantService.findTenant(tenantUsername);
 	}
 
 	@Override
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable int id) {
-		tenantService.deleteTenant(id);
+	@DeleteMapping("/{tenantUsername}")
+	public void delete(@PathVariable String tenantUsername) {
+		tenantService.deleteTenant(tenantUsername);
 	}
 
 }
