@@ -86,22 +86,22 @@ public class LessorController implements LessorContrInterface {
 		return ResponseEntity.ok(new MessageResponse("Requested lease has been deleted."));
 	}
 
-	@Override
-	@PostMapping("/{lessorUsername}/assign/{tenantUsername}/{lid}")
-	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
-		UserRegistration tenant = tenantService.findTenant(tenantUsername);
-		List<Lease> leases = getAllLessorLeases(lessorUsername);
-		for (Lease lease : leases) {
-			if (lease.getId() == lid) {
-				if(!tenant.getUserLeases().contains(lease)) {
-					tenant.getUserLeases().add(lease);
-					tenantService.saveTenant(tenant);
-				}
-				return lease;
-			}
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-	}
+//	@Override
+//	@PostMapping("/{lessorUsername}/assign/{tenantUsername}/{lid}")
+//	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
+//		UserRegistration tenant = tenantService.findTenant(tenantUsername);
+//		List<Lease> leases = getAllLessorLeases(lessorUsername);
+//		for (Lease lease : leases) {
+//			if (lease.getId() == lid) {
+//				if(!tenant.getUserLeases().contains(lease)) {
+//					tenant.getUserLeases().add(lease);
+//					tenantService.saveTenant(tenant);
+//				}
+//				return lease;
+//			}
+//		}
+//		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+//	}
 
 	@Override
 	@PutMapping("/{lessorUsername}/leases/{lid}")
@@ -155,18 +155,26 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@PostMapping("/{lessorUsername}/createLease")
-	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername) {
+	@PostMapping("/{lessorUsername}/{tenantUsername}/createLease")
+	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable String tenantUsername) {
 
 		UserRegistration l = lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
+		
+		UserRegistration t = tenantService.findTenant(tenantUsername);
+		if (t == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		}
+		
 		// sets tenant asnwer to def (in case lessor submits them):
 		lease.setTenantAgree(false);
 		lease.setTenantCom(null);
 		l.getUserLeases().add(lease);
+		t.getUserLeases().add(lease);
 		lessorService.saveLessor(l);
+		tenantService.saveTenant(t);
 		return lease;
 	}
 

@@ -21,11 +21,11 @@ public interface LessorContrInterface {
 
 	public ResponseEntity<MessageResponse> deleteLessorLease(String lessorUsername, int lid);
 
-	public Lease assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
+	//public Lease assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 
 	public Lease updateLease(Lease lease, String lessorUsername, int lid);
 
-	public Lease createLease(Lease lease, String lessorUsername);
+	public Lease createLease(Lease lease, String lessorUsername, String tenantUsername);
 
 	public UserRegistration createTenant(UserRegistration tenant);
 
