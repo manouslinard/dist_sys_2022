@@ -3,6 +3,8 @@ package gr.hua.dit.dissys.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import gr.hua.dit.dissys.payload.request.TenantAnswer;
+
 import java.util.List;
 
 import javax.persistence.*;
@@ -69,8 +71,11 @@ public class Lease {
 	private List<UserRegistration> users;
 	
 	
-	@OneToOne(mappedBy = "lease", cascade = CascadeType.ALL)
-	private TenantAnswer tenantAnswer;
+	@Column(name = "tenant_agree")
+	private boolean tenantAgree;
+	
+	@Column(name = "tenant_com")
+	private String tenantCom;
 
 	public Lease() {
 
@@ -111,12 +116,20 @@ public class Lease {
 		return title;
 	}
 
-	public TenantAnswer getTenantAnswer() {
-		return tenantAnswer;
+	public boolean isTenantAgree() {
+		return tenantAgree;
 	}
 
-	public void setTenantAnswer(TenantAnswer tenantAnswer) {
-		this.tenantAnswer = tenantAnswer;
+	public void setTenantAgree(boolean tenantAgree) {
+		this.tenantAgree = tenantAgree;
+	}
+
+	public String getTenantCom() {
+		return tenantCom;
+	}
+
+	public void setTenantCom(String tenantCom) {
+		this.tenantCom = tenantCom;
 	}
 
 	public void setTitle(String title) {
@@ -195,7 +208,7 @@ public class Lease {
 	public void setDei(String dei) {
 		this.dei = dei;
 	}
-
+	
 	// define toString
 	@Override
 	public String toString() {

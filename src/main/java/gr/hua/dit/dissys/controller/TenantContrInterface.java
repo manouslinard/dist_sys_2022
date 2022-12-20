@@ -2,9 +2,12 @@ package gr.hua.dit.dissys.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.TenantAnswer;
+import gr.hua.dit.dissys.payload.request.TenantAnswer;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.entity.UserRegistration;
 
 public interface TenantContrInterface {
@@ -19,7 +22,7 @@ public interface TenantContrInterface {
 
 	public Contract getTenantContract(String tenantUsername, int cid);
 	
-	public Lease submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
+	public ResponseEntity<MessageResponse> submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
 
 	public UserRegistration save(UserRegistration tenant);
 

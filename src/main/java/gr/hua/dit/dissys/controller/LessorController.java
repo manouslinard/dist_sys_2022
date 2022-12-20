@@ -87,7 +87,7 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@PostMapping("/{lessorUsername}/assignTenantToLease/{tenantUsername}/{lid}")
+	@PostMapping("/{lessorUsername}/assign/{tenantUsername}/{lid}")
 	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
 		List<Lease> leases = getAllLessorLeases(lessorUsername);
@@ -162,6 +162,9 @@ public class LessorController implements LessorContrInterface {
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
+		// sets tenant asnwer to def (in case lessor submits them):
+		lease.setTenantAgree(false);
+		lease.setTenantCom(null);
 		l.getUserLeases().add(lease);
 		lessorService.saveLessor(l);
 		return lease;

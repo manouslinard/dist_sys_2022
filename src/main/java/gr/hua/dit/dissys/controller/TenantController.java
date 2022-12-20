@@ -1,7 +1,8 @@
 package gr.hua.dit.dissys.controller;
 
 
-import gr.hua.dit.dissys.entity.TenantAnswer;
+import gr.hua.dit.dissys.payload.request.TenantAnswer;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.service.LeaseService;
@@ -10,6 +11,7 @@ import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -84,11 +86,12 @@ public class TenantController implements TenantContrInterface {
 	
 	@Override
 	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
-	public Lease submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
+	public ResponseEntity<MessageResponse> submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
 		Lease lease = getTenantLease(tenantUsername, lid);
-		lease.setTenantAnswer(tenantAnswer);
+		lease.setTenantAgree(tenantAnswer.getHasAgreed());
+		lease.setTenantCom(tenantAnswer.getTenantComment());
 		leaseService.saveLease(lease);
-		return lease;
+		return ResponseEntity.ok(new MessageResponse("Answer submitted."));
 	}
 
 	@Override
