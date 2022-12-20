@@ -18,7 +18,7 @@ public interface LessorContrInterface {
 
 	public void deleteLessorLease(String lessorUsername, int lid);
 
-	public boolean assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
+	public Lease assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 
 	public Lease updateLease(Lease lease, String lessorUsername, int lid);
 

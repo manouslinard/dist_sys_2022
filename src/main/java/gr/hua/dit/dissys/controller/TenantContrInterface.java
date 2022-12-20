@@ -19,7 +19,7 @@ public interface TenantContrInterface {
 
 	public Contract getTenantContract(String tenantUsername, int cid);
 	
-	public void submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
+	public Lease submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
 
 	public UserRegistration save(UserRegistration tenant);
 

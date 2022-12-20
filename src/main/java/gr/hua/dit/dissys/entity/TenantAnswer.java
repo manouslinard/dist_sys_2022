@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tenant_answer")
 public class TenantAnswer {
@@ -24,6 +26,7 @@ public class TenantAnswer {
 	@Column(name = "tenant_agree")
 	private boolean hasAgreed;
 
+	@JsonIgnore
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 				CascadeType.REFRESH })
 	@JoinColumn(name = "lease_id")

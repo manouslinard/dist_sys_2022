@@ -1,10 +1,13 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Contract;
+import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -14,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/lessor")
@@ -28,6 +34,9 @@ public class LessorController implements LessorContrInterface {
 
 	@Autowired
 	private LeaseRepository leaseRepo;
+	
+    @Autowired
+    RoleRepository roleRepository;
 	
 	@Autowired
 	private ContractRepository contractRepository;
@@ -64,26 +73,28 @@ public class LessorController implements LessorContrInterface {
 	@DeleteMapping("{lessorUsername}/leases/{lid}")
 	public void deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
 		Lease lease = getLessorLease(lessorUsername, lid);
-		leaseRepo.delete(lease);
+		leaseRepo.deleteById(lease.getId());
 	}
 
 	@Override
-	@GetMapping("/{lessorUsername}/assignTenantToLease/{tenantUsername}/{lid}")
-	public boolean assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
+	@PostMapping("/{lessorUsername}/assignTenantToLease/{tenantUsername}/{lid}")
+	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
 		List<Lease> leases = getAllLessorLeases(lessorUsername);
 		for (Lease loop : leases) {
 			if (loop.getId() == lid) {
-				tenant.getUserLeases().add(loop);
-				tenantService.saveTenant(tenant);
-				return true;
+				if(!tenant.getUserLeases().contains(loop)) {
+					tenant.getUserLeases().add(loop);
+					tenantService.saveTenant(tenant);
+				}
+				return loop;
 			}
 		}
-		return false;
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 
 	@Override
-	@PostMapping("/{lessorUsername}/leases/{lid}")
+	@PutMapping("/{lessorUsername}/leases/{lid}")
 	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
 
 		Lease oldLease = getLessorLease(lessorUsername, lid);
@@ -151,6 +162,8 @@ public class LessorController implements LessorContrInterface {
 	public UserRegistration createTenant(@Valid @RequestBody UserRegistration tenant) {
 
 		List<UserRegistration> tenantList = tenantService.getTenants();
+
+		// updates old Tenant:
 		for (UserRegistration oldTenant : tenantList) {
 			if (oldTenant.getEmail().equals(tenant.getEmail())) {
 				if (!checkNullEmptyBlank(tenant.getAfm())) {
@@ -169,8 +182,12 @@ public class LessorController implements LessorContrInterface {
 				return oldTenant;
 			}
 		}
+		
+		// creates new tenant
 		Long id = (long) 0;
 		tenant.setId(id);
+		Role role = roleRepository.findByName(ERole.ROLE_TENANT).get();
+		tenant.getRoles().add(role);
 		tenantService.saveTenant(tenant);
 		return tenant;
 	}
