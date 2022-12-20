@@ -33,7 +33,6 @@ public class UserRegistration {
     @Email
     private String email;
 
-    @JsonIgnore
     @NotBlank
     @Size(max = 120)
     private String password;
