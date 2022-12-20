@@ -4,6 +4,7 @@ package gr.hua.dit.dissys.controller;
 import gr.hua.dit.dissys.entity.TenantAnswer;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -31,7 +32,7 @@ public class TenantController implements TenantContrInterface {
 	
 
 	@Autowired
-	private LeaseRepository leaseRepo;
+	private LeaseService leaseService;
 
 	@Override
 	@GetMapping("/{tenantUsername}/leases/{lid}")
@@ -86,7 +87,7 @@ public class TenantController implements TenantContrInterface {
 	public Lease submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
 		Lease lease = getTenantLease(tenantUsername, lid);
 		lease.setTenantAnswer(tenantAnswer);
-		leaseRepo.save(lease);
+		leaseService.saveLease(lease);
 		return lease;
 	}
 
