@@ -11,6 +11,6 @@ public interface LeaseService {
 
     public Lease findLease(int id);
 
-    public void deleteLease(int id);
+    public void deleteLease(Lease lease);
 	
 }

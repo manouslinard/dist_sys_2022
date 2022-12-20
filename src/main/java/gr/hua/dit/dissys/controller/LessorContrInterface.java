@@ -2,9 +2,12 @@ package gr.hua.dit.dissys.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 
 public interface LessorContrInterface {
 
@@ -16,7 +19,7 @@ public interface LessorContrInterface {
 
 	public Lease getLessorLease(String lessorUsername, int lid);
 
-	public void deleteLessorLease(String lessorUsername, int lid);
+	public ResponseEntity<MessageResponse> deleteLessorLease(String lessorUsername, int lid);
 
 	public Lease assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 

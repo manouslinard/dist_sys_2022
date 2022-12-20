@@ -5,14 +5,17 @@ import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,7 +36,7 @@ public class LessorController implements LessorContrInterface {
 	private TenantService tenantService;
 
 	@Autowired
-	private LeaseRepository leaseRepo;
+	private LeaseService leaseService;
 	
     @Autowired
     RoleRepository roleRepository;
@@ -71,9 +74,16 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@DeleteMapping("{lessorUsername}/leases/{lid}")
-	public void deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+	public ResponseEntity<MessageResponse> deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
 		Lease lease = getLessorLease(lessorUsername, lid);
-		leaseRepo.deleteById(lease.getId());
+		List <UserRegistration> leaseUsers = lease.getUsers();
+		// removes lease from users (removes all references):
+		for (UserRegistration u: leaseUsers) {
+			u.getUserLeases().remove(lease);
+		}
+		// removes it from db:
+		leaseService.deleteLease(lease);
+		return ResponseEntity.ok(new MessageResponse("Requested lease has been deleted."));
 	}
 
 	@Override
@@ -130,7 +140,7 @@ public class LessorController implements LessorContrInterface {
 			oldLease.setCost(lease.getCost());
 		}
 
-		leaseRepo.save(oldLease);
+		leaseService.saveLease(oldLease);
 		return oldLease;
 
 	}

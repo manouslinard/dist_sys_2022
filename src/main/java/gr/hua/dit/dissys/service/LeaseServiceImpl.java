@@ -35,8 +35,8 @@ public class LeaseServiceImpl implements LeaseService{
 
 	@Override
 	@Transactional
-	public void deleteLease(int id) {
-        leaseRepository.deleteById(id);		
+	public void deleteLease(Lease lease) {
+        leaseRepository.deleteById(lease.getId());
 	}
 
 }
