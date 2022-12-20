@@ -45,7 +45,7 @@ public class LessorController implements LessorContrInterface {
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return l.getLessorLeases();
+		return l.getUserLeases();
 	}
 
 	@Override
@@ -74,7 +74,8 @@ public class LessorController implements LessorContrInterface {
 		List<Lease> leases = getAllLessorLeases(lessorUsername);
 		for (Lease loop : leases) {
 			if (loop.getId() == lid) {
-				loop.setTenant(tenant);
+				tenant.getUserLeases().add(loop);
+				tenantService.saveTenant(tenant);
 				return true;
 			}
 		}
@@ -140,8 +141,8 @@ public class LessorController implements LessorContrInterface {
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		lease.setLessor(l);
-		leaseRepo.save(lease);
+		l.getUserLeases().add(lease);
+		lessorService.saveLessor(l);
 		return lease;
 	}
 
@@ -178,18 +179,18 @@ public class LessorController implements LessorContrInterface {
 	@GetMapping("/{lessorUsername}/contracts")
 	public List<Contract> getAllLessorContracts(@PathVariable String lessorUsername) {
 		UserRegistration lessor= lessorService.findLessor(lessorUsername);
-		return lessor.getLessorContracts();
+		return lessor.getUserContracts();
 	}
 
 	@Override
 	@GetMapping("/{lessorUsername}/contracts/{cid}")
 	public Contract getLessorContract(@PathVariable String lessorUsername, @PathVariable int cid) {
-		UserRegistration lessor= get(lessorUsername);
-		Contract contract= contractRepository.findById(cid).get();
+		UserRegistration lessor= lessorService.findLessor(lessorUsername);
+		List<Contract> contracts= lessor.getUserContracts();
 		
-		for (int i=0; i<lessor.getLessorContracts().size(); i++) {
-			if (contract.getId() == cid) {
-				return contract;
+		for (Contract c: contracts) {
+			if (c.getId() == cid) {
+				return c;
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");

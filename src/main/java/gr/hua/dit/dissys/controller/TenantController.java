@@ -48,7 +48,7 @@ public class TenantController implements TenantContrInterface {
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return tenant.getTenantLeases();
+		return tenant.getUserLeases();
 	}
 
 	@Override
@@ -60,17 +60,15 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/contracts")
 	public List<Contract> getAllTenantContracts(@PathVariable String tenantUsername) {
-		// TODO: Chris
-		UserRegistration tenant = new UserRegistration();
-		tenant = tenantService.findTenant(tenantUsername);
-		return tenant.getTenantContracts();
+		UserRegistration tenant = tenantService.findTenant(tenantUsername);
+		return tenant.getUserContracts();
 	}
 
 	@Override
 	@GetMapping("/{tenantUsername}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable String tenantUsername, @PathVariable int cid) {
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
-		List<Contract> contracts =tenant.getTenantContracts();
+		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
 				return loop;
@@ -82,7 +80,6 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
 	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
-		// TODO: Chris
 		Lease lease = new Lease();
 		lease = tenantAnswer.getLease();
 		lease.setTenantAnswer(tenantAnswer);
