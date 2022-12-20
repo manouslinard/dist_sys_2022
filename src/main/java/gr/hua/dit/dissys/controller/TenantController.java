@@ -5,6 +5,7 @@ import gr.hua.dit.dissys.payload.request.TenantAnswer;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -35,6 +36,10 @@ public class TenantController implements TenantContrInterface {
 
 	@Autowired
 	private LeaseService leaseService;
+	@Autowired
+	private ContractService contractService;
+	@Autowired
+	private LeaseRepository leaseRepository;
 
 	@Override
 	@GetMapping("/{tenantUsername}/leases/{lid}")
@@ -91,7 +96,18 @@ public class TenantController implements TenantContrInterface {
 		lease.setTenantAgree(tenantAnswer.getHasAgreed());
 		lease.setTenantCom(tenantAnswer.getTenantComment());
 		if(lease.isTenantAgree()) {
-			//TODO: create contract, remove lease.
+			Contract contract = new Contract(lease.getTitle(), lease.getAddress(), lease.getTk(), lease.getDimos(), lease.getReason(), lease.getCost(), lease.getStartDate(),
+					lease.getEndDate(), lease.getSp_con(), lease.getDei());
+			UserRegistration tenant = tenantService.findTenant(tenantUsername);
+			tenant.getUserContracts().add(contract);
+			List<UserRegistration> users = lease.getUsers();
+			//Users are only 2: Tenant and Lessor
+			for(UserRegistration user:users){
+				if(!user.getUsername().equals(tenantUsername)){
+					user.getUserContracts().add(contract);
+				}
+			}
+			leaseService.deleteLease(lease);
 		} else {
 			// saves lease if not agreed:
 			leaseService.saveLease(lease);
