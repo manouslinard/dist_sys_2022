@@ -3,6 +3,8 @@ package gr.hua.dit.dissys.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -13,7 +15,7 @@ import javax.validation.constraints.Size;
 public class Lease {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 
@@ -60,16 +62,13 @@ public class Lease {
 	//@NotBlank(message = "Please enter DEI account number")
 	private String dei;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "lessor_id")
-	@JsonBackReference
-	private UserRegistration lessor;
-
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "tenant_id")
-	@JsonBackReference
-	private UserRegistration tenant;
-
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+    @JoinTable(name = "user_leases",
+            joinColumns = @JoinColumn(name = "lease_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<UserRegistration> users;
+	
+	
 	@OneToOne(mappedBy = "lease", cascade = CascadeType.ALL)
 	private TenantAnswer tenantAnswer;
 
@@ -99,6 +98,14 @@ public class Lease {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public List<UserRegistration> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<UserRegistration> users) {
+		this.users = users;
+	}
 
 	public String getTitle() {
 		return title;
@@ -116,13 +123,6 @@ public class Lease {
 		this.title = title;
 	}
 
-	public UserRegistration getLessor() {
-		return lessor;
-	}
-
-	public void setLessor(UserRegistration lessor) {
-		this.lessor = lessor;
-	}
 
 	public String getAddress() {
 		return address;
@@ -194,14 +194,6 @@ public class Lease {
 
 	public void setDei(String dei) {
 		this.dei = dei;
-	}
-
-	public UserRegistration getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(UserRegistration tenant) {
-		this.tenant = tenant;
 	}
 
 	// define toString

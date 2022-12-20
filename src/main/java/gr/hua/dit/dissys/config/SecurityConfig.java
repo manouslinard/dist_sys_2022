@@ -30,10 +30,12 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
         	.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-        	.antMatchers("/lessor/**").hasAnyAuthority(ERole.ROLE_LESSOR.toString(),ERole.ROLE_ADMIN.toString())
+        	//.antMatchers("/lessor/**").hasAnyAuthority(ERole.ROLE_LESSOR.toString(),ERole.ROLE_ADMIN.toString())
         	//.antMatchers("/tenant/**").hasAnyRole("USER","ADMIN")
-        	.antMatchers("/tenant/**").hasAnyAuthority(ERole.ROLE_TENANT.toString(),ERole.ROLE_ADMIN.toString())
-            .anyRequest().authenticated();
+        	//.antMatchers("/tenant/**").hasAnyAuthority(ERole.ROLE_TENANT.toString(),ERole.ROLE_ADMIN.toString())
+        	.antMatchers("/tenant/**").permitAll()
+        	.antMatchers("/lessor/**").permitAll()
+        	.anyRequest().authenticated();
         return http.build();
     }
 

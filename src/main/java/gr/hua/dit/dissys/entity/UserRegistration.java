@@ -66,28 +66,20 @@ public class UserRegistration {
 	private String phone;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "lessor", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private List<Lease> lessorLeases;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_leases",
+    		joinColumns = @JoinColumn(name = "user_id"),
+    		inverseJoinColumns = @JoinColumn(name = "lease_id"))
+	private List<Lease> userLeases;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "lessor", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@JsonManagedReference
-	private List<Contract> lessorContracts;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinTable(name = "user_contracts",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "contract_id"))
+	private List<Contract> userContracts;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private List<Lease> tenantLeases;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "tenant", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@JsonManagedReference
-	private List<Contract> tenantContracts;
-    
-	
+	    
     public UserRegistration() {
     }
 
@@ -140,36 +132,20 @@ public class UserRegistration {
 		this.phone = phone;
 	}
 
-	public List<Lease> getLessorLeases() {
-		return lessorLeases;
+	public List<Lease> getUserLeases() {
+		return userLeases;
 	}
 
-	public void setLessorLeases(List<Lease> lessorLeases) {
-		this.lessorLeases = lessorLeases;
+	public void setUserLeases(List<Lease> userLeases) {
+		this.userLeases = userLeases;
 	}
 
-	public List<Contract> getLessorContracts() {
-		return lessorContracts;
+	public List<Contract> getUserContracts() {
+		return userContracts;
 	}
 
-	public void setLessorContracts(List<Contract> lessorContracts) {
-		this.lessorContracts = lessorContracts;
-	}
-
-	public List<Lease> getTenantLeases() {
-		return tenantLeases;
-	}
-
-	public void setTenantLeases(List<Lease> tenantLeases) {
-		this.tenantLeases = tenantLeases;
-	}
-
-	public List<Contract> getTenantContracts() {
-		return tenantContracts;
-	}
-
-	public void setTenantContracts(List<Contract> tenantContracts) {
-		this.tenantContracts = tenantContracts;
+	public void setUserContracts(List<Contract> userContracts) {
+		this.userContracts = userContracts;
 	}
 
 	public Long getId() {

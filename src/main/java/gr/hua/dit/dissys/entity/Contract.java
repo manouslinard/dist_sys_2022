@@ -1,5 +1,7 @@
 package gr.hua.dit.dissys.entity;
 
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -59,15 +61,11 @@ public class Contract {
 	//@NotBlank(message = "Please enter DEI account number")
 	private String dei;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "lessor_id")
-	@JsonBackReference
-	private UserRegistration lessor;
-
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "tenant_id")
-	@JsonBackReference
-	private UserRegistration tenant;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinTable(name = "user_contracts",
+    		joinColumns = @JoinColumn(name = "contract_id"),
+    		inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<UserRegistration> users;
 
 	public Contract() {
 
@@ -97,6 +95,14 @@ public class Contract {
 
 	public String getTitle() {
 		return title;
+	}
+
+	public List<UserRegistration> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<UserRegistration> users) {
+		this.users = users;
 	}
 
 	public void setTitle(String title) {
@@ -173,22 +179,6 @@ public class Contract {
 
 	public void setDei(String dei) {
 		this.dei = dei;
-	}
-
-	public UserRegistration getLessor() {
-		return lessor;
-	}
-
-	public void setLessor(UserRegistration lessor) {
-		this.lessor = lessor;
-	}
-
-	public UserRegistration getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(UserRegistration tenant) {
-		this.tenant = tenant;
 	}
 
 	@Override
