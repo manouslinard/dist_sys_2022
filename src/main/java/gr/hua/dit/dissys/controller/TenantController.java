@@ -90,7 +90,12 @@ public class TenantController implements TenantContrInterface {
 		Lease lease = getTenantLease(tenantUsername, lid);
 		lease.setTenantAgree(tenantAnswer.getHasAgreed());
 		lease.setTenantCom(tenantAnswer.getTenantComment());
-		leaseService.saveLease(lease);
+		if(lease.isTenantAgree()) {
+			//TODO: create contract, remove lease.
+		} else {
+			// saves lease if not agreed:
+			leaseService.saveLease(lease);
+		}
 		return ResponseEntity.ok(new MessageResponse("Answer submitted."));
 	}
 

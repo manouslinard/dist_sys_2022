@@ -91,13 +91,13 @@ public class LessorController implements LessorContrInterface {
 	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
 		List<Lease> leases = getAllLessorLeases(lessorUsername);
-		for (Lease loop : leases) {
-			if (loop.getId() == lid) {
-				if(!tenant.getUserLeases().contains(loop)) {
-					tenant.getUserLeases().add(loop);
+		for (Lease lease : leases) {
+			if (lease.getId() == lid) {
+				if(!tenant.getUserLeases().contains(lease)) {
+					tenant.getUserLeases().add(lease);
 					tenantService.saveTenant(tenant);
 				}
-				return loop;
+				return lease;
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
@@ -201,6 +201,9 @@ public class LessorController implements LessorContrInterface {
 		tenant.setId(id);
 		Role role = roleRepository.findByName(ERole.ROLE_TENANT).get();
 		tenant.getRoles().add(role);
+		// def null (in case lessor enters them):
+		tenant.setUserLeases(null);
+		tenant.setUserContracts(null);
 		tenantService.saveTenant(tenant);
 		return tenant;
 	}
