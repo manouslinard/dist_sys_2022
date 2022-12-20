@@ -24,7 +24,7 @@ public class TenantServiceImpl implements TenantService{
 	@SuppressWarnings("unlikely-arg-type")
 	private boolean isTenant(Set<Role> userRoles) {
 		for(Role r:userRoles) {
-			if(r.getName().equals("ROLE_TENANT")) {
+			if(r.getName().name().equals("ROLE_TENANT")) {
 				return true;
 			}
 		}

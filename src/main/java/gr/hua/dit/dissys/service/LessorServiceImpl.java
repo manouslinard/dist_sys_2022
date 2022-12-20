@@ -24,7 +24,7 @@ public class LessorServiceImpl implements LessorService{
     @SuppressWarnings("unlikely-arg-type")
 	private boolean isLessor(Set<Role> userRoles) {
     	for(Role r:userRoles) {
-    		if(r.getName().equals("ROLE_LESSOR")) {
+    		if(r.getName().name().equals("ROLE_LESSOR")) {
     			return true;
     		}
     	}

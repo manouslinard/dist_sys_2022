@@ -187,4 +187,11 @@ public class UserRegistration {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+	@Override
+	public String toString() {
+		return "UserRegistration [id=" + id + ", username=" + username + ", email=" + email + ", roles=" + roles + "]";
+	}
+
+    
 }
