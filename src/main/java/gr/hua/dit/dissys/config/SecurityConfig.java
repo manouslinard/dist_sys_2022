@@ -35,7 +35,6 @@ public class SecurityConfig {
         	//.antMatchers("/tenant/**").hasAnyAuthority(ERole.ROLE_TENANT.toString(),ERole.ROLE_ADMIN.toString())
         	.antMatchers("/tenant/**").permitAll()
         	.antMatchers("/lessor/**").permitAll()
-        	.antMatchers("/admin/**").permitAll()
         	.anyRequest().authenticated();
         return http.build();
     }
