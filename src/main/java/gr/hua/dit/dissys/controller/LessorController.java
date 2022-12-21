@@ -227,8 +227,9 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@DeleteMapping("/{lessorUsername}")
-	public void delete(@PathVariable String lessorUsername) {
+	public ResponseEntity<MessageResponse> delete(@PathVariable String lessorUsername) {
 		lessorService.deleteLessor(lessorUsername);
+		return ResponseEntity.ok(new MessageResponse("Requested lessor deleted."));
 	}
 
 	@Override

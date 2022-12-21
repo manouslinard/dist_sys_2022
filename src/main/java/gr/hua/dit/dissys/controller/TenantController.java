@@ -128,8 +128,9 @@ public class TenantController implements TenantContrInterface {
 
 	@Override
 	@DeleteMapping("/{tenantUsername}")
-	public void delete(@PathVariable String tenantUsername) {
+	public ResponseEntity<MessageResponse> delete(@PathVariable String tenantUsername) {
 		tenantService.deleteTenant(tenantUsername);
+		return ResponseEntity.ok(new MessageResponse("Requested tenant deleted."));
 	}
 
 }

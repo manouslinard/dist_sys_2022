@@ -36,6 +36,6 @@ public interface LessorContrInterface {
 
 	public UserRegistration get(String lessorUsername);
 
-	public void delete(String lessorUsername);
+	public ResponseEntity<MessageResponse> delete(String lessorUsername);
 
 }

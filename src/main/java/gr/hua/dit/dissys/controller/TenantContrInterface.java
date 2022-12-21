@@ -26,6 +26,6 @@ public interface TenantContrInterface {
 
 	public UserRegistration get(String tenantUsername);
 
-	public void delete(String tenantUsername);
+	public ResponseEntity<MessageResponse> delete(String tenantUsername);
 
 }
