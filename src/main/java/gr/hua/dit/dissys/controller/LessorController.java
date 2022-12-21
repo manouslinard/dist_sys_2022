@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,12 +170,12 @@ public class LessorController implements LessorContrInterface {
 		}
 		
 		// sets tenant asnwer to def (in case lessor submits them):
+
 		lease.setTenantAgree(false);
 		lease.setTenantCom(null);
-		l.getUserLeases().add(lease);
-		t.getUserLeases().add(lease);
-		lessorService.saveLessor(l);
-		tenantService.saveTenant(t);
+		lease.setUsers(new ArrayList<UserRegistration>());
+		lease.getUsers().add(l);
+		lease.getUsers().add(t);
 		return lease;
 	}
 

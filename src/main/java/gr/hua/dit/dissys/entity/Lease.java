@@ -22,7 +22,7 @@ public class Lease {
 	private int id;
 
 	@Column(name = "title")
-	//@NotBlank(message = "Please enter the lease's title")
+	@NotBlank(message = "Please enter the lease's title")
 	private String title;
 
 	@Column(name = "address")
