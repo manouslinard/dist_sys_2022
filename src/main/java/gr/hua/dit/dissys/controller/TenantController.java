@@ -121,15 +121,6 @@ public class TenantController implements TenantContrInterface {
 	}
 
 	@Override
-	@PostMapping("")
-	public UserRegistration save(@Valid @RequestBody UserRegistration tenant) {
-		Long id = (long) 0;
-		tenant.setId(id);
-		tenantService.saveTenant(tenant);
-		return tenant;
-	}
-
-	@Override
 	@GetMapping("/{tenantUsername}")
 	public UserRegistration get(@PathVariable String tenantUsername) {
 		return tenantService.findTenant(tenantUsername);

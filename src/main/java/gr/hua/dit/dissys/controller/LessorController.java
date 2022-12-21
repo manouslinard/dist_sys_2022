@@ -220,15 +220,6 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@PostMapping("")
-	public UserRegistration save(@Valid @RequestBody UserRegistration lessor) {
-		Long id = (long) 0;
-		lessor.setId(id);
-		lessorService.saveLessor(lessor);
-		return lessor;
-	}
-
-	@Override
 	@GetMapping("/{lessorUsername}")
 	public UserRegistration get(@PathVariable String lessorUsername) {
 		return lessorService.findLessor(lessorUsername);

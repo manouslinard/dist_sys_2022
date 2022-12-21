@@ -24,8 +24,6 @@ public interface TenantContrInterface {
 	
 	public ResponseEntity<MessageResponse> submitTenantAnswer(TenantAnswer tenantAnswer, String tenantUsername, int lid);
 
-	public UserRegistration save(UserRegistration tenant);
-
 	public UserRegistration get(String tenantUsername);
 
 	public void delete(String tenantUsername);

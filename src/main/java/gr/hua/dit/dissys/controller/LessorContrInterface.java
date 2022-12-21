@@ -33,8 +33,6 @@ public interface LessorContrInterface {
 	public List<Contract> getAllLessorContracts(String lessorUsername);
 
 	public Contract getLessorContract(String lessorUsername,  int cid);
-	
-	public UserRegistration save(UserRegistration lessor);
 
 	public UserRegistration get(String lessorUsername);
 
