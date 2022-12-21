@@ -5,10 +5,12 @@ import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.payload.request.SignupRequest;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.repository.UserRepository;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -36,6 +38,12 @@ public class LessorController implements LessorContrInterface {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private TenantService tenantService;
@@ -186,41 +194,8 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("/createTenant")
-	public UserRegistration createTenant(@Valid @RequestBody UserRegistration tenant) {
-
-		List<UserRegistration> tenantList = tenantService.getTenants();
-
-		// updates old Tenant:
-		for (UserRegistration oldTenant : tenantList) {
-			if (oldTenant.getEmail().equals(tenant.getEmail())) {
-				if (!checkNullEmptyBlank(tenant.getAfm())) {
-					oldTenant.setAfm(tenant.getAfm());
-				}
-				if(!checkNullEmptyBlank(tenant.getFirstName())) {
-					oldTenant.setFirstName(tenant.getFirstName());
-				}
-				if(!checkNullEmptyBlank(tenant.getLastName())) {
-					oldTenant.setLastName(tenant.getLastName());
-				}
-				if(!checkNullEmptyBlank(tenant.getPhone())) {
-					oldTenant.setPhone(tenant.getPhone());
-				}
-				tenantService.saveTenant(oldTenant);
-				return oldTenant;
-			}
-		}
-
-		// creates new tenant
-		Long id = (long) 0;
-		tenant.setId(id);
-		Role role = roleRepository.findByName(ERole.ROLE_TENANT).get();
-		tenant.getRoles().add(role);
-		// def null (in case lessor enters them):
-		tenant.setUserLeases(null);
-		tenant.setUserContracts(null);
-		tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
-		tenantService.saveTenant(tenant);
-		return tenant;
+	public ResponseEntity<MessageResponse> createTenant(@Valid @RequestBody SignupRequest tenant) {
+		return registerTenant(tenant);
 	}
 
 	@Override
@@ -269,6 +244,38 @@ public class LessorController implements LessorContrInterface {
 	@GetMapping("/getAllLessors")
 	public List<UserRegistration> getAllLessors() {
 		return lessorService.getLessors();
+	}
+
+	private ResponseEntity<MessageResponse> registerTenant(@Valid @RequestBody SignupRequest signUpRequest) {
+		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Username is already taken!"));
+		}
+
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already in use!"));
+		}
+
+		// Create new user's account
+		UserRegistration user = new UserRegistration(signUpRequest.getUsername(),
+				signUpRequest.getEmail(),
+				encoder.encode(signUpRequest.getPassword()));
+
+		Set<String> strRoles = signUpRequest.getRole();
+		Set<Role> roles = new HashSet<>();
+
+		Role userRole = roleRepository.findByName(ERole.ROLE_TENANT)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+
+
+		user.setRoles(roles);
+		userRepository.save(user);
+
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
 }

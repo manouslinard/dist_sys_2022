@@ -2,6 +2,7 @@ package gr.hua.dit.dissys.controller;
 
 import java.util.List;
 
+import gr.hua.dit.dissys.payload.request.SignupRequest;
 import org.springframework.http.ResponseEntity;
 
 import gr.hua.dit.dissys.entity.Contract;
@@ -27,7 +28,7 @@ public interface LessorContrInterface {
 
 	public Lease createLease(Lease lease, String lessorUsername, String tenantUsername);
 
-	public UserRegistration createTenant(UserRegistration tenant);
+	public ResponseEntity<MessageResponse> createTenant(SignupRequest tenant);
 
 	public List<Contract> getAllLessorContracts(String lessorUsername);
 
