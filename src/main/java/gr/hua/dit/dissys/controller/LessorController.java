@@ -176,6 +176,7 @@ public class LessorController implements LessorContrInterface {
 		lease.setUsers(new ArrayList<UserRegistration>());
 		lease.getUsers().add(l);
 		lease.getUsers().add(t);
+		leaseService.saveLease(lease);
 		return lease;
 	}
 
