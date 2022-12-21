@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "lease")
+@Table(name = "lease", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
 public class Lease {
 
 	@Id

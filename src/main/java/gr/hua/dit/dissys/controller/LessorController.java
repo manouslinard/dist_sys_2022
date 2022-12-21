@@ -39,7 +39,7 @@ public class LessorController implements LessorContrInterface {
 	private LeaseService leaseService;
 	
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 	
 	@Autowired
 	private ContractRepository contractRepository;

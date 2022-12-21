@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Table(name = "contract")
+@Table(name = "contract", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
 public class Contract {
 
 	@Id
