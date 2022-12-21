@@ -49,7 +49,6 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
                 .antMatchers("/lessor/**").hasAnyRole("LESSOR","ADMIN")
                 .antMatchers("/tenant/**").hasAnyRole("TENANT","ADMIN")
                 .anyRequest().authenticated();
