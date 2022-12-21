@@ -107,6 +107,11 @@ public class TenantController implements TenantContrInterface {
 					user.getUserContracts().add(contract);
 				}
 			}
+			List<UserRegistration> leaseUsers = lease.getUsers();
+			// removes lease from lessor and tenant:
+			for (UserRegistration u: leaseUsers) {
+				u.getUserLeases().remove(lease);
+			}
 			leaseService.deleteLease(lease);
 		} else {
 			// saves lease if not agreed:
