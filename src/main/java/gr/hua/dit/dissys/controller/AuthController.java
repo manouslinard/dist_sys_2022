@@ -1,6 +1,6 @@
 package gr.hua.dit.dissys.controller;
 
-//import gr.hua.dit.springbootdemo.config.JwtUtils;
+import gr.hua.dit.dissys.config.JwtUtils;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
@@ -42,8 +42,8 @@ public class AuthController {
     @Autowired
     PasswordEncoder encoder;
 
-    //@Autowired
-    //JwtUtils jwtUtils;
+    @Autowired
+    JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -52,22 +52,14 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        //String jwt = jwtUtils.generateJwtToken(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        /*
-        return ResponseEntity.ok(new JwtResponse(
-        		jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
-    	*/
-        return ResponseEntity.ok(new JwtResponse(
+        return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
@@ -103,13 +95,13 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "ROLE_ADMIN":
+                    case "admin":
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
 
                         break;
-                    case "ROLE_LESSOR":
+                    case "lessor":
                         Role modRole = roleRepository.findByName(ERole.ROLE_LESSOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);

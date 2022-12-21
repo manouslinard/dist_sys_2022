@@ -4,39 +4,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import gr.hua.dit.dissys.entity.ERole;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-
-
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-        	.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-        	//.antMatchers("/lessor/**").hasAnyAuthority(ERole.ROLE_LESSOR.toString(),ERole.ROLE_ADMIN.toString())
-        	//.antMatchers("/tenant/**").hasAnyRole("USER","ADMIN")
-        	//.antMatchers("/tenant/**").hasAnyAuthority(ERole.ROLE_TENANT.toString(),ERole.ROLE_ADMIN.toString())
-        	.antMatchers("/tenant/**").permitAll()
-        	.antMatchers("/lessor/**").permitAll()
-        	.anyRequest().authenticated();
-        return http.build();
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
 
@@ -46,11 +38,26 @@ public class SecurityConfig {
 
     }
 
-    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/lessor/**").hasAnyRole("LESSOR","ADMIN")
+                .antMatchers("/tenant/**").hasAnyRole("TENANT","ADMIN")
+                .anyRequest().authenticated();
 
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
 }
+
+
+
