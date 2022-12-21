@@ -16,6 +16,7 @@ import gr.hua.dit.dissys.service.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,14 +35,17 @@ public class LessorController implements LessorContrInterface {
 	private LessorService lessorService;
 
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
 	private TenantService tenantService;
 
 	@Autowired
 	private LeaseService leaseService;
-	
-    @Autowired
-    private RoleRepository roleRepository;
-	
+
+	@Autowired
+	private RoleRepository roleRepository;
+
 	@Autowired
 	private ContractRepository contractRepository;
 
@@ -163,12 +167,12 @@ public class LessorController implements LessorContrInterface {
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		
+
 		UserRegistration t = tenantService.findTenant(tenantUsername);
 		if (t == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		
+
 		// sets tenant asnwer to def (in case lessor submits them):
 
 		lease.setTenantAgree(false);
@@ -205,7 +209,7 @@ public class LessorController implements LessorContrInterface {
 				return oldTenant;
 			}
 		}
-		
+
 		// creates new tenant
 		Long id = (long) 0;
 		tenant.setId(id);
@@ -214,6 +218,7 @@ public class LessorController implements LessorContrInterface {
 		// def null (in case lessor enters them):
 		tenant.setUserLeases(null);
 		tenant.setUserContracts(null);
+		tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
 		tenantService.saveTenant(tenant);
 		return tenant;
 	}
@@ -230,7 +235,7 @@ public class LessorController implements LessorContrInterface {
 	public Contract getLessorContract(@PathVariable String lessorUsername, @PathVariable int cid) {
 		UserRegistration lessor= lessorService.findLessor(lessorUsername);
 		List<Contract> contracts= lessor.getUserContracts();
-		
+
 		for (Contract c: contracts) {
 			if (c.getId() == cid) {
 				return c;
@@ -267,3 +272,4 @@ public class LessorController implements LessorContrInterface {
 	}
 
 }
+
