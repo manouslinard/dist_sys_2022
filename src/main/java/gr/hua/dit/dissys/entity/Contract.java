@@ -3,11 +3,8 @@ package gr.hua.dit.dissys.entity;
 import java.util.List;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "contract", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
