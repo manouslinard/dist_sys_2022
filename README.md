@@ -1,8 +1,8 @@
 ## Prerequisites:
 
-* Install postgres
+* Install postgres.
 
-* Install [docker](https://tinyurl.com/2m3bhahn)<br />
+* Install [docker](https://tinyurl.com/2m3bhahn).<br />
 
 --------------------------------
 ## Database Setup with Terminal
@@ -23,16 +23,16 @@ createdb -h localhost -p 5432 -U postgres realestate
 psql -h localhost -U postgres -d realestate -p 5432 -f assets/db/users.sql -W
 ```
 
-* Input user's (postgres) password.
+* Input user's (postgres) password (if requested).
 
-* Database setup finished. Run main app to create other tables automatically
+* Database setup finished. Run main app to create other tables automatically.
 
 ### Delete posgres database using terminal
 
 ```bash
 dropdb -h localhost -p 5432 -U postgres realestate
 ```
-* Input user's (postgres) password.
+* Input user's (postgres) password (if requested).
 
 * Database is deleted.<br />
 
@@ -62,8 +62,8 @@ psql -h localhost -U postgres -d realestate -p 5432 -W
 ```
 
 ----------------------------------------------------------
-# Branches:
-* [Main](https://github.com/manouslinard/dist_sys_2022) &rarr; Spring boot application with thymeleaf, spring security and bootstrap 3
+## Default Users in Database:
+
 Existing Users and Roles in pre-configured initial sql
 
 | USER   | PASSWORD | ROLES       |
@@ -72,10 +72,11 @@ Existing Users and Roles in pre-configured initial sql
 | lessor | pass123  | LESSOR      |
 | admin  | pass123  | ADMIN       |
  
-You can create users using /api/auth/signup
-* [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security) &rarr; Spring Boot Backend with JWT Authentication
+You can create users using /api/auth/signup.<br />
 
-API endpoints provided to register users
+------------------------------------------------------------------
+## Branches:
+* [Backend](https://github.com/manouslinard/dist_sys_2022/tree/backend) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
 
-## Links:
-* [1st Derivable](https://tinyurl.com/2m3bhahn)
+## Other Links:
+* [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing)
