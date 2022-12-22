@@ -63,7 +63,7 @@ psql -h localhost -U postgres -d realestate -p 5432 -W
 
 ----------------------------------------------------------
 # Branches:
-* [Main](https://github.com/manouslinard/dist_sys_2022). Spring boot application with thymeleaf, spring security and bootstrap 3
+* [Main](https://github.com/manouslinard/dist_sys_2022) &rarr; Spring boot application with thymeleaf, spring security and bootstrap 3
 Existing Users and Roles in pre-configured initial sql
 
 | USER   | PASSWORD | ROLES       |
@@ -73,7 +73,7 @@ Existing Users and Roles in pre-configured initial sql
 | admin  | pass123  | ADMIN       |
  
 You can create users using /api/auth/signup
-* [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security). Spring Boot Backend with JWT Authentication
+* [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security) &rarr; Spring Boot Backend with JWT Authentication
 
 API endpoints provided to register users
 
