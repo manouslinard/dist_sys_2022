@@ -1,8 +1,8 @@
 package gr.hua.dit.dissys.controller;
 
 import java.util.List;
-import gr.hua.dit.dissys.entity.Teacher;
-import gr.hua.dit.dissys.service.TeacherService;
+import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.service.LessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class TeacherFormController {
 
     @Autowired
-    private TeacherService teacherService;
+    private LessorService lessorService;
 
     @GetMapping("/")
     public String index() {
@@ -21,22 +21,22 @@ public class TeacherFormController {
 
     @GetMapping("/teacherform")
     public String showTeacherForm(Model model) {
-        Teacher teacher = new Teacher();
+    	UserRegistration teacher = new UserRegistration();
         model.addAttribute("teacher", teacher);
         return "add-teacher";
     }
 
     @GetMapping("/teacherlist")
     public String showTeacherList(Model model) {
-        List<Teacher> teachers = teacherService.getTeachers();
+        List<UserRegistration> teachers = lessorService.getLessors();
         model.addAttribute("teachers", teachers);
         return "list-teachers";
 
     }
 
     @PostMapping(path = "/teacherform")
-    public String saveTeacher(@ModelAttribute("teacher") Teacher teacher) {
-        teacherService.saveTeacher(teacher);
+    public String saveTeacher(@ModelAttribute("teacher") UserRegistration teacher) {
+        lessorService.saveLessor(teacher);
         return "redirect:/";
 
     }
