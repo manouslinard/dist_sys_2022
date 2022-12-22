@@ -1,26 +1,67 @@
-### Run a postgres database using docker
+## Prerequisites:
+
+* Install postgres
+
+* Install [docker](https://tinyurl.com/2m3bhahn)<br />
+
+--------------------------------
+## Database Setup with Terminal
+### Setup postgres database using terminal
+
+* First, create realestate database (if not already created): 
+
+```bash
+createdb -h localhost -p 5432 -U postgres realestate
+```
+
+* It should ask for user's (postgres) password.
+* In this project, password is pass123 (if yours differs, change it in application.properties too).
+
+* Then run script from project directory to input test users (if you want):
+
+```bash
+psql -h localhost -U postgres -d realestate -p 5432 -f assets/db/users.sql -W
+```
+
+* Input user's (postgres) password.
+
+* Database setup finished. Run main app to create other tables automatically
+
+### Delete posgres database using terminal
+
+```bash
+dropdb -h localhost -p 5432 -U postgres realestate
+```
+* Input user's (postgres) password.
+
+* Database is deleted.<br />
+
+--------------------------------------
+## Database Setup with docker
+### Option 1: Run postgres database
 
 ```bash
 docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v pgdata14:/var/lib/postgresql/data  -d postgres:14
 ```
-### Initialize default users
+### Option 2: Run postgres database & initialize default users
 
 ```bash
 docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v "$(pwd)"/assets/db:/docker-entrypoint-initdb.d -v pgdata14:/var/lib/postgresql/data -d postgres:14
 ```
 
-## remove db data
+### Remove db data
 ```bash
 docker volume rm pgdata14
 ```
 
-## connect to database using psql
+### Connect to database using psql
 
 ```bash
 sudo apt install postgresl-client
 psql -h localhost -U postgres -d realestate -p 5432 -W
 ```
 
+----------------------------------------------------------
 # Branches:
 * [Main](https://github.com/manouslinard/dist_sys_2022). Spring boot application with thymeleaf, spring security and bootstrap 3
 Existing Users and Roles in pre-configured initial sql
@@ -31,7 +72,7 @@ Existing Users and Roles in pre-configured initial sql
 | lessor | pass123  | LESSOR      |
 | admin  | pass123  | ADMIN       |
  
-You can create users using /register
+You can create users using /api/auth/signup
 * [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security). Spring Boot Backend with JWT Authentication
 
 API endpoints provided to register users
