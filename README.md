@@ -15,7 +15,7 @@ createdb -h localhost -p 5432 -U postgres realestate
 ```
 
 * It should ask for user's (postgres) password.
-* In this project, password is pass123 (if yours differs, change it in application.properties too).
+* The password of user postgres in tested systems is pass123 (if yours differs, change it in application.properties too).
 
 * Then run script from project directory to input test users (if you want):
 
