@@ -15,7 +15,8 @@ import java.util.Set;
 @Table(	name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "afm")
         })
 public class UserRegistration {
     @Id
@@ -52,14 +53,14 @@ public class UserRegistration {
 	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String lastName;
 
-	@JsonIgnore
+	//@JsonIgnore
 	@Column(name = "afm", unique = true)
 	//@NotBlank(message = "Please enter your AFM")
 	//@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
-	@JsonIgnore
+	//@JsonIgnore
 	@Column(name = "phone")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
