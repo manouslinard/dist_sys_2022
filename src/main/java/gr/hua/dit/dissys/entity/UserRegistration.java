@@ -3,11 +3,9 @@ package gr.hua.dit.dissys.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +15,8 @@ import java.util.Set;
 @Table(	name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "afm")
         })
 public class UserRegistration {
     @Id
@@ -54,14 +53,14 @@ public class UserRegistration {
 	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String lastName;
 
-	@JsonIgnore
+	//@JsonIgnore
 	@Column(name = "afm", unique = true)
 	//@NotBlank(message = "Please enter your AFM")
 	//@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
-	@JsonIgnore
+	//@JsonIgnore
 	@Column(name = "phone")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
@@ -88,6 +87,14 @@ public class UserRegistration {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+    
+    public UserRegistration(String username, String email, String password, String firstName, String lastName) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+		this.lastName = lastName;
     }
     
     public UserRegistration(String username, String email, String password, String firstName, String lastName, String afm, String phone) {
