@@ -17,38 +17,38 @@ public class Lease {
 	private int id;
 
 	@Column(name = "title")
-	@NotBlank(message = "Please enter the lease's title")
+	//@NotBlank(message = "Please enter the lease's title")
 	private String title;
 
 	@Column(name = "address")
-	@NotBlank(message = "Please enter the address")
+	//@NotBlank(message = "Please enter the address")
 	private String address;
 
 	@Column(name = "tk")
-	@NotBlank(message = "Please enter your postal code")
-	@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
-	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid postal code")
+	//@NotBlank(message = "Please enter your postal code")
+	//@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
+	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid postal code")
 	private String tk;
 
 	@Column(name = "dimos")
-	@NotBlank(message = "Please enter your municipality")
+	//@NotBlank(message = "Please enter your municipality")
 	private String dimos;
 
 	@Column(name = "reason")
 	private String reason;
 
 	@Column(name = "cost")
-	@NotBlank(message = "Please enter the cost")
+	//@NotBlank(message = "Please enter the cost")
 	private double cost;
 
 	@Column(name = "start_date")
-	@NotBlank(message = "Please enter the contract's start date")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	//@NotBlank(message = "Please enter the contract's start date")
+	//@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String startDate;
 
 	@Column(name = "end_date")
-	@NotBlank(message = "Please enter the last name")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	//@NotBlank(message = "Please enter the last name")
+	//@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String endDate;
 
 	// special conditions:
@@ -56,7 +56,7 @@ public class Lease {
 	private String sp_con;
 
 	@Column(name = "dei")
-	@NotBlank(message = "Please enter DEI account number")
+	//@NotBlank(message = "Please enter DEI account number")
 	private String dei;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })

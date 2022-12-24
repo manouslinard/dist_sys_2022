@@ -20,31 +20,31 @@ public class Lessor {
 	private int id;
 
 	@Column(name = "first_name")
-	@NotBlank(message = "Please enter the first name")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	//@NotBlank(message = "Please enter the first name")
+	//@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String firstName;
 
 	@Column(name = "last_name")
-	@NotBlank(message = "Please enter the last name")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	//@NotBlank(message = "Please enter the last name")
+	//@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String lastName;
 
 	@Column(name = "email", unique = true)
 	@Email(message = "Please enter a valid email")
-	@NotBlank(message = "Please enter your email")
-	@Size(max = 50)
+	//@NotBlank(message = "Please enter your email")
+	//@Size(max = 50)
 	private String email;
 
 	@JsonIgnore
 	@Column(name = "afm", unique = true)
-	@NotBlank(message = "Please enter your AFM")
-	@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
-	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
+	//@NotBlank(message = "Please enter your AFM")
+	//@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
+	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
 	@JsonIgnore
 	@Column(name = "phone")
-	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
+	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
 
 	@JsonIgnore

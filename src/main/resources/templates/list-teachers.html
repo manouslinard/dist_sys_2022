@@ -38,7 +38,7 @@
 
     <script type="text/javascript">
         $("[name='deleteTeacher']").click(function() {
-            var urlCall = "/teachers/";
+            var urlCall = "/lessor/";
             $.ajax({
                 url : urlCall + $(this).attr('id'),
                 type : 'DELETE',
