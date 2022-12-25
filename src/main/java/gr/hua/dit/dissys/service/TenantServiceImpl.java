@@ -5,38 +5,38 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import gr.hua.dit.dissys.entity.Tenant;
-import gr.hua.dit.dissys.repository.TenantRepository;
+import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.repository.UserRepository;
 import javax.transaction.Transactional;
 
 @Service
 public class TenantServiceImpl implements TenantService{
 
 	@Autowired
-    private TenantRepository tenantRepository;
+    private UserRepository userRepository;
 	
 	@Override
 	@Transactional
-	public List<Tenant> getTenants() {
-        return tenantRepository.findAll();
+	public List<AverageUser> getTenants() {
+        return userRepository.findAll();
 	}
 
 	@Override
 	@Transactional
-	public void saveTenant(Tenant tenant) {
-        tenantRepository.save(tenant);		
+	public void saveTenant(AverageUser tenant) {
+        userRepository.save(tenant);		
 	}
 
 	@Override
 	@Transactional
-	public Tenant findTenant(int id) {
-		return tenantRepository.findById(id).get();
+	public AverageUser findTenant(int id) {
+		return userRepository.findById(id).get();
 	}
 
 	@Override
 	@Transactional
 	public void deleteTenant(int id) {
-        tenantRepository.deleteById(id);		
+        userRepository.deleteById(id);		
 	}
 
 }

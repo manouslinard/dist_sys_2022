@@ -8,11 +8,14 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "lessor")
-public class Lessor {
+public class AverageUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,6 +38,16 @@ public class Lessor {
 	//@Size(max = 50)
 	private String email;
 
+    //@NotBlank
+    @Size(max = 20)
+    private String username;
+
+    //@NotBlank
+	@JsonIgnore
+    @Size(max = 120)
+    private String password;
+
+	
 	@JsonIgnore
 	@Column(name = "afm", unique = true)
 	//@NotBlank(message = "Please enter your AFM")
@@ -47,22 +60,32 @@ public class Lessor {
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "lessor", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private List<Lease> leases;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "lessor", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@JsonManagedReference
-	private List<Contract> contracts;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_leases",
+    		joinColumns = @JoinColumn(name = "user_id"),
+    		inverseJoinColumns = @JoinColumn(name = "lease_id"))
+	private List<Lease> userLeases;
 
-	public Lessor() {
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinTable(name = "user_contracts",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "contract_id"))
+	private List<Contract> userContracts;
+
+	
+	public AverageUser() {
 
 	}
 
-	public Lessor(String firstName, String lastName, String email, String afm, String phone) {
+	public AverageUser(String firstName, String lastName, String email, String afm, String phone) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -101,13 +124,46 @@ public class Lessor {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public List<Lease> getLeases() {
-		return leases;
+	
+	
+	public String getUsername() {
+		return username;
 	}
 
-	public void setLeases(List<Lease> leases) {
-		this.leases = leases;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public List<Lease> getUserLeases() {
+		return userLeases;
+	}
+
+	public void setUserLeases(List<Lease> userLeases) {
+		this.userLeases = userLeases;
+	}
+
+	public List<Contract> getUserContracts() {
+		return userContracts;
+	}
+
+	public void setUserContracts(List<Contract> userContracts) {
+		this.userContracts = userContracts;
 	}
 
 	public String getAfm() {
@@ -126,13 +182,6 @@ public class Lessor {
 		this.phone = phone;
 	}
 
-	public List<Contract> getContracts() {
-		return contracts;
-	}
-
-	public void setContracts(List<Contract> contracts) {
-		this.contracts = contracts;
-	}
 
 	/*
 	 * // add convenience methods for bi-directional relation public void add(Lease

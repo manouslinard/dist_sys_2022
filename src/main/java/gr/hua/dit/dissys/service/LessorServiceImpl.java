@@ -1,7 +1,7 @@
 package gr.hua.dit.dissys.service;
 
-import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.repository.LessorRepository;
+import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,23 +13,23 @@ import java.util.List;
 public class LessorServiceImpl implements LessorService{
 
     @Autowired
-    private LessorRepository lessorRepository;
+    private UserRepository lessorRepository;
 
     @Override
     @Transactional
-    public List<Lessor> getLessors() {
+    public List<AverageUser> getLessors() {
         return lessorRepository.findAll();
     }
 
     @Override
     @Transactional
-    public void saveLessor(Lessor lessor) {
+    public void saveLessor(AverageUser lessor) {
         lessorRepository.save(lessor);
     }
 
     @Override
     @Transactional
-    public Lessor findLessor(int id) {
+    public AverageUser findLessor(int id) {
     	return lessorRepository.findById(id).get();
     }
 

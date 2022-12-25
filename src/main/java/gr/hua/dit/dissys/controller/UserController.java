@@ -36,7 +36,7 @@ public class UserController {
 
         // authorities to be granted
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_TENANT"));
 
         User user = new User(userRegistrationObject.getUsername(), passwordEncoder.encode(userRegistrationObject.getPassword()), authorities);
         jdbcUserDetailsManager.createUser(user);

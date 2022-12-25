@@ -2,8 +2,7 @@ package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
-import gr.hua.dit.dissys.entity.Tenant;
+import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.service.LessorService;
@@ -35,18 +34,18 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@GetMapping("/getAllTenants")
-	public List<Tenant> getAllTenants() {
+	public List<AverageUser> getAllTenants() {
 		return tenantService.getTenants();
 	}
 
 	@Override
 	@GetMapping("/{id}/leases")
 	public List<Lease> getAllLessorLeases(@PathVariable int id) {
-		Lessor l = (Lessor) lessorService.findLessor(id);
+		AverageUser l = (AverageUser) lessorService.findLessor(id);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return l.getLeases();
+		return l.getUserLeases();
 	}
 
 	@Override
@@ -68,19 +67,19 @@ public class LessorController implements LessorContrInterface {
 		leaseRepo.delete(lease);
 	}
 
-	@Override
-	@GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
-	public boolean assignTenantToLease(@PathVariable int tid, @PathVariable int lid, @PathVariable int id) {
-		Tenant tenant = tenantService.findTenant(tid);
-		List<Lease> leases = getAllLessorLeases(id);
-		for (Lease loop : leases) {
-			if (loop.getId() == lid) {
-				loop.setTenant(tenant);
-				return true;
-			}
-		}
-		return false;
-	}
+//	@Override
+//	@GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
+//	public boolean assignTenantToLease(@PathVariable int tid, @PathVariable int lid, @PathVariable int id) {
+//		Tenant tenant = tenantService.findTenant(tid);
+//		List<Lease> leases = getAllLessorLeases(id);
+//		for (Lease loop : leases) {
+//			if (loop.getId() == lid) {
+//				loop.setTenant(tenant);
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	@Override
 	@PostMapping("/{id}/leases/{lid}")
@@ -132,24 +131,24 @@ public class LessorController implements LessorContrInterface {
 		}
 	}
 
-	@Override
-	@PostMapping("/{id}/createLease")
-	public void createLease(@Valid @RequestBody Lease lease, @PathVariable int id) {
-
-		Lessor l = lessorService.findLessor(id);
-		if (l == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-		}
-		lease.setLessor(l);
-		leaseRepo.save(lease);
-	}
+//	@Override
+//	@PostMapping("/{id}/createLease")
+//	public void createLease(@Valid @RequestBody Lease lease, @PathVariable int id) {
+//
+//		Lessor l = lessorService.findLessor(id);
+//		if (l == null) {
+//			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+//		}
+//		lease.setLessor(l);
+//		leaseRepo.save(lease);
+//	}
 
 	@Override
 	@PostMapping("/createTenant")
-	public Tenant createTenant(@Valid @RequestBody Tenant tenant) {
+	public AverageUser createTenant(@Valid @RequestBody AverageUser tenant) {
 
-		List<Tenant> tenantList = tenantService.getTenants();
-		for (Tenant oldTenant : tenantList) {
+		List<AverageUser> tenantList = tenantService.getTenants();
+		for (AverageUser oldTenant : tenantList) {
 			if (oldTenant.getEmail().equals(tenant.getEmail())) {
 				if (!checkNullEmptyBlank(tenant.getAfm())) {
 					oldTenant.setAfm(tenant.getAfm());
@@ -175,17 +174,17 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{id}/contracts")
 	public List<Contract> getAllLessorContracts(@PathVariable int id) {
-		Lessor lessor= lessorService.findLessor(id);
-		return lessor.getContracts();
+		AverageUser lessor= lessorService.findLessor(id);
+		return lessor.getUserContracts();
 	}
 
 	@Override
 	@GetMapping("/{id}/contracts/{cid}")
 	public Contract getLessorContract(@PathVariable int id, @PathVariable int cid) {
-		Lessor lessor= get(id);
+		AverageUser lessor= get(id);
 		Contract contract= contractRepository.findById(cid).get();
 		
-		for (int i=0; i<lessor.getContracts().size(); i++) {
+		for (int i=0; i<lessor.getUserContracts().size(); i++) {
 			if (contract.getId() == cid) {
 				return contract;
 			}
@@ -195,7 +194,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@PostMapping("")
-	public Lessor save(@Valid @RequestBody Lessor lessor) {
+	public AverageUser save(@Valid @RequestBody AverageUser lessor) {
 		lessor.setId(0);
 		lessorService.saveLessor(lessor);
 		return lessor;
@@ -203,7 +202,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@GetMapping("/{id}")
-	public Lessor get(@PathVariable int id) {
+	public AverageUser get(@PathVariable int id) {
 		return lessorService.findLessor(id);
 	}
 
@@ -215,7 +214,7 @@ public class LessorController implements LessorContrInterface {
 
 	@Override
 	@GetMapping("/getAllLessors")
-	public List<Lessor> getAllLessors() {
+	public List<AverageUser> getAllLessors() {
 		return lessorService.getLessors();
 	}
 

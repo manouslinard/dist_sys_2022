@@ -1,23 +1,22 @@
 package gr.hua.dit.dissys.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "lease")
+@Table(name = "lease", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
 public class Lease {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 
 	@Column(name = "title")
-	//@NotBlank(message = "Please enter the lease's title")
+	@NotBlank(message = "Please enter the lease's title")
 	private String title;
 
 	@Column(name = "address")
@@ -26,7 +25,7 @@ public class Lease {
 
 	@Column(name = "tk")
 	//@NotBlank(message = "Please enter your postal code")
-	//@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
+	@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid postal code")
 	private String tk;
 
@@ -43,12 +42,12 @@ public class Lease {
 
 	@Column(name = "start_date")
 	//@NotBlank(message = "Please enter the contract's start date")
-	//@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String startDate;
 
 	@Column(name = "end_date")
 	//@NotBlank(message = "Please enter the last name")
-	//@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String endDate;
 
 	// special conditions:
@@ -59,18 +58,18 @@ public class Lease {
 	//@NotBlank(message = "Please enter DEI account number")
 	private String dei;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "lessor_id")
-	@JsonBackReference
-	private Lessor lessor;
-
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "tenant_id")
-	@JsonBackReference
-	private Tenant tenant;
-
-	@OneToOne(mappedBy = "lease", cascade = CascadeType.ALL)
-	private TenantAnswer tenantAnswer;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+    @JoinTable(name = "user_leases",
+            joinColumns = @JoinColumn(name = "lease_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<AverageUser> users;
+	
+	
+	@Column(name = "tenant_agree")
+	private boolean tenantAgree;
+	
+	@Column(name = "tenant_com")
+	private String tenantCom;
 
 	public Lease() {
 
@@ -98,30 +97,39 @@ public class Lease {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public List<AverageUser> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<AverageUser> users) {
+		this.users = users;
+	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public TenantAnswer getTenantAnswer() {
-		return tenantAnswer;
+	public boolean isTenantAgree() {
+		return tenantAgree;
 	}
 
-	public void setTenantAnswer(TenantAnswer tenantAnswer) {
-		this.tenantAnswer = tenantAnswer;
+	public void setTenantAgree(boolean tenantAgree) {
+		this.tenantAgree = tenantAgree;
+	}
+
+	public String getTenantCom() {
+		return tenantCom;
+	}
+
+	public void setTenantCom(String tenantCom) {
+		this.tenantCom = tenantCom;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public Lessor getLessor() {
-		return lessor;
-	}
-
-	public void setLessor(Lessor lessor) {
-		this.lessor = lessor;
-	}
 
 	public String getAddress() {
 		return address;
@@ -194,15 +202,7 @@ public class Lease {
 	public void setDei(String dei) {
 		this.dei = dei;
 	}
-
-	public Tenant getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(Tenant tenant) {
-		this.tenant = tenant;
-	}
-
+	
 	// define toString
 	@Override
 	public String toString() {

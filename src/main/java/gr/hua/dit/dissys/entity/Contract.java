@@ -1,14 +1,13 @@
 package gr.hua.dit.dissys.entity;
 
+import java.util.List;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Table(name = "contract")
+@Table(name = "contract", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
 public class Contract {
 
 	@Id
@@ -26,7 +25,7 @@ public class Contract {
 
 	@Column(name = "tk")
 	//@NotBlank(message = "Please enter your postal code")
-	//@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
+	@Size(min = 5, max = 5, message = "Postal code should be exactly 5 digits")
 	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid postal code")
 	private String tk;
 
@@ -43,12 +42,12 @@ public class Contract {
 
 	@Column(name = "start_date")
 	//@NotBlank(message = "Please enter the contract's start date")
-	//@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String startDate;
 
 	@Column(name = "end_date")
 	//@NotBlank(message = "Please enter the last name")
-	//@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String endDate;
 
 	// special conditions:
@@ -59,15 +58,11 @@ public class Contract {
 	//@NotBlank(message = "Please enter DEI account number")
 	private String dei;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "lessor_id")
-	@JsonBackReference
-	private Lessor lessor;
-
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "tenant_id")
-	@JsonBackReference
-	private Tenant tenant;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinTable(name = "user_contracts",
+    		joinColumns = @JoinColumn(name = "contract_id"),
+    		inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private List<AverageUser> users;
 
 	public Contract() {
 
@@ -97,6 +92,14 @@ public class Contract {
 
 	public String getTitle() {
 		return title;
+	}
+
+	public List<AverageUser> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<AverageUser> users) {
+		this.users = users;
 	}
 
 	public void setTitle(String title) {
@@ -173,22 +176,6 @@ public class Contract {
 
 	public void setDei(String dei) {
 		this.dei = dei;
-	}
-
-	public Lessor getLessor() {
-		return lessor;
-	}
-
-	public void setLessor(Lessor lessor) {
-		this.lessor = lessor;
-	}
-
-	public Tenant getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(Tenant tenant) {
-		this.tenant = tenant;
 	}
 
 	@Override

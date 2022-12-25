@@ -1,6 +1,5 @@
 package gr.hua.dit.dissys.controller;
 
-import gr.hua.dit.dissys.entity.Tenant;
 import gr.hua.dit.dissys.entity.TenantAnswer;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -12,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Lessor;
+import gr.hua.dit.dissys.entity.AverageUser;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,16 +42,16 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{id}/leases")
 	public List<Lease> getAllTenantLeases(@PathVariable int id) {
-		Tenant tenant = (Tenant) tenantService.findTenant(id);
+		AverageUser tenant = (AverageUser) tenantService.findTenant(id);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		return tenant.getLeases();
+		return tenant.getUserLeases();
 	}
 
 	@Override
 	@GetMapping("/getAllLessors")
-	public List<Lessor> getAllLessors() {
+	public List<AverageUser> getAllLessors() {
 		return lessorService.getLessors();
 	}
 
@@ -60,16 +59,16 @@ public class TenantController implements TenantContrInterface {
 	@GetMapping("/{id}/contracts")
 	public List<Contract> getAllTenantContracts(@PathVariable int id) {
 		// TODO: Chris
-		Tenant tenant = new Tenant();
+		AverageUser tenant = new AverageUser();
 		tenant = tenantService.findTenant(id);
-		return tenant.getContracts();
+		return tenant.getUserContracts();
 	}
 
 	@Override
 	@GetMapping("/{id}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
-		Tenant tenant = tenantService.findTenant(id);
-		List<Contract> contracts =tenant.getContracts();
+		AverageUser tenant = tenantService.findTenant(id);
+		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
 				return loop;
@@ -78,18 +77,18 @@ public class TenantController implements TenantContrInterface {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 	
-	@Override
-	@PostMapping("/{id}/leases/{lid}/answer")
-	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable int id, @PathVariable int lid) {
-		// TODO: Chris
-		Lease lease = new Lease();
-		lease = tenantAnswer.getLease();
-		lease.setTenantAnswer(tenantAnswer);
-	}
+//	@Override
+//	@PostMapping("/{id}/leases/{lid}/answer")
+//	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable int id, @PathVariable int lid) {
+//		// TODO: Chris
+//		Lease lease = new Lease();
+//		lease = tenantAnswer.getLease();
+//		lease.setTenantAnswer(tenantAnswer);
+//	}
 
 	@Override
 	@PostMapping("")
-	public Tenant save(@Valid @RequestBody Tenant tenant) {
+	public AverageUser save(@Valid @RequestBody AverageUser tenant) {
 		tenant.setId(0);
 		tenantService.saveTenant(tenant);
 		return tenant;
@@ -97,7 +96,7 @@ public class TenantController implements TenantContrInterface {
 
 	@Override
 	@GetMapping("/{id}")
-	public Tenant get(@PathVariable int id) {
+	public AverageUser get(@PathVariable int id) {
 		return tenantService.findTenant(id);
 	}
 
