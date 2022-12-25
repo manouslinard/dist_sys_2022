@@ -4,6 +4,7 @@ import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,9 @@ public class LessorServiceImpl implements LessorService{
     @Autowired
     private UserRepository lessorRepository;
 
+    @Autowired
+    private JdbcUserDetailsManager jdbcUserDetailsManager;
+    
     @Override
     @Transactional
     public List<AverageUser> getLessors() {

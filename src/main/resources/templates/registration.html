@@ -21,6 +21,11 @@
       <input type="password" th:field="*{password}" id="name" placeholder="password" class="form-control">
       <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
+    <div class="form-outline mb-4">
+      <label for="role" class="form-label">Role</label>
+      <input type="text" th:field="*{role}" id="role" placeholder="role" class="form-control">
+      <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>

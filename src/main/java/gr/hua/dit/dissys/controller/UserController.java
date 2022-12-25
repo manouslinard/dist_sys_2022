@@ -20,12 +20,33 @@ import java.util.List;
 @Controller
 public class UserController {
 
+	private static boolean setLessorAcc = false;
+	
     @Autowired
     private JdbcUserDetailsManager jdbcUserDetailsManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private void checkGroupCreate(String groupName, List<GrantedAuthority> authorities) {
+        List<String> groups = jdbcUserDetailsManager.findAllGroups();
+        for (String g: groups) {
+        	if (g.equals(groupName)) {
+        		return;	// group exists already -> does nothing
+        	}
+        }    	
+        // group does not exist, creates it and add list of authorities.
+        jdbcUserDetailsManager.createGroup(groupName, authorities);
+    }
+    
+    @RequestMapping(value = "/register/setLessor", method = RequestMethod.POST)
+    public boolean setLessor() {
+    	setLessorAcc = !setLessorAcc;
+    	System.out.println(setLessorAcc);
+        return setLessorAcc;
+    }
+    
+    
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register() {
         return new ModelAndView("registration", "user", new UserRegistration());
@@ -33,12 +54,12 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView processRegister(@ModelAttribute("user") UserRegistration userRegistrationObject) {
-
         // authorities to be granted
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_TENANT"));
-
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        
         User user = new User(userRegistrationObject.getUsername(), passwordEncoder.encode(userRegistrationObject.getPassword()), authorities);
+        System.out.println(userRegistrationObject.getRole());
         jdbcUserDetailsManager.createUser(user);
         return new ModelAndView("redirect:/");
     }
