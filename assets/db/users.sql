@@ -28,3 +28,31 @@ INSERT INTO authorities(username, authority) VALUES
 ('user1', 'ROLE_USER'),
 ('user2', 'ROLE_USER');
 
+
+CREATE TABLE IF NOT EXISTS roles (
+    id integer NOT NULL PRIMARY KEY,
+    name character varying(20)
+);
+
+
+CREATE SEQUENCE IF NOT EXISTS roles_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+
+
+ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+INSERT INTO roles(name) VALUES
+('ROLE_TENANT'),	--id: 1
+('ROLE_LESSOR'),	--id: 2
+('ROLE_ADMIN');		--id: 3
+
+

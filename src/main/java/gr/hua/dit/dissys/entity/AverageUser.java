@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "lessor")
+@Table(name = "all_users")
 public class AverageUser {
 
 	@Id

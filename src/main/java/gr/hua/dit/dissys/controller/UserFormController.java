@@ -2,9 +2,12 @@ package gr.hua.dit.dissys.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -26,6 +29,9 @@ public class UserFormController {
     @Autowired
     private JdbcUserDetailsManager jdbcUserDetailsManager;
 
+
+    @Autowired
+    private RoleRepository roleRepository;
     
     @GetMapping("/")
     public String index() {
@@ -48,8 +54,16 @@ public class UserFormController {
     }
 
     @PostMapping(path = "/teacherform")
-    public String saveLessor(@ModelAttribute("teacher") AverageUser teacher) {
-        lessorService.saveLessor(teacher);
+    public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {
+    	Set<Role> roles = new HashSet<>();
+
+		Role userRole = roleRepository.findByName(ERole.ROLE_LESSOR)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+
+
+		lessor.setRoles(roles);
+        lessorService.saveLessor(lessor);
         return "redirect:/";
 
     }
@@ -74,8 +88,16 @@ public class UserFormController {
     }
 
     @PostMapping(path = "/tenantform")
-    public String saveTenant(@ModelAttribute("tenant") AverageUser teacher) {
-        tenantService.saveTenant(teacher);
+    public String saveTenant(@ModelAttribute("tenant") AverageUser tenant) {
+    	Set<Role> roles = new HashSet<>();
+
+		Role userRole = roleRepository.findByName(ERole.ROLE_TENANT)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+
+
+		tenant.setRoles(roles);
+    	tenantService.saveTenant(tenant);
         return "redirect:/";
 
     }
