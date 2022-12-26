@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .antMatchers("/register").permitAll()
                 .antMatchers("/registerTenant").permitAll()
                 .antMatchers("/registerLessor").permitAll()
-                .antMatchers("/teacherlist").permitAll()
+                //.antMatchers("/teacherlist").permitAll()
                 .antMatchers("/teacherform").hasRole("ADMIN")
                 .antMatchers("/lessor").hasRole("USER")
                 .antMatchers("/tenant").hasRole("USER")
