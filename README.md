@@ -65,12 +65,11 @@ psql -h localhost -U postgres -d students -p 5432 -W
 * [Main](https://gitlab.com/atsadimas/springbootdemo). Spring boot application with thymeleaf, spring security and bootstrap 5
 Existing Users and Roles in pre-configured initial sql
 
-| USER  | PASSWORD | ROLES       |
-|-------|----------|-------------|
-| user1 | pass123  | USER        |
-| user2 | pass123  | USER        |
-| admin | pass123  | USER, ADMIN |
-| root  | pass123  | ADMIN       |
+| USER    | PASSWORD | ROLES       |
+|-------  |----------|-------------|
+| tenant  | pass123  | TENANT      |
+| lessor  | pass123  | LESSOR      |
+| admin   | pass123  | ADMIN       |
  
 You can create users using /register
 * [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security). Spring Boot Backend with JWT Authentication

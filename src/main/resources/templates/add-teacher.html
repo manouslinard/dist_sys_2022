@@ -12,6 +12,21 @@
 <div layout:fragment="main-content">
 <form class="row g-3" th:action="@{/teacherform}" th:object="${teacher}" method="post">
     <div class="form-outline mb-4">
+        <label for="username" class="form-label">Username *</label>
+        <input type="text" th:field="*{username}" id="username" placeholder="Username" class="form-control">
+        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+    </div>
+    <div class="form-outline mb-4">
+        <label for="email"  class="form-label">Email *</label>
+        <input type="email" th:field="*{email}" id="email" placeholder="Email" class="form-control">
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    </div>
+    <div class="form-outline mb-4">
+        <label for="password" class="form-label">Password *</label>
+        <input type="password" th:field="*{password}" id="password" placeholder="Password" class="form-control">
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+    </div>
+    <div class="form-outline mb-4">
         <label for="firstName" class="form-label">First Name</label>
         <input type="text" th:field="*{firstName}" id="firstName" placeholder="FirstName" class="form-control">
         <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
@@ -20,11 +35,6 @@
         <label for="lastName" class="form-label">Last Name</label>
         <input type="text" th:field="*{lastName}" id="name" placeholder="LastName" class="form-control">
         <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-    </div>
-    <div class="form-outline mb-4">
-        <label for="email"  class="form-label">Email</label>
-        <input type="email" th:field="*{email}" id="email" placeholder="Email" class="form-control">
-        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>

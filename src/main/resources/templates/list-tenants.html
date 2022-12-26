@@ -15,6 +15,7 @@
         <table  class="table table-dark table-striped">
             <thead>
             <tr>
+                <th scope="col">Username</th>
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
                 <th scope="col">Email</th>
@@ -23,6 +24,7 @@
             </thead>
             <tbody>
             <tr th:each="tenant : ${tenants}">
+                <td th:text="${tenant.username}"></td>
                 <td th:text="${tenant.firstName}"></td>
                 <td th:text="${tenant.lastName}"></td>
                 <td th:text="${tenant.email}"></td>

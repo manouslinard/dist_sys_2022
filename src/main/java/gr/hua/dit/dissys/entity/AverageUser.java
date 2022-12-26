@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "all_users")
+@Table(name = "avg_users")
 public class AverageUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 
@@ -34,17 +34,18 @@ public class AverageUser {
 
 	@Column(name = "email", unique = true)
 	@Email(message = "Please enter a valid email")
-	//@NotBlank(message = "Please enter your email")
+	@NotBlank(message = "Email should not be blank.")
 	//@Size(max = 50)
 	private String email;
 
-    //@NotBlank
+	@NotBlank(message = "Username should not be blank.")
     @Size(max = 20)
     private String username;
 
     //@NotBlank
 	@JsonIgnore
-    @Size(max = 120)
+	@NotBlank(message = "Password should not be blank.")
+	@Size(max = 120)
     private String password;
 
 	
