@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/register").permitAll()
+                .antMatchers("/registerTenant").permitAll()
+                .antMatchers("/registerLessor").permitAll()
                 .antMatchers("/teacherlist").permitAll()
                 .antMatchers("/teacherform").hasRole("ADMIN")
                 .antMatchers("/lessor").hasRole("USER")

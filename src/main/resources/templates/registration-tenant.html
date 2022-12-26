@@ -10,7 +10,7 @@
 </head>
 <body>
 <div layout:fragment="main-content">
-  <form class="row g-3" th:action="@{/registerLessor}" th:object="${user}" method="post">
+  <form class="row g-3" th:action="@{/registerTenant}" th:object="${user}" method="post">
     <div class="form-outline mb-4">
       <label for="username" class="form-label">Username *</label>
       <input type="text" th:field="*{username}" id="firstName" placeholder="username" class="form-control">

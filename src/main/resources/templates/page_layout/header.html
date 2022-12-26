@@ -16,7 +16,10 @@
             <a sec:authorize="hasAnyRole('ADMIN','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Tenantform</a>
             <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/logout" th:href="@{/logout}">Logout</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/login" th:href="@{/login}">Login</a>
-            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/register" th:href="@{/register}">Register</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerTenant" th:href="@{/registerTenant}">Register as Tenant</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerLessor" th:href="@{/registerLessor}">Register as Lessor</a>
+            <!--  <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/teacherform" th:href="@{/teacherform}">Register as Lessor</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Register as Tenant</a> -->
         </nav>
     </div>
 </header>

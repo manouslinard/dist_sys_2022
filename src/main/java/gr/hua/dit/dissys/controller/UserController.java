@@ -1,6 +1,10 @@
 package gr.hua.dit.dissys.controller;
 
+import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.service.LessorService;
+import gr.hua.dit.dissys.service.TenantService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,51 +23,43 @@ import java.util.List;
 
 @Controller
 public class UserController {
-
-	private static boolean setLessorAcc = false;
 	
     @Autowired
     private JdbcUserDetailsManager jdbcUserDetailsManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+	@Autowired
+	private TenantService tenantService;
 
-    private void checkGroupCreate(String groupName, List<GrantedAuthority> authorities) {
-        List<String> groups = jdbcUserDetailsManager.findAllGroups();
-        for (String g: groups) {
-        	if (g.equals(groupName)) {
-        		return;	// group exists already -> does nothing
-        	}
-        }    	
-        // group does not exist, creates it and add list of authorities.
-        jdbcUserDetailsManager.createGroup(groupName, authorities);
-    }
-    
-    @RequestMapping(value = "/register/setLessor", method = RequestMethod.POST)
-    public boolean setLessor() {
-    	setLessorAcc = !setLessorAcc;
-    	System.out.println(setLessorAcc);
-        return setLessorAcc;
-    }
-    
-    
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView register() {
-        return new ModelAndView("registration", "user", new UserRegistration());
+	@Autowired
+	private LessorService lessorService;
+	
+    @RequestMapping(value = "/registerTenant", method = RequestMethod.GET)
+    public ModelAndView registerTenant() {
+        return new ModelAndView("registration-tenant", "user", new AverageUser());
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView processRegister(@ModelAttribute("user") UserRegistration userRegistrationObject) {
-        // authorities to be granted
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        
-        User user = new User(userRegistrationObject.getUsername(), passwordEncoder.encode(userRegistrationObject.getPassword()), authorities);
-        System.out.println(userRegistrationObject.getRole());
-        jdbcUserDetailsManager.createUser(user);
+    @RequestMapping(value = "/registerTenant", method = RequestMethod.POST)
+    public ModelAndView processRegisterTenant(@ModelAttribute("user") AverageUser userRegistration) {
+    	// if user is tenant:
+    	tenantService.saveTenant(userRegistration);
         return new ModelAndView("redirect:/");
     }
 
+    @RequestMapping(value = "/registerLessor", method = RequestMethod.GET)
+    public ModelAndView registerLessor() {
+        return new ModelAndView("registration", "user", new AverageUser());
+    }
+
+    @RequestMapping(value = "/registerLessor", method = RequestMethod.POST)
+    public ModelAndView processRegisterLessor(@ModelAttribute("user") AverageUser userRegistration) {
+    	// if user is lessor:
+    	lessorService.saveLessor(userRegistration);
+        return new ModelAndView("redirect:/");
+    }
+    
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, String error, String logout) {
         if (error != null)
