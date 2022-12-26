@@ -13,7 +13,7 @@
   <form class="row g-3" th:action="@{/registerLessor}" th:object="${user}" method="post">
     <div class="form-outline mb-4">
       <label for="username" class="form-label">Username *</label>
-      <input type="text" th:field="*{username}" id="firstName" placeholder="username" class="form-control">
+      <input type="text" th:field="*{username}" id="username" placeholder="username" class="form-control">
       <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
     </div>
     <div class="form-outline mb-4">
@@ -23,8 +23,18 @@
     </div>
     <div class="form-outline mb-4">
       <label for="password" class="form-label">Password *</label>
-      <input type="password" th:field="*{password}" id="name" placeholder="password" class="form-control">
+      <input type="password" th:field="*{password}" id="password" placeholder="password" class="form-control">
       <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+    </div>
+    <div class="form-outline mb-4">
+      <label for="firstName" class="form-label">First Name</label>
+      <input type="text" th:field="*{firstName}" id="firstName" placeholder="FirstName" class="form-control">
+      <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+    </div>
+    <div class="form-outline mb-4">
+      <label for="lastName" class="form-label">Last Name</label>
+      <input type="text" th:field="*{lastName}" id="lastName" placeholder="LastName" class="form-control">
+      <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

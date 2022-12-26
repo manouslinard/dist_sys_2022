@@ -73,18 +73,19 @@ public class LessorServiceImpl implements LessorService{
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(userRole);		
 		lessor.setRoles(roles);
-        registerTenant(lessor);
+		lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
+        registerLessor(lessor);
         userRepository.save(lessor);		
 	}
 
-	private void registerTenant(AverageUser tenant) {
+	private void registerLessor(AverageUser lessor) {
     	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-    	Set<Role> auth = tenant.getRoles();
+    	Set<Role> auth = lessor.getRoles();
     	for(Role a: auth) {
             authorities.add(new SimpleGrantedAuthority(a.getName().name()));    		
     	}
         
-        User user = new User(tenant.getUsername(), passwordEncoder.encode(tenant.getPassword()), authorities);
+        User user = new User(lessor.getUsername(), lessor.getPassword(), authorities);
         //System.out.println(userRegistrationObject.getRole());
         jdbcUserDetailsManager.createUser(user);
     }
