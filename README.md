@@ -76,7 +76,7 @@ You can create users using /api/auth/signup.<br />
 
 ------------------------------------------------------------------
 ## Branches:
-* [Backend](https://github.com/manouslinard/dist_sys_2022/tree/backend) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
+* [Backend](https://github.com/manouslinard/dist_sys_2022/tree/backend-token-auth) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
 
 ## Other Links:
 * [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing)
