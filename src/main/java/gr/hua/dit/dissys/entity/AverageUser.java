@@ -52,13 +52,13 @@ public class AverageUser {
 	@JsonIgnore
 	@Column(name = "afm", unique = true)
 	//@NotBlank(message = "Please enter your AFM")
-	//@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
-	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
+	@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
+	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
 	@JsonIgnore
 	@Column(name = "phone")
-	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
+	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
 
     @ManyToMany(fetch = FetchType.LAZY)

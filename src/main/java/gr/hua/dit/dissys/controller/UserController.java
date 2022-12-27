@@ -44,6 +44,7 @@ public class UserController {
     @RequestMapping(value = "/registerTenant", method = RequestMethod.POST)
     public ModelAndView processRegisterTenant(@ModelAttribute("user") AverageUser userRegistration) {
     	// if user is tenant:
+    	setBlankAttr(userRegistration);
     	tenantService.saveTenant(userRegistration);
         return new ModelAndView("redirect:/");
     }
@@ -56,9 +57,46 @@ public class UserController {
     @RequestMapping(value = "/registerLessor", method = RequestMethod.POST)
     public ModelAndView processRegisterLessor(@ModelAttribute("user") AverageUser userRegistration) {
     	// if user is lessor:
+    	setBlankAttr(userRegistration);
+    	//System.out.println(userRegistration.getPassword());
+    	//System.out.println(userRegistration.getPhone() +", " + userRegistration.getAfm());
     	lessorService.saveLessor(userRegistration);
         return new ModelAndView("redirect:/");
     }
+    
+    private void setBlankAttr(AverageUser user) {
+    	if (checkNullEmptyBlank(user.getPhone())) {
+    		user.setPhone(null);
+    	}
+    	if (checkNullEmptyBlank(user.getAfm())) {
+    		user.setAfm(null);
+    	}
+    	if (checkNullEmptyBlank(user.getUsername())) {
+    		user.setUsername(null);
+    	}
+    	if (checkNullEmptyBlank(user.getEmail())) {
+    		user.setEmail(null);
+    	}
+    	if (checkNullEmptyBlank(user.getPassword())) {
+    		user.setPassword(null);
+    	}
+    	if (checkNullEmptyBlank(user.getFirstName())) {
+    		user.setFirstName(null);
+    	}
+    	if (checkNullEmptyBlank(user.getLastName())) {
+    		user.setLastName(null);
+    	}
+    }
+    
+    
+	private boolean checkNullEmptyBlank(String strToCheck) {
+		// check whether the given string is null or empty or blank
+		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
     
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, String error, String logout) {

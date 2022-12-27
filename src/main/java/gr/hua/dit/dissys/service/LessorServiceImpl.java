@@ -73,7 +73,9 @@ public class LessorServiceImpl implements LessorService{
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(userRole);		
 		lessor.setRoles(roles);
-		lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
+		if (lessor.getPassword() != null) {
+			lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
+		}
         registerLessor(lessor);
         userRepository.save(lessor);		
 	}

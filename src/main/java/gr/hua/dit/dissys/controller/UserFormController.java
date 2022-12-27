@@ -56,6 +56,7 @@ public class UserFormController {
 
     @PostMapping(path = "/teacherform")
     public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {
+    	setBlankAttr(lessor);
         lessorService.saveLessor(lessor);
         return "redirect:/";
 
@@ -82,9 +83,46 @@ public class UserFormController {
 
     @PostMapping(path = "/tenantform")
     public String saveTenant(@ModelAttribute("tenant") AverageUser tenant) {
+    	setBlankAttr(tenant);
 		tenantService.saveTenant(tenant);
         return "redirect:/";
 
     }
+    
+
+    private void setBlankAttr(AverageUser user) {
+    	if (checkNullEmptyBlank(user.getPhone())) {
+    		user.setPhone(null);
+    	}
+    	if (checkNullEmptyBlank(user.getAfm())) {
+    		user.setAfm(null);
+    	}
+    	if (checkNullEmptyBlank(user.getUsername())) {
+    		user.setUsername(null);
+    	}
+    	if (checkNullEmptyBlank(user.getEmail())) {
+    		user.setEmail(null);
+    	}
+    	if (checkNullEmptyBlank(user.getPassword())) {
+    		user.setPassword(null);
+    	}
+    	if (checkNullEmptyBlank(user.getFirstName())) {
+    		user.setFirstName(null);
+    	}
+    	if (checkNullEmptyBlank(user.getLastName())) {
+    		user.setLastName(null);
+    	}
+    }
+    
+    
+	private boolean checkNullEmptyBlank(String strToCheck) {
+		// check whether the given string is null or empty or blank
+		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+    
 
 }

@@ -72,7 +72,9 @@ public class TenantServiceImpl implements TenantService{
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(userRole);		
 		tenant.setRoles(roles);
-		tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
+		if (tenant.getPassword() != null) {
+			tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
+		}
 		registerTenant(tenant);
         userRepository.save(tenant);
 	}
