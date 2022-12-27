@@ -76,8 +76,8 @@ public class LessorServiceImpl implements LessorService{
 		if (lessor.getPassword() != null) {
 			lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
 		}
-        registerLessor(lessor);
         userRepository.save(lessor);		
+		registerLessor(lessor);
 	}
 
 	private void registerLessor(AverageUser lessor) {

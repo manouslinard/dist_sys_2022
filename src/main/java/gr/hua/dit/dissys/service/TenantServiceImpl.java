@@ -75,8 +75,8 @@ public class TenantServiceImpl implements TenantService{
 		if (tenant.getPassword() != null) {
 			tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
 		}
-		registerTenant(tenant);
         userRepository.save(tenant);
+		registerTenant(tenant);
 	}
 
 	private void registerTenant(AverageUser tenant) {
