@@ -8,10 +8,10 @@
 ## Database Setup with Terminal
 ### Setup postgres database using terminal
 
-* First, create students database (if not already created): 
+* First, create realestate database (if not already created): 
 
 ```bash
-createdb -h localhost -p 5432 -U postgres students
+createdb -h localhost -p 5432 -U postgres realestate
 ```
 
 * It should ask for user's (postgres) password.
@@ -20,7 +20,7 @@ createdb -h localhost -p 5432 -U postgres students
 * Then run script from project directory to input test users (if you want):
 
 ```bash
-psql -h localhost -U postgres -d students -p 5432 -f assets/db/users.sql -W
+psql -h localhost -U postgres -d realestate -p 5432 -f assets/db/users.sql -W
 ```
 
 * Input user's (postgres) password (if requested).
@@ -30,7 +30,7 @@ psql -h localhost -U postgres -d students -p 5432 -f assets/db/users.sql -W
 ### Delete posgres database using terminal
 
 ```bash
-dropdb -h localhost -p 5432 -U postgres students
+dropdb -h localhost -p 5432 -U postgres realestate
 ```
 * Input user's (postgres) password (if requested).
 
@@ -41,12 +41,12 @@ dropdb -h localhost -p 5432 -U postgres students
 ### Option 1: Run postgres database
 
 ```bash
-docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=students --net=host -v pgdata14:/var/lib/postgresql/data  -d postgres:14
+docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v pgdata14:/var/lib/postgresql/data  -d postgres:14
 ```
 ### Option 2: Run postgres database & initialize default users
 
 ```bash
-docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=students --net=host -v "$(pwd)"/assets/db:/docker-entrypoint-initdb.d -v pgdata14:/var/lib/postgresql/data -d postgres:14
+docker run --name spb_db --rm -e  POSTGRES_PASSWORD=pass123 -e POSTGRES_DB=realestate --net=host -v "$(pwd)"/assets/db:/docker-entrypoint-initdb.d -v pgdata14:/var/lib/postgresql/data -d postgres:14
 ```
 
 ### Remove db data
@@ -58,7 +58,7 @@ docker volume rm pgdata14
 
 ```bash
 sudo apt install postgresl-client
-psql -h localhost -U postgres -d students -p 5432 -W
+psql -h localhost -U postgres -d realestate -p 5432 -W
 ```
 ----------------------------------------
 # Branches:
