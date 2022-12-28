@@ -7,12 +7,26 @@ CREATE TABLE IF NOT exists users (
 
 
 CREATE TABLE IF NOT EXISTS authorities (
-    username varchar(50) NOT NULL,
+    id integer NOT NULL PRIMARY KEY,
+	username varchar(50) NOT NULL,
     authority varchar(50) NOT NULL,
     unique(username,authority),
     CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users(username));
 
+CREATE SEQUENCE IF NOT EXISTS auth_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
+ALTER SEQUENCE auth_id_seq OWNED BY authorities.id;
+
+
+ALTER TABLE ONLY authorities ALTER COLUMN id SET DEFAULT nextval('auth_id_seq'::regclass);
+
+    
+    
 INSERT INTO users (username, password, enabled) VALUES
 ('tenant', '$2a$04$DR/f..s1siWJc8Xg3eJgpeB28a4V6kYpnkMPeOuq4rLQ42mJUYFGC', 't'),
 ('lessor', '$2a$04$DR/f..s1siWJc8Xg3eJgpeB28a4V6kYpnkMPeOuq4rLQ42mJUYFGC', 't'),
@@ -98,7 +112,6 @@ INSERT INTO user_roles(user_id, role_id) VALUES
 (1, 1),
 (2, 2),
 (3, 3);
-
 
 
 
