@@ -215,6 +215,14 @@ public class UserFormController {
 			return false;
 		}
 	}
+	
+	@GetMapping("/adminlist")
+    public String showAdminList(Model model) {
+        List<AverageUser> admins = adminService.getAdmins();
+        model.addAttribute("admins", admins);
+        return "list-admins";
+
+    }
     
   	@PostMapping(path = "/adminform")
     public String saveAdmin(@ModelAttribute("admin") AverageUser admin) {

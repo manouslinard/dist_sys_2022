@@ -35,6 +35,7 @@ public class AdminServiceImpl implements AdminService{
 	
 	@Autowired
     private PasswordEncoder passwordEncoder;
+		
 	@Override
 	@Transactional
 	public void saveAdmin(AverageUser admin) {
@@ -73,7 +74,34 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	@Transactional
 	public void deleteAdminById(int id) {
-		userRepository.deleteById(id);
+		String l_username = findAdminById(id).getUsername();
+		jdbcUserDetailsManager.deleteUser(l_username);
+        userRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public List<AverageUser> getAdmins() {
+		List<AverageUser> users = userRepository.findAll();
+		List<AverageUser> admins = new ArrayList<>();
+
+		for(AverageUser u:users) {
+			if(isAdmin(u.getRoles())) {
+				admins.add(u);
+			}
+		}
+
+		return admins;
+	}
+	
+	@SuppressWarnings("unlikely-arg-type")
+	private boolean isAdmin(Set<Role> userRoles) {
+		for(Role r:userRoles) {
+			if(r.getName().name().equals("ROLE_ADMIN")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
