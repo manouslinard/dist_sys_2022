@@ -38,9 +38,6 @@ public class LessorController implements LessorContrInterface {
 	private LessorService lessorService;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
