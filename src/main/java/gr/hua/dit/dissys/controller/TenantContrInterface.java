@@ -5,7 +5,6 @@ import java.util.List;
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.AverageUser;
-import gr.hua.dit.dissys.entity.TenantAnswer;
 
 public interface TenantContrInterface {
 
@@ -25,6 +24,5 @@ public interface TenantContrInterface {
 
 	public AverageUser get(int id);
 
-	public void delete(int id);
 
 }

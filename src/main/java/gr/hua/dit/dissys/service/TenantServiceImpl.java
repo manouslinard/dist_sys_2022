@@ -93,7 +93,7 @@ public class TenantServiceImpl implements TenantService{
 	
 	@Override
 	@Transactional
-	public AverageUser findTenant(int id) {
+	public AverageUser findTenantById(int id) {
 		List<AverageUser> tenants = getTenants();
 		for(AverageUser t: tenants) {
 			if(t.getId() == id) {
@@ -105,8 +105,8 @@ public class TenantServiceImpl implements TenantService{
 
 	@Override
 	@Transactional
-	public void deleteTenant(int id) {
-		String t_username = findTenant(id).getUsername();
+	public void deleteTenantById(int id) {
+		String t_username = findTenantById(id).getUsername();
 		jdbcUserDetailsManager.deleteUser(t_username);
         userRepository.deleteById(id);
 	}

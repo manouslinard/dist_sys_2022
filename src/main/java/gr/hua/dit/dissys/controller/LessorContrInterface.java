@@ -35,6 +35,4 @@ public interface LessorContrInterface {
 
 	public AverageUser get(int id);
 
-	public void delete(int id);
-
 }

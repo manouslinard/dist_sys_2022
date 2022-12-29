@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{page_layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lease List Page</title>
+</head>
+<body>
+<div layout:fragment="main-content">
+
+    <div th:if="${ not#lists.isEmpty(leases)}">
+        <table  class="table table-dark table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Address</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col">Dei</th>
+                <th scope="col">Cost</th>
+                <th sec:authorize="hasAnyRole('LESSOR')" scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="lease : ${leases}">
+                <td th:text="${lease.title}"></td>
+                <td th:text="${lease.tenantCom}"></td>
+                <td th:text="${lease.address}"></td>
+                <td th:text="${lease.startDate}"></td>
+                <td th:text="${lease.endDate}"></td>
+                <td th:text="${lease.dei}"></td>
+                <td th:text="${lease.cost}"></td>
+                <td sec:authorize="hasRole('LESSOR')">
+                    <button type="submit" th:id="${lease.id}"
+                            name="deleteLease"><i class="remove user icon"></i>
+                        Delete</button>
+                </td>
+            </tr>
+            </tbody>
+            </table>
+    </div>
+
+    <script type="text/javascript">
+        $("[name='deleteLease']").click(function() {
+            var urlCall = "/user/leases/";
+            $.ajax({
+                url : urlCall + $(this).attr('id'),
+                type : 'DELETE',
+                success : function(result) {
+                    console.log(result);
+                    $(location).attr("href", value="/leaselist");
+                },
+                error : function(result) {
+                    console.log(result);
+                },
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,6 +1,5 @@
 package gr.hua.dit.dissys.controller;
 
-import gr.hua.dit.dissys.entity.TenantAnswer;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
@@ -42,7 +41,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{id}/leases")
 	public List<Lease> getAllTenantLeases(@PathVariable int id) {
-		AverageUser tenant = (AverageUser) tenantService.findTenant(id);
+		AverageUser tenant = (AverageUser) tenantService.findTenantById(id);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
@@ -60,14 +59,14 @@ public class TenantController implements TenantContrInterface {
 	public List<Contract> getAllTenantContracts(@PathVariable int id) {
 		// TODO: Chris
 		AverageUser tenant = new AverageUser();
-		tenant = tenantService.findTenant(id);
+		tenant = tenantService.findTenantById(id);
 		return tenant.getUserContracts();
 	}
 
 	@Override
 	@GetMapping("/{id}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
-		AverageUser tenant = tenantService.findTenant(id);
+		AverageUser tenant = tenantService.findTenantById(id);
 		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
@@ -97,13 +96,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{id}")
 	public AverageUser get(@PathVariable int id) {
-		return tenantService.findTenant(id);
+		return tenantService.findTenantById(id);
 	}
-
-	@Override
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable int id) {
-		tenantService.deleteTenant(id);
-	}
-
+	
 }

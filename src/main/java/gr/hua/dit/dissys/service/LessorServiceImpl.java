@@ -3,6 +3,7 @@ package gr.hua.dit.dissys.service;
 import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
 
@@ -95,7 +96,7 @@ public class LessorServiceImpl implements LessorService{
 	
     @Override
     @Transactional
-    public AverageUser findLessor(int id) {
+    public AverageUser findLessorById(int id) {
     	List<AverageUser> lessors = getLessors();
     	for(AverageUser l: lessors) {
     		if(l.getId() == id) {
@@ -107,9 +108,30 @@ public class LessorServiceImpl implements LessorService{
 
     @Override
     @Transactional
-    public void deleteLessor(int id) {
-		String l_username = findLessor(id).getUsername();
+    public void deleteLessorById(int id) {
+		String l_username = findLessorById(id).getUsername();
 		jdbcUserDetailsManager.deleteUser(l_username);
         userRepository.deleteById(id);
     }
+
+
+	@Override
+	@Transactional
+	public AverageUser findLessor(String username) {
+    	List<AverageUser> lessors = getLessors();
+    	for(AverageUser l: lessors) {
+    		if(l.getUsername().equals(username)) {
+    			return l;
+    		}
+    	}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+	}
+
+
+	@Override
+	public void deleteLessor(String username) {
+		AverageUser lessor = findLessor(username);
+		jdbcUserDetailsManager.deleteUser(username);
+		userRepository.delete(lessor);
+	}
 }

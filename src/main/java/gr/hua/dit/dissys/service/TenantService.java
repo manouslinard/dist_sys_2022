@@ -9,8 +9,8 @@ public interface TenantService {
     public List<AverageUser> getTenants();
     public void saveTenant(AverageUser tenant);
 
-    public AverageUser findTenant(int id);
+    public AverageUser findTenantById(int id);
 
-    public void deleteTenant(int id);
+    public void deleteTenantById(int id);
 	
 }

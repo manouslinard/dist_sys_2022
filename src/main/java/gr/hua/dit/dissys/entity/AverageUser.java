@@ -94,6 +94,17 @@ public class AverageUser {
 		this.phone = phone;
 	}
 
+	public AverageUser(String username, String email, String password, String firstName, String lastName, String afm, String phone) {
+		this.firstName = firstName;
+		this.username = username;
+		this.password = password;
+		this.lastName = lastName;
+		this.email = email;
+		this.afm = afm;
+		this.phone = phone;
+	}
+
+	
 	public int getId() {
 		return id;
 	}

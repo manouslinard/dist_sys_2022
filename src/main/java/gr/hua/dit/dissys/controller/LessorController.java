@@ -41,7 +41,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{id}/leases")
 	public List<Lease> getAllLessorLeases(@PathVariable int id) {
-		AverageUser l = (AverageUser) lessorService.findLessor(id);
+		AverageUser l = (AverageUser) lessorService.findLessorById(id);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
@@ -174,7 +174,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{id}/contracts")
 	public List<Contract> getAllLessorContracts(@PathVariable int id) {
-		AverageUser lessor= lessorService.findLessor(id);
+		AverageUser lessor= lessorService.findLessorById(id);
 		return lessor.getUserContracts();
 	}
 
@@ -203,14 +203,9 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{id}")
 	public AverageUser get(@PathVariable int id) {
-		return lessorService.findLessor(id);
+		return lessorService.findLessorById(id);
 	}
 
-	@Override
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable int id) {
-		lessorService.deleteLessor(id);
-	}
 
 	@Override
 	@GetMapping("/getAllLessors")

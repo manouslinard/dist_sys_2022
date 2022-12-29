@@ -40,7 +40,7 @@
 
     <script type="text/javascript">
         $("[name='deleteTenant']").click(function() {
-            var urlCall = "/tenant/";
+            var urlCall = "/user/tenant/";
             $.ajax({
                 url : urlCall + $(this).attr('id'),
                 type : 'DELETE',

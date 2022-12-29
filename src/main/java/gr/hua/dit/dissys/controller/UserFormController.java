@@ -7,14 +7,18 @@ import java.util.Set;
 
 import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.ERole;
+import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -30,7 +34,10 @@ public class UserFormController {
 
     @Autowired
     private TenantService tenantService;
-        
+
+    @Autowired
+    private LeaseService leaseService;
+    
     @Autowired
     private RoleRepository roleRepository;
     
@@ -54,6 +61,26 @@ public class UserFormController {
 
     }
 
+    @GetMapping("/leaselist")
+    public String showLeaseList(Model model) {
+        List<Lease> leases = leaseService.getLeases();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        List <Lease> userLeases = new ArrayList<>();
+        for (Lease l: leases) {
+        	List<AverageUser> users = l.getUsers();
+        	for (AverageUser u: users) {
+        		// appends lease list if req user is in it.
+        		if(logged_in_username.equals(u.getUsername())){
+        			userLeases.add(l);
+        			break;	// stops if it finds req user.
+        		}
+        	}
+        }        
+        model.addAttribute("leases", userLeases);
+        return "list-leases";
+    }
+    
     @PostMapping(path = "/teacherform")
     public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {
     	setBlankAttr(lessor);

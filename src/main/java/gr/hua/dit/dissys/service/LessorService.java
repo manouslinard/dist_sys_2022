@@ -9,7 +9,11 @@ public interface LessorService {
     public List<AverageUser> getLessors();
     public void saveLessor(AverageUser lessor);
 
-    public AverageUser findLessor(int id);
+    public AverageUser findLessorById(int id);
 
-    public void deleteLessor(int id);
+    public AverageUser findLessor(String username);
+    
+    public void deleteLessorById(int id);
+    
+    public void deleteLessor(String username);
 }
