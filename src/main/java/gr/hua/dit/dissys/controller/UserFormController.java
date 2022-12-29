@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
@@ -15,6 +16,7 @@ import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.service.AdminService;
+import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -44,6 +46,9 @@ public class UserFormController {
 
     @Autowired
     private LeaseService leaseService;
+
+    @Autowired
+    private ContractService contractService;
     
     @Autowired
     private RoleRepository roleRepository;
@@ -92,6 +97,27 @@ public class UserFormController {
         model.addAttribute("leases", userLeases);
         return "list-leases";
     }
+    
+    @GetMapping("/contractlist")
+    public String showContractList(Model model) {
+        List<Contract> contracts = contractService.getContracts();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        List <Contract> userContracts = new ArrayList<>();
+        for (Contract c: contracts) {
+        	List<AverageUser> users = c.getUsers();
+        	for (AverageUser u: users) {
+        		// appends lease list if req user is in it.
+        		if(logged_in_username.equals(u.getUsername())){
+        			userContracts.add(c);
+        			break;	// stops if it finds req user.
+        		}
+        	}
+        }        
+        model.addAttribute("contracts", userContracts);
+        return "list-contracts";
+    }
+    
     
     @PostMapping(path = "/teacherform")
     public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {

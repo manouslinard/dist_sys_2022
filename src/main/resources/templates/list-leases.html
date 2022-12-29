@@ -23,7 +23,7 @@
                 <th scope="col">Dei</th>                
                 <th scope="col">TK</th>
                 <th scope="col">Cost</th>
-                <th sec:authorize="hasAnyRole('LESSOR')" scope="col">Actions</th>
+                <th sec:authorize="hasAnyRole('LESSOR','TENANT')" scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -41,6 +41,11 @@
                             name="deleteLease"><i class="remove user icon"></i>
                         Delete</button>
                 </td>
+            	<td sec:authorize="hasRole('TENANT')">
+                    <button type="submit" th:id="${lease.id}"
+                            name="agreeLease"><i class="remove user icon"></i>
+                        Agree</button>
+                </td>
             </tr>
             </tbody>
             </table>
@@ -52,6 +57,23 @@
             $.ajax({
                 url : urlCall + $(this).attr('id'),
                 type : 'DELETE',
+                success : function(result) {
+                    console.log(result);
+                    $(location).attr("href", value="/leaselist");
+                },
+                error : function(result) {
+                    console.log(result);
+                },
+            });
+        });
+    </script>
+    
+    <script type="text/javascript">
+        $("[name='agreeLease']").click(function() {
+            var urlCall = "/user/leases/agree/";
+            $.ajax({
+                url : urlCall + $(this).attr('id'),
+                type : 'POST',
                 success : function(result) {
                     console.log(result);
                     $(location).attr("href", value="/leaselist");

@@ -9,157 +9,180 @@ import java.util.List;
 
 public class LeaseFormRequest {
 
-    private String title;
+	private String title;
 
+	private int lease_id;
 
-    //@NotBlank(message = "Please enter the address")
-    private String address;
+	// @NotBlank(message = "Please enter the address")
+	private String address;
 
+	private String tk;
 
-    private String tk;
+	private String dimos;
 
+	private String reason;
 
-    private String dimos;
+	// @NotBlank(message = "Please enter the cost")
+	private double cost;
 
+	private String startDate;
 
-    private String reason;
+	private String endDate;
 
+	// special conditions:
 
-    //@NotBlank(message = "Please enter the cost")
-    private double cost;
+	private String sp_con;
 
+	private String dei;
 
+	private String tenant_username;
 
-    private String startDate;
+	private String lessor_username;
+	
+	private String tenant_com;
 
+	public LeaseFormRequest() {
 
-    private String endDate;
+	}
 
-    // special conditions:
+	public LeaseFormRequest(int lease_id) {
+		this.lease_id = lease_id;
+	}
 
-    private String sp_con;
+	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, double cost,
+			String startDate, String endDate, String sp_con, String dei) {
+		this.title = title;
+		this.address = address;
+		this.tk = tk;
+		this.dimos = dimos;
+		this.reason = reason;
+		this.cost = cost;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.sp_con = sp_con;
+		this.dei = dei;
+	}
 
+	public String getTenant_username() {
+		return tenant_username;
+	}
 
-    private String dei;
+	public void setTenant_username(String tenant_username) {
+		this.tenant_username = tenant_username;
+	}
 
+	public String getTitle() {
+		return title;
+	}
 
-    private String  tenant_username;
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
+	public String getAddress() {
+		return address;
+	}
 
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
+	public String getTk() {
+		return tk;
+	}
 
+	
+	
+	public String getLessor_username() {
+		return lessor_username;
+	}
 
-    public LeaseFormRequest() {
+	public void setLessor_username(String lessor_username) {
+		this.lessor_username = lessor_username;
+	}
 
-    }
+	public void setTk(String tk) {
+		this.tk = tk;
+	}
 
-    public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, double cost, String startDate,
-                 String endDate, String sp_con, String dei) {
-        this.title = title;
-        this.address = address;
-        this.tk = tk;
-        this.dimos = dimos;
-        this.reason = reason;
-        this.cost = cost;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.sp_con = sp_con;
-        this.dei = dei;
-    }
+	public String getDimos() {
+		return dimos;
+	}
 
-    public String getTenant_username() {
-        return tenant_username;
-    }
+	public void setDimos(String dimos) {
+		this.dimos = dimos;
+	}
 
-    public void setTenant_username(String tenant_username) {
-        this.tenant_username = tenant_username;
-    }
+	public String getReason() {
+		return reason;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public double getCost() {
+		return cost;
+	}
 
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getStartDate() {
+		return startDate;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
 
-    public String getTk() {
-        return tk;
-    }
+	public String getEndDate() {
+		return endDate;
+	}
 
-    public void setTk(String tk) {
-        this.tk = tk;
-    }
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
 
-    public String getDimos() {
-        return dimos;
-    }
+	public String getSp_con() {
+		return sp_con;
+	}
 
-    public void setDimos(String dimos) {
-        this.dimos = dimos;
-    }
+	public void setSp_con(String sp_con) {
+		this.sp_con = sp_con;
+	}
 
-    public String getReason() {
-        return reason;
-    }
+	public String getDei() {
+		return dei;
+	}
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+	public void setDei(String dei) {
+		this.dei = dei;
+	}
 
-    public double getCost() {
-        return cost;
-    }
+	public String getTenant_com() {
+		return tenant_com;
+	}
 
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
+	public void setTenant_com(String tenant_com) {
+		this.tenant_com = tenant_com;
+	}
 
-    public String getStartDate() {
-        return startDate;
-    }
+	
+	
+	public int getLease_id() {
+		return lease_id;
+	}
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
+	public void setLease_id(int lease_id) {
+		this.lease_id = lease_id;
+	}
 
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getSp_con() {
-        return sp_con;
-    }
-
-    public void setSp_con(String sp_con) {
-        this.sp_con = sp_con;
-    }
-
-    public String getDei() {
-        return dei;
-    }
-
-    public void setDei(String dei) {
-        this.dei = dei;
-    }
-
-    // define toString
-    @Override
-    public String toString() {
-        return "Lease Form [title=" + title + "]";
-    }
+	// define toString
+	@Override
+	public String toString() {
+		return "Lease Form [title=" + title + "]";
+	}
 
 }
