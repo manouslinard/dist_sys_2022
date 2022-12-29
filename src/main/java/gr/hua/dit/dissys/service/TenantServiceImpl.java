@@ -100,7 +100,7 @@ public class TenantServiceImpl implements TenantService{
 				return t;
 			}
 		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");	
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found");	
 	}
 
 	@Override
@@ -109,6 +109,18 @@ public class TenantServiceImpl implements TenantService{
 		String t_username = findTenantById(id).getUsername();
 		jdbcUserDetailsManager.deleteUser(t_username);
         userRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public AverageUser findTenant(String username) {
+		List<AverageUser> tenants = getTenants();
+		for(AverageUser t: tenants) {
+			if(t.getUsername().equals(username)) {
+				return t;
+			}
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found");
 	}
 
 }

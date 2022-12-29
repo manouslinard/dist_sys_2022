@@ -1,20 +1,28 @@
 package gr.hua.dit.dissys.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
+import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.service.AdminService;
+import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +33,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class UserFormController {
@@ -37,9 +46,17 @@ public class UserFormController {
 
     @Autowired
     private LeaseService leaseService;
+
+    @Autowired
+    private ContractService contractService;
     
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private LeaseRepository leaseRepository;
+
+    @Autowired
+    private AdminService adminService;
     
     @GetMapping("/")
     public String index() {
@@ -81,6 +98,27 @@ public class UserFormController {
         return "list-leases";
     }
     
+    @GetMapping("/contractlist")
+    public String showContractList(Model model) {
+        List<Contract> contracts = contractService.getContracts();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        List <Contract> userContracts = new ArrayList<>();
+        for (Contract c: contracts) {
+        	List<AverageUser> users = c.getUsers();
+        	for (AverageUser u: users) {
+        		// appends lease list if req user is in it.
+        		if(logged_in_username.equals(u.getUsername())){
+        			userContracts.add(c);
+        			break;	// stops if it finds req user.
+        		}
+        	}
+        }        
+        model.addAttribute("contracts", userContracts);
+        return "list-contracts";
+    }
+    
+    
     @PostMapping(path = "/teacherform")
     public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {
     	setBlankAttr(lessor);
@@ -114,6 +152,59 @@ public class UserFormController {
 		tenantService.saveTenant(tenant);
         return "redirect:/";
 
+    }
+
+    @PostMapping(path = "/leaseform")
+    public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+        //System.out.println("Start Date: "+leaseFormRequest.getStartDate());
+    	if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");    
+    	}
+        if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");        	
+        }
+        String title = leaseFormRequest.getTitle();
+        String dimos = leaseFormRequest.getDimos();
+        String start_date = leaseFormRequest.getStartDate();
+        String end_date = leaseFormRequest.getEndDate();
+        String sp_con = leaseFormRequest.getSp_con();
+        String reason = leaseFormRequest.getReason();
+        String tk = null;
+        if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
+        	tk = leaseFormRequest.getTk().toString();        
+        }
+    	String address = leaseFormRequest.getAddress();
+        double cost = leaseFormRequest.getCost();
+        String dei = null;
+        if (!checkNullEmptyBlank(leaseFormRequest.getDei())) {
+        	dei = leaseFormRequest.getDei().toString();
+        }
+
+    	Lease lease = new Lease(title, address, tk, dimos, reason, cost, start_date, end_date, sp_con, dei);
+        
+    	AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+        tenant.getUserLeases().add(lease);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String lessor_username = auth.getName();
+        AverageUser lessor = lessorService.findLessor(lessor_username);
+        lessor.getUserLeases().add(lease);
+        
+//        lease.setUsers(new ArrayList<AverageUser>());
+//        lease.getUsers().add(lessor);
+//        lease.getUsers().add(tenant);
+        leaseService.saveLease(lease);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/leaseform")
+    public String showLeaseForm(Model model) {
+        LeaseFormRequest leaseFormRequest = new LeaseFormRequest();
+//        HashSet<Role> set= new HashSet();
+//        set.add(new Role(ERole.ROLE_TENANT));
+//        tenant.setRoles(set);
+        model.addAttribute("lease", leaseFormRequest);
+        return "add-lease";
     }
     
 
@@ -150,6 +241,43 @@ public class UserFormController {
 			return false;
 		}
 	}
-    
+	
+	@GetMapping("/adminlist")
+    public String showAdminList(Model model) {
+        List<AverageUser> admins = adminService.getAdmins();
+        model.addAttribute("admins", admins);
+        return "list-admins";
 
+    }
+    
+  	@PostMapping(path = "/adminform")
+    public String saveAdmin(@ModelAttribute("admin") AverageUser admin) {
+    	setBlankAttr(admin);
+        adminService.saveAdmin(admin);
+        return "redirect:/";
+
+    }
+
+    @GetMapping("/adminform")
+    public String showAdminForm(Model model) {
+    	AverageUser admin = new AverageUser();
+        model.addAttribute("admin", admin);
+        return "add-admin";
+    }
+
+
+    private boolean startEarlierThanEnd(String startDate, String endDate) {
+    	if (checkNullEmptyBlank(startDate) || checkNullEmptyBlank(endDate)) {
+    		return true;	// continues execution.
+    	}
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	try {
+    		boolean bef = sdf.parse(startDate).before(sdf.parse(endDate));
+    		boolean same = sdf.parse(startDate).equals(sdf.parse(endDate));
+    		
+			return bef || same;
+		} catch (ParseException e) {
+			return false;
+		}
+    }
 }
