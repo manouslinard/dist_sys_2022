@@ -3,14 +3,19 @@ package gr.hua.dit.dissys.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.service.AdminService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -27,6 +32,9 @@ public class UserFrontFunc {
 	
 	@Autowired
 	private LeaseService leaseService;
+	
+	@Autowired
+	private AdminService adminService;
 	
 	@DeleteMapping("/tenant/{id}")
 	public void deleteTenantById(@PathVariable int id) {
@@ -49,6 +57,18 @@ public class UserFrontFunc {
 		}
 		// removes it from db:
 		leaseService.deleteLease(lease.getId());
+	}
+
+	@DeleteMapping("/admin/{id}")
+	public void deleteAdminById(@PathVariable int id) {
+		AverageUser reqAdmin= adminService.findAdminById(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        if (reqAdmin.getUsername().equals(logged_in_username)) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot delete logged in admin."); 
+        }
+		
+        adminService.deleteAdminById(id);
 	}
 
 }

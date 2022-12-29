@@ -1,8 +1,12 @@
 package gr.hua.dit.dissys.service;
 
+import java.util.List;
+
 import gr.hua.dit.dissys.entity.AverageUser;
 
 public interface AdminService {
+	
+	public List<AverageUser> getAdmins();
 
 	public void saveAdmin(AverageUser admin);
 
