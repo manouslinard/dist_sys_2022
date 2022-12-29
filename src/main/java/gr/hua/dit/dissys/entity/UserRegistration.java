@@ -3,6 +3,7 @@ package gr.hua.dit.dissys.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(	name = "users",
+@Table(	name = "avg_users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email"),
@@ -21,7 +22,7 @@ import java.util.Set;
 public class UserRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @NotBlank
     @Size(max = 20)
@@ -53,16 +54,16 @@ public class UserRegistration {
 	@Size(max = 30, message = "Name should not be greater than 30 characters")
 	private String lastName;
 
-	//@JsonIgnore
+	@JsonIgnore
 	@Column(name = "afm", unique = true)
 	//@NotBlank(message = "Please enter your AFM")
-	//@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
-	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
+	@Size(min = 11, max = 11, message = "AFM should be exactly 11 digits")
+	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid afm")
 	private String afm;
 
-	//@JsonIgnore
+	@JsonIgnore
 	@Column(name = "phone")
-	//@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
+	@Pattern(regexp = "[\\s]*[0-9]*[1-9]+", message = "Please enter a valid phone number")
 	private String phone;
 
 	@JsonIgnore
@@ -156,11 +157,11 @@ public class UserRegistration {
 		this.userContracts = userContracts;
 	}
 
-	public Long getId() {
+	public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

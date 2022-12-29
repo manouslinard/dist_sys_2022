@@ -1,5 +1,7 @@
 package gr.hua.dit.dissys.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,7 +22,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-
+//    @Autowired
+//    DataSource dataSource;
+//    @Bean
+//    public JdbcUserDetailsManager jdbcUserDetailsManager() throws Exception {
+//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
+//        jdbcUserDetailsManager.setDataSource(dataSource);
+//        return jdbcUserDetailsManager;
+//    }
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;

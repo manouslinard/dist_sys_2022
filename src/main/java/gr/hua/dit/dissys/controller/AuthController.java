@@ -4,6 +4,7 @@ import gr.hua.dit.dissys.config.JwtUtils;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.entity.basicauth.UserAuthServ;
 import gr.hua.dit.dissys.payload.request.LoginRequest;
 import gr.hua.dit.dissys.payload.request.SignupRequest;
 import gr.hua.dit.dissys.payload.response.JwtResponse;
@@ -16,11 +17,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +43,13 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
 
+
+    // @Autowired
+    // private JdbcUserDetailsManager jdbcUserDetailsManager;
+    
+    @Autowired
+    private UserAuthServ userAuthServ;
+    
     @Autowired
     RoleRepository roleRepository;
 
@@ -48,7 +62,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
+    	Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -118,7 +132,9 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-
+        userAuthServ.saveUser(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+    
+	
 }
