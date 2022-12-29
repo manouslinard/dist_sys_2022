@@ -10,6 +10,7 @@ import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.service.AdminService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -40,6 +41,9 @@ public class UserFormController {
     
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private AdminService adminService;
     
     @GetMapping("/")
     public String index() {
@@ -151,5 +155,18 @@ public class UserFormController {
 		}
 	}
     
+	  	@PostMapping(path = "/adminform")
+	    public String saveAdmin(@ModelAttribute("admin") AverageUser admin) {
+	    	setBlankAttr(admin);
+	        adminService.saveAdmin(admin);
+	        return "redirect:/";
 
+	    }
+	
+	    @GetMapping("/adminform")
+	    public String showAdminForm(Model model) {
+	    	AverageUser admin = new AverageUser();
+	        model.addAttribute("admin", admin);
+	        return "add-admin";
+	    }
 }
