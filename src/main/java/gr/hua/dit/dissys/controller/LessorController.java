@@ -5,6 +5,7 @@ import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.entity.basicauth.UserAuthServ;
 import gr.hua.dit.dissys.payload.request.SignupRequest;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.ContractRepository;
@@ -37,9 +38,6 @@ public class LessorController implements LessorContrInterface {
 	private LessorService lessorService;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -56,6 +54,9 @@ public class LessorController implements LessorContrInterface {
 
 	@Autowired
 	private ContractRepository contractRepository;
+	
+	@Autowired
+	private UserAuthServ userAuthServ;
 
 	@Override
 	@GetMapping("/getAllTenants")
@@ -267,7 +268,7 @@ public class LessorController implements LessorContrInterface {
 
 		user.setRoles(roles);
 		userRepository.save(user);
-
+		userAuthServ.saveUser(user);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
