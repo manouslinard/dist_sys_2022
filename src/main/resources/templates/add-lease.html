@@ -25,11 +25,11 @@
 					th:if="${#fields.hasErrors('tenant_username')}"
 					th:errors="*{tenant_username}"></span>
 			</div>
-			<table class="form-outline mb-4" style="width:100%">
+			<table class="form-outline mb-4" style="width: 100%">
 				<tr>
 					<td>Address</td>
-					<td style="width:33%">Municipality</td>
-					<td style="width:20%">Postal Code</td>
+					<td style="width: 33%">Municipality</td>
+					<td style="width: 20%">Postal Code</td>
 				</tr>
 				<tr>
 					<td><input type="text" th:field="*{address}" id="address"
@@ -40,14 +40,14 @@
 						placeholder="Municipality" class="form-control"> <span
 						th:if="${#fields.hasErrors('dimos')}" th:errors="*{dimos}"></span>
 					</td>
-					<td><input type="number" th:field="*{tk}" id="tk"
+					<td><input type="number" th:field="*{tk}" id="tk" min="0"
 						placeholder="Code" class="form-control"> <span
 						th:if="${#fields.hasErrors('tk')}" th:errors="*{tk}"></span></td>
 				</tr>
 			</table>
-			<table class="form-outline mb-4" style="width:100%">
+			<table class="form-outline mb-4" style="width: 100%">
 				<tr>
-					<td style="width:30%">Cost</td>
+					<td style="width: 30%">Cost</td>
 					<td>Reason</td>
 				</tr>
 				<tr>
@@ -77,10 +77,10 @@
 					</td>
 				</tr>
 			</table>
-			<table class="form-outline mb-4" style="width:100%">
+			<table class="form-outline mb-4" style="width: 100%">
 				<tr>
 					<td>Special Condition</td>
-					<td style="width:27%">Dei</td>
+					<td style="width: 27%">Dei Number</td>
 				</tr>
 				<tr>
 					<td><input type="text" th:field="*{sp_con}" id="sp_con"
@@ -88,7 +88,7 @@
 						th:if="${#fields.hasErrors('sp_con')}" th:errors="*{sp_con}"></span>
 					</td>
 					<td><input type="number" th:field="*{dei}" id="dei"
-						placeholder="Dei" class="form-control"> <span
+						placeholder="Number" class="form-control" min="0"> <span
 						th:if="${#fields.hasErrors('dei')}" th:errors="*{dei}"></span></td>
 				</tr>
 			</table>
