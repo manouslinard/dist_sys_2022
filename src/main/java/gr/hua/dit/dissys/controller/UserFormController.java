@@ -1,5 +1,7 @@
 package gr.hua.dit.dissys.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,7 @@ import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,6 +31,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class UserFormController {
@@ -126,22 +130,39 @@ public class UserFormController {
 
     @PostMapping(path = "/leaseform")
     public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
-        Lease lease = new Lease();
-        lease.setTitle(leaseFormRequest.getTitle());
-        lease.setCost(leaseFormRequest.getCost());
-        lease.setAddress(leaseFormRequest.getAddress());
-        lease.setDei(leaseFormRequest.getDei());
-        lease.setDimos(leaseFormRequest.getDimos());
-        lease.setStartDate(leaseFormRequest.getStartDate());
-        lease.setEndDate(leaseFormRequest.getEndDate());
-        lease.setSp_con(leaseFormRequest.getSp_con());
-        lease.setReason(leaseFormRequest.getReason());
-        AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+        //System.out.println("Start Date: "+leaseFormRequest.getStartDate());
+    	if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");    
+    	}
+        if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");        	
+        }
+        String title = leaseFormRequest.getTitle();
+        String dimos = leaseFormRequest.getDimos();
+        String start_date = leaseFormRequest.getStartDate();
+        String end_date = leaseFormRequest.getEndDate();
+        String sp_con = leaseFormRequest.getSp_con();
+        String reason = leaseFormRequest.getReason();
+        String tk = null;
+        if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
+        	tk = leaseFormRequest.getTk().toString();        
+        }
+    	String address = leaseFormRequest.getAddress();
+        double cost = leaseFormRequest.getCost();
+        String dei = null;
+        if (!checkNullEmptyBlank(leaseFormRequest.getDei())) {
+        	dei = leaseFormRequest.getDei().toString();
+        }
+
+    	Lease lease = new Lease(title, address, tk, dimos, reason, cost, start_date, end_date, sp_con, dei);
+        
+    	AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
         tenant.getUserLeases().add(lease);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String lessor_username = auth.getName();
         AverageUser lessor = lessorService.findLessor(lessor_username);
         lessor.getUserLeases().add(lease);
+        
 //        lease.setUsers(new ArrayList<AverageUser>());
 //        lease.getUsers().add(lessor);
 //        lease.getUsers().add(tenant);
@@ -210,4 +231,19 @@ public class UserFormController {
         return "add-admin";
     }
 
+
+    private boolean startEarlierThanEnd(String startDate, String endDate) {
+    	if (checkNullEmptyBlank(startDate) || checkNullEmptyBlank(endDate)) {
+    		return true;	// continues execution.
+    	}
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	try {
+    		boolean bef = sdf.parse(startDate).before(sdf.parse(endDate));
+    		boolean same = sdf.parse(startDate).equals(sdf.parse(endDate));
+    		
+			return bef || same;
+		} catch (ParseException e) {
+			return false;
+		}
+    }
 }

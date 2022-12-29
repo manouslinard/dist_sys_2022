@@ -20,7 +20,8 @@
                 <th scope="col">Address</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">End Date</th>
-                <th scope="col">Dei</th>
+                <th scope="col">Dei</th>                
+                <th scope="col">TK</th>
                 <th scope="col">Cost</th>
                 <th sec:authorize="hasAnyRole('LESSOR')" scope="col">Actions</th>
             </tr>
@@ -33,6 +34,7 @@
                 <td th:text="${lease.startDate}"></td>
                 <td th:text="${lease.endDate}"></td>
                 <td th:text="${lease.dei}"></td>
+                <td th:text="${lease.tk}"></td>
                 <td th:text="${lease.cost}"></td>
                 <td sec:authorize="hasRole('LESSOR')">
                     <button type="submit" th:id="${lease.id}"

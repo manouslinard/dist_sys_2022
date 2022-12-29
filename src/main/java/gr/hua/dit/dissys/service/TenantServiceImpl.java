@@ -100,7 +100,7 @@ public class TenantServiceImpl implements TenantService{
 				return t;
 			}
 		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");	
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found");	
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class TenantServiceImpl implements TenantService{
 				return t;
 			}
 		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found");
 	}
 
 }

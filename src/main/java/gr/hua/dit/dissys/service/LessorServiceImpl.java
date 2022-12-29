@@ -103,7 +103,7 @@ public class LessorServiceImpl implements LessorService{
     			return l;
     		}
     	}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");    
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lessor not found");    
 	}
 
     @Override
@@ -124,7 +124,7 @@ public class LessorServiceImpl implements LessorService{
     			return l;
     		}
     	}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lessor not found");
 	}
 
 

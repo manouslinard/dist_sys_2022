@@ -25,7 +25,7 @@
 			</div>
 			<div class="form-outline mb-4">
 				<label for="tk" class="form-label">Postal Code</label> <input
-					type="text" th:field="*{tk}" id="tk"
+					type="number" th:field="*{tk}" id="tk"
 					placeholder="Postal Code" class="form-control"> <span
 					th:if="${#fields.hasErrors('tk')}" th:errors="*{tk}"></span>
 			</div>
@@ -43,20 +43,20 @@
 			</div>
 			<div class="form-outline mb-4">
 				<label for="Cost" class="form-label">Cost</label> <input
-					type="text" th:field="*{cost}" id="cost"
+					type="number" step="0.01" min="0" th:field="*{cost}" id="cost"
 					placeholder="Cost" class="form-control"> <span
 					th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}"></span>
 			</div>
 			<div class="form-outline mb-4">
 				<label for="startDate" class="form-label">Start Date</label> <input
-					type="text" th:field="*{startDate}" id="startDate"
+					type="date" th:field="*{startDate}" id="startDate"
 					placeholder="Start Date" class="form-control"> <span
 					th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
 			</div>
 			<div class="form-outline mb-4">
 				<label for="endDate" class="form-label">End Date</label> <input
-					type="text" th:field="*{endDate}" id="endDate"
-					placeholder="Start Date" class="form-control"> <span
+					type="date" th:field="*{endDate}" id="endDate"
+					placeholder="End Date" class="form-control"> <span
 					th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
 			</div>
 			<div class="form-outline mb-4">
@@ -67,14 +67,14 @@
 			</div>
 			<div class="form-outline mb-4">
 				<label for="dei" class="form-label">Dei</label> <input
-					type="text" th:field="*{dei}" id="dei"
+					type="number" th:field="*{dei}" id="dei"
 					placeholder="Dei" class="form-control"> <span
 					th:if="${#fields.hasErrors('dei')}" th:errors="*{dei}"></span>
 			</div>
 			<div class="form-outline mb-4">
-				<label for="tenant_username" class="form-label">Tenant Username*</label> <input
+				<label for="tenant_username" class="form-label">Tenant Username *</label> <input
 					type="text" th:field="*{tenant_username}" id="tenant_username"
-					placeholder="Tenant Username*" class="form-control"> <span
+					placeholder="Tenant Username" class="form-control"> <span
 					th:if="${#fields.hasErrors('dei')}" th:errors="*{tenant_username}"></span>
 			</div>
 			<!--<table class="form-outline mb-4">
