@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{page_layout/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Add Lease Page</title>
+</head>
+<body>
+	<div layout:fragment="main-content">
+		<form class="row g-3" th:action="@{/leaseform}" th:object="${lease}"
+			method="post">
+			<div class="form-outline mb-4">
+				<label for="title" class="form-label">Title *</label> <input
+					type="text" th:field="*{title}" id="title"
+					placeholder="Title" class="form-control"> <span
+					th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="address" class="form-label">Address </label> <input
+					type="text" th:field="*{address}" id="address" placeholder="Address"
+					class="form-control"> <span
+					th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="tk" class="form-label">Postal Code</label> <input
+					type="text" th:field="*{tk}" id="tk"
+					placeholder="Postal Code" class="form-control"> <span
+					th:if="${#fields.hasErrors('tk')}" th:errors="*{tk}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="dimos" class="form-label">Municipality</label> <input
+					type="text" th:field="*{dimos}" id="dimos"
+					placeholder="Municipality" class="form-control"> <span
+					th:if="${#fields.hasErrors('dimos')}" th:errors="*{dimos}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="reason" class="form-label">Reason </label> <input
+					type="text" th:field="*{reason}" id="reason"
+					placeholder="Reason" class="form-control"> <span
+					th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="Cost" class="form-label">Cost</label> <input
+					type="text" th:field="*{cost}" id="cost"
+					placeholder="Cost" class="form-control"> <span
+					th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="startDate" class="form-label">Start Date</label> <input
+					type="text" th:field="*{startDate}" id="startDate"
+					placeholder="Start Date" class="form-control"> <span
+					th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="endDate" class="form-label">End Date</label> <input
+					type="text" th:field="*{endDate}" id="endDate"
+					placeholder="Start Date" class="form-control"> <span
+					th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="sp_con" class="form-label">Special Condition</label> <input
+					type="text" th:field="*{sp_con}" id="sp_con"
+					placeholder="Special Condition" class="form-control"> <span
+					th:if="${#fields.hasErrors('sp_con')}" th:errors="*{sp_con}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="dei" class="form-label">Dei</label> <input
+					type="text" th:field="*{dei}" id="dei"
+					placeholder="Dei" class="form-control"> <span
+					th:if="${#fields.hasErrors('dei')}" th:errors="*{dei}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="tenant_username" class="form-label">Tenant Username*</label> <input
+					type="text" th:field="*{tenant_username}" id="tenant_username"
+					placeholder="Tenant Username*" class="form-control"> <span
+					th:if="${#fields.hasErrors('dei')}" th:errors="*{tenant_username}"></span>
+			</div>
+			<!--<table class="form-outline mb-4">
+				<tr>
+					<td>First Name</td>
+					<td>Last Name</td>
+				</tr>
+				<tr>
+					<td><input type="text" th:field="*{firstName}" id="firstName"
+						placeholder="FirstName" class="form-control"> <span
+						th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+					</td>
+					<td><input type="text" th:field="*{lastName}" id="lastName"
+						placeholder="LastName" class="form-control"> <span
+						th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+					</td>
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<td>Phone</td>
+					<td>AFM</td>
+				</tr>
+				<tr>
+					<td><input type="number" th:field="*{phone}" id="phone"
+						placeholder="Phone" class="form-control"> <span
+						th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+					</td>
+					<td><input type="number" th:field="*{afm}" id="afm"
+						placeholder="AFM" class="form-control"> <span
+						th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}"></span></td>
+				</tr>
+			</table> -->
+			<!-- 
+	    <div class="form-outline mb-4">
+	        <label for="firstName" class="form-label">First Name</label>
+	        <input type="text" th:field="*{firstName}" id="firstName" placeholder="FirstName" class="form-control">
+	        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+	    </div>
+	    <div class="form-outline mb-4">
+	        <label for="lastName" class="form-label">Last Name</label>
+	        <input type="text" th:field="*{lastName}" id="name" placeholder="LastName" class="form-control">
+	        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+	    </div>
+	     -->
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</body>
+</html>

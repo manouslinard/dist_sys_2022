@@ -14,6 +14,7 @@
             <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/tenantlist" th:href="@{/tenantlist}">Tenant List</a>
             <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/teacherform" th:href="@{/teacherform}">Lessorform</a>
             <a sec:authorize="hasAnyRole('ADMIN','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Tenantform</a>
+            <a sec:authorize="hasRole('LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaseform" th:href="@{/leaseform}">Lease Form</a>
             <a sec:authorize="hasAnyRole('TENANT','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaselist" th:href="@{/leaselist}">Lease List</a>
             <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/logout" th:href="@{/logout}">Logout</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/login" th:href="@{/login}">Login</a>

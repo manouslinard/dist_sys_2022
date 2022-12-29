@@ -12,5 +12,7 @@ public interface TenantService {
     public AverageUser findTenantById(int id);
 
     public void deleteTenantById(int id);
+
+    public AverageUser findTenant(String username);
 	
 }

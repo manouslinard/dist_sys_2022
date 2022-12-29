@@ -9,6 +9,8 @@ import gr.hua.dit.dissys.entity.AverageUser;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
+import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
@@ -40,7 +42,9 @@ public class UserFormController {
     
     @Autowired
     private RoleRepository roleRepository;
-    
+    @Autowired
+    private LeaseRepository leaseRepository;
+
     @GetMapping("/")
     public String index() {
         return "index";
@@ -114,6 +118,42 @@ public class UserFormController {
 		tenantService.saveTenant(tenant);
         return "redirect:/";
 
+    }
+
+    @PostMapping(path = "/leaseform")
+    public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+        Lease lease = new Lease();
+        lease.setTitle(leaseFormRequest.getTitle());
+        lease.setCost(leaseFormRequest.getCost());
+        lease.setAddress(leaseFormRequest.getAddress());
+        lease.setDei(leaseFormRequest.getDei());
+        lease.setDimos(leaseFormRequest.getDimos());
+        lease.setStartDate(leaseFormRequest.getStartDate());
+        lease.setEndDate(leaseFormRequest.getEndDate());
+        lease.setSp_con(leaseFormRequest.getSp_con());
+        lease.setReason(leaseFormRequest.getReason());
+        AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+        tenant.getUserLeases().add(lease);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String lessor_username = auth.getName();
+        AverageUser lessor = lessorService.findLessor(lessor_username);
+        lessor.getUserLeases().add(lease);
+//        lease.setUsers(new ArrayList<AverageUser>());
+//        lease.getUsers().add(lessor);
+//        lease.getUsers().add(tenant);
+        leaseService.saveLease(lease);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/leaseform")
+    public String showLeaseForm(Model model) {
+        LeaseFormRequest leaseFormRequest = new LeaseFormRequest();
+//        HashSet<Role> set= new HashSet();
+//        set.add(new Role(ERole.ROLE_TENANT));
+//        tenant.setRoles(set);
+        model.addAttribute("lease", leaseFormRequest);
+        return "add-lease";
     }
     
 
