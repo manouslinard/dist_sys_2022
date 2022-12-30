@@ -16,6 +16,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import gr.hua.dit.dissys.entity.UserRegistration;
+import gr.hua.dit.dissys.entity.basicauth.UserAuthServ;
 import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.repository.RoleRepository;
@@ -31,11 +32,11 @@ public class AdminServiceImpl implements AdminService{
 	private RoleRepository roleRepository;
 	
 	@Autowired
-    private JdbcUserDetailsManager jdbcUserDetailsManager;
-	
-	@Autowired
     private PasswordEncoder passwordEncoder;
 		
+	@Autowired
+	private UserAuthServ userAuthServ;
+	
 	@Override
 	@Transactional
 	public void saveAdmin(UserRegistration admin) {
@@ -49,22 +50,9 @@ public class AdminServiceImpl implements AdminService{
 			admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 		}
         userRepository.save(admin);		
-		registerAdmin(admin);
-
+    	userAuthServ.saveUser(admin);
 	}
 	
-	private void registerAdmin(UserRegistration admin) {
-    	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-    	Set<Role> auth = admin.getRoles();
-    	for(Role a: auth) {
-            authorities.add(new SimpleGrantedAuthority(a.getName().name()));    		
-    	}
-        
-        User user = new User(admin.getUsername(), admin.getPassword(), authorities);
-        //System.out.println(userRegistrationObject.getRole());
-        jdbcUserDetailsManager.createUser(user);
-    }
-
 	@Override
 	@Transactional
 	public UserRegistration findAdminById(int id) {
@@ -75,7 +63,7 @@ public class AdminServiceImpl implements AdminService{
 	@Transactional
 	public void deleteAdminById(int id) {
 		String l_username = findAdminById(id).getUsername();
-		jdbcUserDetailsManager.deleteUser(l_username);
+		userAuthServ.deleteUser(l_username);
         userRepository.deleteById((long) id);
 	}
 
