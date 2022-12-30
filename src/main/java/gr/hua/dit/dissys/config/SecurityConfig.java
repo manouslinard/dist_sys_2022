@@ -35,7 +35,6 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/register").permitAll()
                 .antMatchers("/registerTenant").permitAll()
                 .antMatchers("/registerLessor").permitAll()
                 .antMatchers("/lessorform").hasRole("ADMIN")
