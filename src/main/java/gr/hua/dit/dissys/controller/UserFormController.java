@@ -370,4 +370,28 @@ public class UserFormController {
 			return false;
 		}
 	}
+	
+	@GetMapping("/leasecom")
+	public String showCommentForm(Model model) {
+		LeaseFormRequest leaseFormRequest = new LeaseFormRequest();
+		
+		model.addAttribute("lease", leaseFormRequest);
+		return "add-lease-com";
+	}
+
+	
+	@PostMapping(path = "/leasecom")
+	public String saveComment(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
+		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
+		}
+		Lease lease= leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+	
+		lease.setTenantCom(leaseFormRequest.getTenant_com());
+		leaseService.saveLease(lease);
+
+		return "redirect:/";
+	}
+
 }

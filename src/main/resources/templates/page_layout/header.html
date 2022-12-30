@@ -20,6 +20,7 @@
             <a sec:authorize="hasRole('LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaseupdate" th:href="@{/leaseupdate}">Lease Update</a>
             <a sec:authorize="hasAnyRole('TENANT','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaselist" th:href="@{/leaselist}">Lease List</a>
             <a sec:authorize="hasAnyRole('TENANT','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/contractlist" th:href="@{/contractlist}">Contract List</a>
+            <a sec:authorize="hasRole('TENANT')" class="nav-link fw-bold py-1 px-0" href="/leasecom" th:href="@{/leasecom}">Comment</a>
             <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/logout" th:href="@{/logout}">Logout</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/login" th:href="@{/login}">Login</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerTenant" th:href="@{/registerTenant}">Register as Tenant</a>
