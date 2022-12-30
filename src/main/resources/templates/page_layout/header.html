@@ -10,9 +10,9 @@
         <h3 class="float-md-start mb-0">Cover</h3>
         <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="/" th:href="@{/}">Home</a>
-            <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/teacherlist" th:href="@{/teacherlist}">Lessor List</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/lessorlist" th:href="@{/lessorlist}">Lessor List</a>
             <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/tenantlist" th:href="@{/tenantlist}">Tenant List</a>
-            <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/teacherform" th:href="@{/teacherform}">Lessorform</a>
+            <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/lessorform" th:href="@{/lessorform}">Lessorform</a>
             <a sec:authorize="hasAnyRole('ADMIN','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Tenantform</a>
             <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/adminform" th:href="@{/adminform}">Adminform</a>
             <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/adminlist" th:href="@{/adminlist}">Admin List</a>
@@ -25,7 +25,7 @@
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/login" th:href="@{/login}">Login</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerTenant" th:href="@{/registerTenant}">Register as Tenant</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerLessor" th:href="@{/registerLessor}">Register as Lessor</a>
-            <!--  <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/teacherform" th:href="@{/teacherform}">Register as Lessor</a>
+            <!--  <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/lessorform" th:href="@{/lessorform}">Register as Lessor</a>
             <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Register as Tenant</a> -->
         </nav>
     </div>

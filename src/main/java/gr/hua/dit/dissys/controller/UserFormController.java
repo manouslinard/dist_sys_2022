@@ -67,18 +67,18 @@ public class UserFormController {
 		return "index";
 	}
 
-	@GetMapping("/teacherform")
+	@GetMapping("/lessorform")
 	public String showLessorForm(Model model) {
 		AverageUser lessor = new AverageUser();
-		model.addAttribute("teacher", lessor);
-		return "add-teacher";
+		model.addAttribute("lessor", lessor);
+		return "add-lessor";
 	}
 
-	@GetMapping("/teacherlist")
+	@GetMapping("/lessorlist")
 	public String showLessorList(Model model) {
-		List<AverageUser> teachers = lessorService.getLessors();
-		model.addAttribute("teachers", teachers);
-		return "list-teachers";
+		List<AverageUser> lessors = lessorService.getLessors();
+		model.addAttribute("lessors", lessors);
+		return "list-lessors";
 
 	}
 
@@ -140,8 +140,8 @@ public class UserFormController {
 				c.getStartDate(), c.getEndDate(), c.getSp_con(), c.getDei(), tenantUsername, lessorUsername);
 	}
 
-	@PostMapping(path = "/teacherform")
-	public String saveLessor(@ModelAttribute("teacher") AverageUser lessor) {
+	@PostMapping(path = "/lessorform")
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor) {
 		setBlankAttr(lessor);
 		lessorService.saveLessor(lessor);
 		return "redirect:/";
@@ -270,8 +270,8 @@ public class UserFormController {
 		if (!checkNullEmptyBlank(leaseFormRequest.getSp_con())) {
 			oldLease.setSp_con(leaseFormRequest.getSp_con());
 		}
-		if (!checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			oldLease.setTitle(leaseFormRequest.getTitle());
+		if (!checkNullEmptyBlank(leaseFormRequest.getNew_title())) {
+			oldLease.setTitle(leaseFormRequest.getNew_title());
 		}
 		if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
 			oldLease.setTk(leaseFormRequest.getTk());

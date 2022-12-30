@@ -14,7 +14,12 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "avg_users")
+@Table(	name = "avg_users",
+uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "afm")
+})
 public class AverageUser {
 
 	@Id

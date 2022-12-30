@@ -11,7 +11,7 @@
 <body>
 <div layout:fragment="main-content">
 
-    <div th:if="${ not#lists.isEmpty(teachers)}">
+    <div th:if="${ not#lists.isEmpty(lessors)}">
         <table  class="table table-dark table-striped">
             <thead>
             <tr>
@@ -23,14 +23,14 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="teacher : ${teachers}">
-                <td th:text="${teacher.username}"></td> 
-                <td th:text="${teacher.firstName}"></td>
-                <td th:text="${teacher.lastName}"></td>
-                <td th:text="${teacher.email}"></td>
+            <tr th:each="lessor : ${lessors}">
+                <td th:text="${lessor.username}"></td> 
+                <td th:text="${lessor.firstName}"></td>
+                <td th:text="${lessor.lastName}"></td>
+                <td th:text="${lessor.email}"></td>
                 <td sec:authorize="hasRole('ADMIN')">
-                    <button type="submit" th:id="${teacher.id}"
-                            name="deleteTeacher"><i class="remove user icon"></i>
+                    <button type="submit" th:id="${lessor.id}"
+                            name="deleteLessor"><i class="remove user icon"></i>
                         Delete</button>
                 </td>
             </tr>
@@ -39,14 +39,14 @@
     </div>
 
     <script type="text/javascript">
-        $("[name='deleteTeacher']").click(function() {
+        $("[name='deleteLessor']").click(function() {
             var urlCall = "/user/lessor/";
             $.ajax({
                 url : urlCall + $(this).attr('id'),
                 type : 'DELETE',
                 success : function(result) {
                     console.log(result);
-                    $(location).attr("href", value="/teacherlist");
+                    $(location).attr("href", value="/lessorlist");
                 },
                 error : function(result) {
                     console.log(result);

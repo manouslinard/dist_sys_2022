@@ -9,8 +9,8 @@
 </head>
 <body>
 	<div layout:fragment="main-content">
-		<form class="row g-3" th:action="@{/teacherform}"
-			th:object="${teacher}" method="post">
+		<form class="row g-3" th:action="@{/lessorform}"
+			th:object="${lessor}" method="post">
 			<div class="form-outline mb-4">
 				<label for="username" class="form-label">Username *</label> <input
 					type="text" th:field="*{username}" id="username"
