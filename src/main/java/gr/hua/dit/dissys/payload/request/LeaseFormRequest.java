@@ -63,6 +63,22 @@ public class LeaseFormRequest {
 		this.dei = dei;
 	}
 
+	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, double cost,
+			String startDate, String endDate, String sp_con, String dei, String tenantUsername, String lessorUsername) {
+		this.title = title;
+		this.address = address;
+		this.tk = tk;
+		this.dimos = dimos;
+		this.reason = reason;
+		this.cost = cost;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.sp_con = sp_con;
+		this.dei = dei;
+		this.tenant_username = tenantUsername;
+		this.lessor_username = lessorUsername;
+	}
+	
 	public String getTenant_username() {
 		return tenant_username;
 	}
