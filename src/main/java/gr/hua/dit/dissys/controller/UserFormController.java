@@ -125,14 +125,11 @@ public class UserFormController {
 		String lessorUsername = null;
 		String tenantUsername = null;
 		for (AverageUser u : tar_users) {
-			for (Role r : u.getRoles()) {
-				if (r.getName().name().equals(ERole.ROLE_LESSOR.name())) {
-					lessorUsername = u.getUsername();
-					break;
-				} else if (r.getName().name().equals(ERole.ROLE_TENANT.name())) {
-					tenantUsername = u.getUsername();
-					break;
-				}
+			if (lessorUsername == null) {
+				lessorUsername = u.getUsername();
+			}
+			else if (tenantUsername == null) {
+				tenantUsername = u.getUsername();
 			}
 		}
 		return new LeaseFormRequest(c.getTitle(), c.getAddress(), c.getTk(), c.getDimos(), c.getReason(), c.getCost(),

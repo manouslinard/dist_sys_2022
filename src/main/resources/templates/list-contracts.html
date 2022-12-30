@@ -23,8 +23,8 @@
 						<th scope="col">TK</th>
 						<th scope="col">Cost</th>
 						<th scope="col">Special</th>
-						<th sec:authorize="hasRole('LESSOR')" scope="col">Tenant</th>
-						<th sec:authorize="hasRole('TENANT')" scope="col">Lessor</th>
+						<th scope="col">User1</th>
+						<th scope="col">User2</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -38,8 +38,8 @@
 						<td th:text="${contract.tk}"></td>
 						<td th:text="${contract.cost}"></td>
 						<td th:text="${contract.sp_con}"></td>
-						<td sec:authorize="hasRole('LESSOR')" th:text="${contract.tenant_username}"></td>
-						<td sec:authorize="hasRole('TENANT')" th:text="${contract.lessor_username}"></td>
+						<td th:text="${contract.tenant_username}"></td>
+						<td th:text="${contract.lessor_username}"></td>
 					</tr>
 				</tbody>
 			</table>
