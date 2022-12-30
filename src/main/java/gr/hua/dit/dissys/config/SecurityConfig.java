@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,35 +32,33 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/user/lessor/{id}").hasRole("ADMIN")
-                .antMatchers("/user/tenant/{id}").hasRole("ADMIN")
-                .antMatchers("/user/admin/{id}").hasRole("ADMIN")
-                .antMatchers("/user/leases/{id}").hasRole("LESSOR")
-                .antMatchers("/user/leases/agree/{id}").hasRole("TENANT")
-                .antMatchers("/registerTenant").permitAll()
-                .antMatchers("/registerLessor").permitAll()
-                .antMatchers("/lessorform").hasRole("ADMIN")
-                .antMatchers("/tenantform").hasAnyRole("ADMIN", "LESSOR")
-                .antMatchers("/adminform").hasRole("ADMIN")
-                .antMatchers("/adminlist").hasRole("ADMIN")
-                .antMatchers("/leaseform").hasRole("LESSOR")
-                .antMatchers("/leaseupdate").hasRole("LESSOR")
-                .antMatchers("/leaselist").hasAnyRole("LESSOR", "TENANT")
-                .antMatchers("/contractlist").hasAnyRole("LESSOR", "TENANT")
-                .antMatchers("/leasecom").hasRole("TENANT")
-                .anyRequest().authenticated()
-                .and().formLogin().defaultSuccessUrl("/", true)
-                .permitAll()
-                .and()
-                .logout().permitAll();
-
-
-        http.headers().frameOptions().sameOrigin();
-
+        http		        
+		    	.cors().and().csrf().disable()
+		    	.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+		    	.authorizeRequests()
+		        .antMatchers("/").permitAll()
+		        .antMatchers("/user/lessor/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/tenant/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/admin/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/leases/{id}").hasRole("LESSOR")
+		        .antMatchers("/user/leases/agree/{id}").hasRole("TENANT")
+		        .antMatchers("/registerTenant").permitAll()
+		        .antMatchers("/registerLessor").permitAll()
+		        .antMatchers("/lessorform").hasRole("ADMIN")
+		        .antMatchers("/tenantform").hasAnyRole("ADMIN", "LESSOR")
+		        .antMatchers("/adminform").hasRole("ADMIN")
+		        .antMatchers("/adminlist").hasRole("ADMIN")
+		        .antMatchers("/leaseform").hasRole("LESSOR")
+		        .antMatchers("/leaseupdate").hasRole("LESSOR")
+		        .antMatchers("/leaselist").hasAnyRole("LESSOR", "TENANT")
+		        .antMatchers("/contractlist").hasAnyRole("LESSOR", "TENANT")
+		        .antMatchers("/leasecom").hasRole("TENANT")
+	        	.antMatchers("/lessor/**").hasAnyRole("LESSOR","ADMIN")
+	        	.antMatchers("/tenant/**").hasAnyRole("TENANT","ADMIN")
+		        .anyRequest().authenticated()
+		    	.and()
+		    	.httpBasic();
+		
         return http.build();
 
     }
