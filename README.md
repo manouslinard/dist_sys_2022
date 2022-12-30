@@ -73,12 +73,13 @@ Existing Users and Roles in pre-configured initial sql
 | admin  | pass123  | ADMIN       |
  
 You can create users using /api/auth/signup in token - backend.
-You can create users using /registerTenant or /registerLessor.<br />
+You can create users using /registerTenant or /registerLessor in frontend.<br />
 
 ------------------------------------------------------------------
 ## Branches:
-* [Backend](https://github.com/manouslinard/dist_sys_2022/tree/backend-token-auth) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
-* [Frontend](https://github.com/manouslinard/dist_sys_2022/tree/frontend) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
+* [Backend Token Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-token-auth) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users.
+* [Frontend](https://github.com/manouslinard/dist_sys_2022/tree/frontend) &rarr; Thymeleaf Frontend with Basic Authentication.
+* [Backend Basic Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-basic) &rarr; Spring Boot Backend with Basic Auth, API endpoints provided to register users.
 
 ## Other Links:
 * [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing)
