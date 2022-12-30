@@ -1,16 +1,24 @@
 package gr.hua.dit.dissys.controller;
 
+
+import gr.hua.dit.dissys.payload.request.TenantAnswer;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
+import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.service.ContractService;
+import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.AverageUser;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,10 +34,17 @@ public class TenantController implements TenantContrInterface {
 	private LessorService lessorService;
 	
 
+	@Autowired
+	private LeaseService leaseService;
+	@Autowired
+	private ContractService contractService;
+	@Autowired
+	private LeaseRepository leaseRepository;
+
 	@Override
-	@GetMapping("/{id}/leases/{lid}")
-	public Lease getTenantLease(@PathVariable int id, @PathVariable int lid) {
-		List<Lease> leases = getAllTenantLeases(id);
+	@GetMapping("/{tenantUsername}/leases/{lid}")
+	public Lease getTenantLease(@PathVariable String tenantUsername, @PathVariable int lid) {
+		List<Lease> leases = getAllTenantLeases(tenantUsername);
 		for (Lease lease : leases) {
 			if (lease.getId() == lid) {
 				return lease;
@@ -39,9 +54,9 @@ public class TenantController implements TenantContrInterface {
 	}
 
 	@Override
-	@GetMapping("/{id}/leases")
-	public List<Lease> getAllTenantLeases(@PathVariable int id) {
-		AverageUser tenant = (AverageUser) tenantService.findTenantById(id);
+	@GetMapping("/{tenantUsername}/leases")
+	public List<Lease> getAllTenantLeases(@PathVariable String tenantUsername) {
+		AverageUser tenant = (AverageUser) tenantService.findTenant(tenantUsername);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
@@ -55,18 +70,16 @@ public class TenantController implements TenantContrInterface {
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts")
-	public List<Contract> getAllTenantContracts(@PathVariable int id) {
-		// TODO: Chris
-		AverageUser tenant = new AverageUser();
-		tenant = tenantService.findTenantById(id);
+	@GetMapping("/{tenantUsername}/contracts")
+	public List<Contract> getAllTenantContracts(@PathVariable String tenantUsername) {
+		AverageUser tenant = tenantService.findTenant(tenantUsername);
 		return tenant.getUserContracts();
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts/{cid}")
-	public Contract getTenantContract(@PathVariable int id, @PathVariable int cid) {
-		AverageUser tenant = tenantService.findTenantById(id);
+	@GetMapping("/{tenantUsername}/contracts/{cid}")
+	public Contract getTenantContract(@PathVariable String tenantUsername, @PathVariable int cid) {
+		AverageUser tenant = tenantService.findTenant(tenantUsername);
 		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
 			if(loop.getId()==cid){
@@ -76,27 +89,49 @@ public class TenantController implements TenantContrInterface {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 	
-//	@Override
-//	@PostMapping("/{id}/leases/{lid}/answer")
-//	public void submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable int id, @PathVariable int lid) {
-//		// TODO: Chris
-//		Lease lease = new Lease();
-//		lease = tenantAnswer.getLease();
-//		lease.setTenantAnswer(tenantAnswer);
-//	}
-
 	@Override
-	@PostMapping("")
-	public AverageUser save(@Valid @RequestBody AverageUser tenant) {
-		tenant.setId(0);
-		tenantService.saveTenant(tenant);
-		return tenant;
+	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
+	public ResponseEntity<MessageResponse> submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
+		Lease lease = getTenantLease(tenantUsername, lid);
+		lease.setTenantAgree(tenantAnswer.getHasAgreed());
+		lease.setTenantCom(tenantAnswer.getTenantComment());
+		if(lease.isTenantAgree()) {
+			Contract contract = new Contract(lease.getTitle(), lease.getAddress(), lease.getTk(), lease.getDimos(), lease.getReason(), lease.getCost(), lease.getStartDate(),
+					lease.getEndDate(), lease.getSp_con(), lease.getDei());
+			AverageUser tenant = tenantService.findTenant(tenantUsername);
+			tenant.getUserContracts().add(contract);
+			List<AverageUser> users = lease.getUsers();
+			//Users are only 2: Tenant and Lessor
+			for(AverageUser user:users){
+				if(!user.getUsername().equals(tenantUsername)){
+					user.getUserContracts().add(contract);
+				}
+			}
+			List<AverageUser> leaseUsers = lease.getUsers();
+			// removes lease from lessor and tenant:
+			for (AverageUser u: leaseUsers) {
+				u.getUserLeases().remove(lease);
+			}
+			leaseService.deleteLease(lease.getId());
+		} else {
+			// saves lease if not agreed:
+			leaseService.saveLease(lease);
+		}
+		return ResponseEntity.ok(new MessageResponse("Answer submitted."));
 	}
 
 	@Override
-	@GetMapping("/{id}")
-	public AverageUser get(@PathVariable int id) {
-		return tenantService.findTenantById(id);
+	@GetMapping("/{tenantUsername}")
+	public AverageUser get(@PathVariable String tenantUsername) {
+		return tenantService.findTenant(tenantUsername);
 	}
-	
+
+	@Override
+	@DeleteMapping("/{tenantUsername}")
+	public ResponseEntity<MessageResponse> delete(@PathVariable String tenantUsername) {
+		AverageUser t = tenantService.findTenant(tenantUsername);
+		tenantService.deleteTenantById(t.getId());
+		return ResponseEntity.ok(new MessageResponse("Requested tenant deleted."));
+	}
+
 }

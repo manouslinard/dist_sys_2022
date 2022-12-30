@@ -1,20 +1,33 @@
 package gr.hua.dit.dissys.controller;
 
 import gr.hua.dit.dissys.entity.Contract;
+import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
+import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.payload.request.SignupRequest;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.repository.UserRepository;
+import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/lessor")
@@ -24,11 +37,20 @@ public class LessorController implements LessorContrInterface {
 	private LessorService lessorService;
 
 	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder encoder;
+
+	@Autowired
 	private TenantService tenantService;
 
 	@Autowired
-	private LeaseRepository leaseRepo;
-	
+	private LeaseService leaseService;
+
+	@Autowired
+	private RoleRepository roleRepository;
+
 	@Autowired
 	private ContractRepository contractRepository;
 
@@ -39,9 +61,9 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@GetMapping("/{id}/leases")
-	public List<Lease> getAllLessorLeases(@PathVariable int id) {
-		AverageUser l = (AverageUser) lessorService.findLessorById(id);
+	@GetMapping("/{lessorUsername}/leases")
+	public List<Lease> getAllLessorLeases(@PathVariable String lessorUsername) {
+		AverageUser l = (AverageUser) lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
@@ -49,9 +71,9 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@GetMapping("/{id}/leases/{lid}")
-	public Lease getLessorLease(@PathVariable int id, @PathVariable int lid) {
-		List<Lease> lessorLeases = getAllLessorLeases(id);
+	@GetMapping("/{lessorUsername}/leases/{lid}")
+	public Lease getLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		List<Lease> lessorLeases = getAllLessorLeases(lessorUsername);
 		for (Lease lease : lessorLeases) {
 			if (lease.getId() == lid) {
 				return lease;
@@ -61,31 +83,41 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	@Override
-	@DeleteMapping("{id}/leases/{lid}")
-	public void deleteLessorLease(@PathVariable int id, @PathVariable int lid) {
-		Lease lease = getLessorLease(id, lid);
-		leaseRepo.delete(lease);
+	@DeleteMapping("{lessorUsername}/leases/{lid}")
+	public ResponseEntity<MessageResponse> deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		Lease lease = getLessorLease(lessorUsername, lid);
+		List <AverageUser> leaseUsers = lease.getUsers();
+		// removes lease from users (removes all references):
+		for (AverageUser u: leaseUsers) {
+			u.getUserLeases().remove(lease);
+		}
+		// removes it from db:
+		leaseService.deleteLease(lease.getId());
+		return ResponseEntity.ok(new MessageResponse("Requested lease has been deleted."));
 	}
 
 //	@Override
-//	@GetMapping("/{id}/assignTenantToLease/{tid}/{lid}")
-//	public boolean assignTenantToLease(@PathVariable int tid, @PathVariable int lid, @PathVariable int id) {
-//		Tenant tenant = tenantService.findTenant(tid);
-//		List<Lease> leases = getAllLessorLeases(id);
-//		for (Lease loop : leases) {
-//			if (loop.getId() == lid) {
-//				loop.setTenant(tenant);
-//				return true;
+//	@PostMapping("/{lessorUsername}/assign/{tenantUsername}/{lid}")
+//	public Lease assignTenantToLease(@PathVariable String lessorUsername, @PathVariable String tenantUsername, @PathVariable int lid) {
+//		AverageUser tenant = tenantService.findTenant(tenantUsername);
+//		List<Lease> leases = getAllLessorLeases(lessorUsername);
+//		for (Lease lease : leases) {
+//			if (lease.getId() == lid) {
+//				if(!tenant.getUserLeases().contains(lease)) {
+//					tenant.getUserLeases().add(lease);
+//					tenantService.saveTenant(tenant);
+//				}
+//				return lease;
 //			}
 //		}
-//		return false;
+//		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 //	}
 
 	@Override
-	@PostMapping("/{id}/leases/{lid}")
-	public void updateLease(@Valid @RequestBody Lease lease, @PathVariable int id, @PathVariable int lid) {
+	@PutMapping("/{lessorUsername}/leases/{lid}")
+	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
 
-		Lease oldLease = getLessorLease(id, lid);
+		Lease oldLease = getLessorLease(lessorUsername, lid);
 
 		if (!checkNullEmptyBlank(lease.getAddress())) {
 			oldLease.setAddress(lease.getAddress());
@@ -118,7 +150,8 @@ public class LessorController implements LessorContrInterface {
 			oldLease.setCost(lease.getCost());
 		}
 
-		leaseRepo.save(oldLease);
+		leaseService.saveLease(oldLease);
+		return oldLease;
 
 	}
 
@@ -131,81 +164,70 @@ public class LessorController implements LessorContrInterface {
 		}
 	}
 
-//	@Override
-//	@PostMapping("/{id}/createLease")
-//	public void createLease(@Valid @RequestBody Lease lease, @PathVariable int id) {
-//
-//		Lessor l = lessorService.findLessor(id);
-//		if (l == null) {
-//			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-//		}
-//		lease.setLessor(l);
-//		leaseRepo.save(lease);
-//	}
-
 	@Override
-	@PostMapping("/createTenant")
-	public AverageUser createTenant(@Valid @RequestBody AverageUser tenant) {
+	@PostMapping("/{lessorUsername}/{tenantUsername}/createLease")
+	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable String tenantUsername) {
 
-		List<AverageUser> tenantList = tenantService.getTenants();
-		for (AverageUser oldTenant : tenantList) {
-			if (oldTenant.getEmail().equals(tenant.getEmail())) {
-				if (!checkNullEmptyBlank(tenant.getAfm())) {
-					oldTenant.setAfm(tenant.getAfm());
-				}
-				if(!checkNullEmptyBlank(tenant.getFirstName())) {
-					oldTenant.setFirstName(tenant.getFirstName());
-				}
-				if(!checkNullEmptyBlank(tenant.getLastName())) {
-					oldTenant.setLastName(tenant.getLastName());
-				}
-				if(!checkNullEmptyBlank(tenant.getPhone())) {
-					oldTenant.setPhone(tenant.getPhone());
-				}
-				tenantService.saveTenant(oldTenant);
-				return oldTenant;
-			}
+		AverageUser l = lessorService.findLessor(lessorUsername);
+		if (l == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		}
-		tenant.setId(0);
-		tenantService.saveTenant(tenant);
-		return tenant;
+
+		AverageUser t = tenantService.findTenant(tenantUsername);
+		if (t == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+		}
+
+		// sets tenant asnwer to def (in case lessor submits them):
+
+		lease.setTenantAgree(false);
+		lease.setTenantCom(null);
+		lease.setUsers(new ArrayList<AverageUser>());
+		lease.getUsers().add(l);
+		lease.getUsers().add(t);
+		leaseService.saveLease(lease);
+		return lease;
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts")
-	public List<Contract> getAllLessorContracts(@PathVariable int id) {
-		AverageUser lessor= lessorService.findLessorById(id);
+	@PostMapping("/createTenant")
+	public ResponseEntity<MessageResponse> createTenant(@Valid @RequestBody SignupRequest tenant) {
+		return registerTenant(tenant);
+	}
+
+	@Override
+	@GetMapping("/{lessorUsername}/contracts")
+	public List<Contract> getAllLessorContracts(@PathVariable String lessorUsername) {
+		AverageUser lessor= lessorService.findLessor(lessorUsername);
 		return lessor.getUserContracts();
 	}
 
 	@Override
-	@GetMapping("/{id}/contracts/{cid}")
-	public Contract getLessorContract(@PathVariable int id, @PathVariable int cid) {
-		AverageUser lessor= get(id);
-		Contract contract= contractRepository.findById(cid).get();
-		
-		for (int i=0; i<lessor.getUserContracts().size(); i++) {
-			if (contract.getId() == cid) {
-				return contract;
+	@GetMapping("/{lessorUsername}/contracts/{cid}")
+	public Contract getLessorContract(@PathVariable String lessorUsername, @PathVariable int cid) {
+		AverageUser lessor= lessorService.findLessor(lessorUsername);
+		List<Contract> contracts= lessor.getUserContracts();
+
+		for (Contract c: contracts) {
+			if (c.getId() == cid) {
+				return c;
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 	}
 
 	@Override
-	@PostMapping("")
-	public AverageUser save(@Valid @RequestBody AverageUser lessor) {
-		lessor.setId(0);
-		lessorService.saveLessor(lessor);
-		return lessor;
+	@GetMapping("/{lessorUsername}")
+	public AverageUser get(@PathVariable String lessorUsername) {
+		return lessorService.findLessor(lessorUsername);
 	}
 
 	@Override
-	@GetMapping("/{id}")
-	public AverageUser get(@PathVariable int id) {
-		return lessorService.findLessorById(id);
+	@DeleteMapping("/{lessorUsername}")
+	public ResponseEntity<MessageResponse> delete(@PathVariable String lessorUsername) {
+		lessorService.deleteLessor(lessorUsername);
+		return ResponseEntity.ok(new MessageResponse("Requested lessor deleted."));
 	}
-
 
 	@Override
 	@GetMapping("/getAllLessors")
@@ -213,4 +235,28 @@ public class LessorController implements LessorContrInterface {
 		return lessorService.getLessors();
 	}
 
+	private ResponseEntity<MessageResponse> registerTenant(@Valid @RequestBody SignupRequest signUpRequest) {
+		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Username is already taken!"));
+		}
+
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already in use!"));
+		}
+
+		// Create new user's account
+        AverageUser user = new AverageUser(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()), signUpRequest.getFirstName(), signUpRequest.getLastName(),
+                signUpRequest.getAfm(), signUpRequest.getPhone());
+
+        tenantService.saveTenant(user);
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
 }
+

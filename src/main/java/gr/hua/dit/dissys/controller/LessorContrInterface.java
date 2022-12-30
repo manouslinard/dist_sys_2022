@@ -2,10 +2,13 @@ package gr.hua.dit.dissys.controller;
 
 import java.util.List;
 
-import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.payload.request.SignupRequest;
+import org.springframework.http.ResponseEntity;
+
 import gr.hua.dit.dissys.entity.Contract;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.payload.response.MessageResponse;
 
 public interface LessorContrInterface {
 
@@ -13,26 +16,26 @@ public interface LessorContrInterface {
 
 	public List<AverageUser> getAllLessors();
 	
-	public List<Lease> getAllLessorLeases(int id);
+	public List<Lease> getAllLessorLeases(String lessorUsername);
 
-	public Lease getLessorLease(int id, int lid);
+	public Lease getLessorLease(String lessorUsername, int lid);
 
-	public void deleteLessorLease(int id, int lid);
+	public ResponseEntity<MessageResponse> deleteLessorLease(String lessorUsername, int lid);
 
-	//public boolean assignTenantToLease(int tid, int lid, int id);
+	//public Lease assignTenantToLease(String lessorUsername, String tenantUsername, int lid);
 
-	public void updateLease(Lease lease, int id, int lid);
+	public Lease updateLease(Lease lease, String lessorUsername, int lid);
 
-	//public void createLease(Lease lease, int id);
+	public Lease createLease(Lease lease, String lessorUsername, String tenantUsername);
 
-	public AverageUser createTenant(AverageUser tenant);
+	public ResponseEntity<MessageResponse> createTenant(SignupRequest tenant);
 
-	public List<Contract> getAllLessorContracts( int id);
+	public List<Contract> getAllLessorContracts(String lessorUsername);
 
-	public Contract getLessorContract( int id,  int cid);
-	
-	public AverageUser save(AverageUser lessor);
+	public Contract getLessorContract(String lessorUsername,  int cid);
 
-	public AverageUser get(int id);
+	public AverageUser get(String lessorUsername);
+
+	public ResponseEntity<MessageResponse> delete(String lessorUsername);
 
 }
