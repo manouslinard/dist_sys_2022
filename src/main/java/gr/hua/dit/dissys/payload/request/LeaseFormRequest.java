@@ -41,6 +41,9 @@ public class LeaseFormRequest {
 	
 	private String tenant_com;
 
+	private String new_title;
+
+
 	public LeaseFormRequest() {
 
 	}
@@ -193,6 +196,14 @@ public class LeaseFormRequest {
 
 	public void setLease_id(int lease_id) {
 		this.lease_id = lease_id;
+	}
+
+	public String getNew_title() {
+		return new_title;
+	}
+
+	public void setNew_title(String new_title) {
+		this.new_title = new_title;
 	}
 
 	// define toString

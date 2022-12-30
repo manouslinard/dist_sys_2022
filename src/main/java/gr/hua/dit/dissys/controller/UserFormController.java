@@ -15,6 +15,7 @@ import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
+import gr.hua.dit.dissys.repository.UserRepository;
 import gr.hua.dit.dissys.service.AdminService;
 import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
@@ -57,6 +58,9 @@ public class UserFormController {
 
 	@Autowired
 	private AdminService adminService;
+
+	@Autowired
+	private LessorController lessorController;
 
 	@GetMapping("/")
 	public String index() {
@@ -221,6 +225,79 @@ public class UserFormController {
 //        tenant.setRoles(set);
 		model.addAttribute("lease", leaseFormRequest);
 		return "add-lease";
+	}
+
+	@GetMapping("/leaseupdate")
+	public String showLeaseUpdateForm(Model model) {
+		LeaseFormRequest leaseFormRequest = new LeaseFormRequest();
+		model.addAttribute("lease", leaseFormRequest);
+		return "update-lease";
+	}
+
+	@PostMapping(path = "/leaseupdate")
+	public String updateLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
+		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
+		}
+		if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String lessor_username = auth.getName();
+		AverageUser current_lessor = lessorService.findLessor(lessor_username);
+		Lease lease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+		Lease oldLease = lessorController.getLessorLease(current_lessor.getId(), lease.getId());
+
+		if (!checkNullEmptyBlank(leaseFormRequest.getAddress())) {
+			oldLease.setAddress(leaseFormRequest.getAddress());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getDei())) {
+			oldLease.setDei(leaseFormRequest.getDei());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getDimos())) {
+			oldLease.setDimos(leaseFormRequest.getDimos());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getEndDate())) {
+			oldLease.setEndDate(leaseFormRequest.getEndDate());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getStartDate())) {
+			oldLease.setStartDate(leaseFormRequest.getStartDate());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getReason())) {
+			oldLease.setReason(leaseFormRequest.getReason());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getSp_con())) {
+			oldLease.setSp_con(leaseFormRequest.getSp_con());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getTitle())) {
+			oldLease.setTitle(leaseFormRequest.getTitle());
+		}
+		if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
+			oldLease.setTk(leaseFormRequest.getTk());
+		}
+		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getCost()))) {
+			oldLease.setCost(leaseFormRequest.getCost());
+		}
+		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getTenant_username()))) {
+			for(AverageUser users:oldLease.getUsers()){
+				if(!users.getUsername().equals(lessor_username)){
+					oldLease.getUsers().remove(users);
+				}
+			}
+			AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+			tenant.getUserLeases().add(lease);
+		}
+
+		leaseService.saveLease(oldLease);
+	//	lessor.getUserLeases().add(lease);
+
+//        lease.setUsers(new ArrayList<AverageUser>());
+//        lease.getUsers().add(lessor);
+//        lease.getUsers().add(tenant);
+		//leaseService.saveLease(lease);
+
+		return "redirect:/";
 	}
 
 	private void setBlankAttr(AverageUser user) {
