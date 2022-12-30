@@ -126,7 +126,9 @@ public class LessorController implements LessorContrInterface {
 		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
-		
+		if (lease.getCost() < 0){
+			lease.setCost(0);
+		}
 		Lease oldLease = getLessorLease(lessorUsername, lid);
 
 		if (!checkNullEmptyBlank(lease.getAddress())) {
@@ -182,7 +184,9 @@ public class LessorController implements LessorContrInterface {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
 
-		
+		if (lease.getCost() < 0){
+			lease.setCost(0);
+		}
 		UserRegistration l = lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
