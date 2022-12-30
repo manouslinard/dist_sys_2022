@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -117,6 +119,13 @@ public class LessorController implements LessorContrInterface {
 	@PutMapping("/{lessorUsername}/leases/{lid}")
 	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
 
+		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
+		}
+		if (lease.getCost() < 0){
+			lease.setCost(0);
+		}
+		
 		Lease oldLease = getLessorLease(lessorUsername, lid);
 
 		if (!checkNullEmptyBlank(lease.getAddress())) {
@@ -168,6 +177,13 @@ public class LessorController implements LessorContrInterface {
 	@PostMapping("/{lessorUsername}/{tenantUsername}/createLease")
 	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable String tenantUsername) {
 
+		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
+		}
+		if (lease.getCost() < 0){
+			lease.setCost(0);
+		}
+
 		AverageUser l = lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
@@ -200,6 +216,21 @@ public class LessorController implements LessorContrInterface {
 	public List<Contract> getAllLessorContracts(@PathVariable String lessorUsername) {
 		AverageUser lessor= lessorService.findLessor(lessorUsername);
 		return lessor.getUserContracts();
+	}
+	
+	private boolean startEarlierThanEnd(String startDate, String endDate) {
+		if (checkNullEmptyBlank(startDate) || checkNullEmptyBlank(endDate)) {
+			return true; // continues execution.
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			boolean bef = sdf.parse(startDate).before(sdf.parse(endDate));
+			boolean same = sdf.parse(startDate).equals(sdf.parse(endDate));
+
+			return bef || same;
+		} catch (ParseException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Input Date should be in format 'yyyy-mm-dd'.");
+		}
 	}
 
 	@Override
