@@ -59,9 +59,6 @@ public class UserFormController {
 	@Autowired
 	private AdminService adminService;
 
-	@Autowired
-	private LessorController lessorController;
-
 	@GetMapping("/")
 	public String index() {
 		return "index";
@@ -246,8 +243,7 @@ public class UserFormController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String lessor_username = auth.getName();
 		AverageUser current_lessor = lessorService.findLessor(lessor_username);
-		Lease lease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
-		Lease oldLease = lessorController.getLessorLease(current_lessor.getId(), lease.getId());
+		Lease oldLease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
 
 		if (!checkNullEmptyBlank(leaseFormRequest.getAddress())) {
 			oldLease.setAddress(leaseFormRequest.getAddress());
@@ -276,7 +272,7 @@ public class UserFormController {
 		if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
 			oldLease.setTk(leaseFormRequest.getTk());
 		}
-		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getCost()))) {
+		if (leaseFormRequest.getCost() > 0) {
 			oldLease.setCost(leaseFormRequest.getCost());
 		}
 		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getTenant_username()))) {
@@ -286,7 +282,7 @@ public class UserFormController {
 				}
 			}
 			AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
-			tenant.getUserLeases().add(lease);
+			tenant.getUserLeases().add(oldLease);
 		}
 
 		leaseService.saveLease(oldLease);
@@ -367,7 +363,7 @@ public class UserFormController {
 
 			return bef || same;
 		} catch (ParseException e) {
-			return false;
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Input Date should be in format 'yyyy-mm-dd'.");
 		}
 	}
 	

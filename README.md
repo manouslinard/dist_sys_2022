@@ -60,21 +60,26 @@ docker volume rm pgdata14
 sudo apt install postgresl-client
 psql -h localhost -U postgres -d realestate -p 5432 -W
 ```
-----------------------------------------
-# Branches:
-* [Main](https://gitlab.com/atsadimas/springbootdemo). Spring boot application with thymeleaf, spring security and bootstrap 5
+
+----------------------------------------------------------
+## Default Users in Database:
+
 Existing Users and Roles in pre-configured initial sql
 
-| USER    | PASSWORD | ROLES       |
-|-------  |----------|-------------|
-| tenant  | pass123  | TENANT      |
-| lessor  | pass123  | LESSOR      |
-| admin   | pass123  | ADMIN       |
+| USER   | PASSWORD | ROLES       |
+|------- |----------|-------------|
+| tenant | pass123  | TENANT      |
+| lessor | pass123  | LESSOR      |
+| admin  | pass123  | ADMIN       |
  
-You can create users using /register
-* [Security](https://gitlab.com/atsadimas/springbootdemo/-/tree/security). Spring Boot Backend with JWT Authentication
+You can create users using /api/auth/signup in token - backend.
+You can create users using /registerTenant or /registerLessor.<br />
 
-API endpoints provided to register users
+------------------------------------------------------------------
+## Branches:
+* [Backend](https://github.com/manouslinard/dist_sys_2022/tree/backend-token-auth) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
+* [Frontend](https://github.com/manouslinard/dist_sys_2022/tree/frontend) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users
 
-## Links:
-* [install docker](https://tinyurl.com/2m3bhahn)
+## Other Links:
+* [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing)
+* [2nd Derivable](https://docs.google.com/document/d/1zQ9ZFB1zW_16LlmPExFsPG2_oqWwOZkO9oOKpkt20Oo/edit?usp=sharing)
