@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -37,6 +38,7 @@ public class Lease {
 	private String reason;
 
 	@Column(name = "cost")
+	//@Positive(message = "Cost cannot be zero")
 	//@NotBlank(message = "Please enter the cost")
 	private double cost;
 
