@@ -48,18 +48,29 @@ public class UserFrontFunc {
 	
 	@DeleteMapping("/tenant/{id}")
 	public void deleteTenantById(@PathVariable int id) {
-		tenantService.deleteTenant(userRepo.findById((long) id).get().getUsername());
+		tenantService.deleteTenant(userRepo.findById(id).get().getUsername());
 	}
 
 	@DeleteMapping("/lessor/{id}")
 	public void deleteLessorById(@PathVariable int id) {
-		lessorService.deleteLessor(userRepo.findById((long) id).get().getUsername());
+		lessorService.deleteLessor(userRepo.findById(id).get().getUsername());
 	}
 
 	
 	@DeleteMapping("/leases/{id}")
 	public void deleteLeaseById(@PathVariable int id) {
 		Lease lease = leaseService.findLease(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        boolean contains_user = false;
+        for (UserRegistration u: lease.getUsers()) {
+        	if (u.getUsername().equals(logged_in_username)) {
+        		contains_user = true;
+        	}
+        }
+        if (!contains_user) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete lease of not logged in lessor!");         	
+        }
 		List <UserRegistration> leaseUsers = lease.getUsers();
 		// removes lease from users (removes all references):
 		for (UserRegistration u: leaseUsers) {
@@ -85,6 +96,17 @@ public class UserFrontFunc {
 	@PostMapping("/leases/agree/{id}")
 	public void agreeLease(@PathVariable int id) {
 		Lease l = leaseService.findLease(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        boolean contains_user = false;
+        for (UserRegistration u: l.getUsers()) {
+        	if (u.getUsername().equals(logged_in_username)) {
+        		contains_user = true;
+        	}
+        }
+        if (!contains_user) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot submit answer of not logged in tenant!");         	
+        }
         String title = l.getTitle();
         String dimos = l.getDimos();
         String sp_con = l.getSp_con();

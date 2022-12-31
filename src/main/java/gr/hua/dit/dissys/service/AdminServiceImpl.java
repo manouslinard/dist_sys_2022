@@ -56,7 +56,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	@Transactional
 	public UserRegistration findAdminById(int id) {
-		return userRepository.findById((long) id).get();
+		return userRepository.findById(id).get();
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class AdminServiceImpl implements AdminService{
 	public void deleteAdminById(int id) {
 		String l_username = findAdminById(id).getUsername();
 		userAuthServ.deleteUser(l_username);
-        userRepository.deleteById((long) id);
+        userRepository.deleteById(id);
 	}
 
 	@Override
