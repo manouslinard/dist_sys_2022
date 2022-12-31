@@ -42,9 +42,6 @@ public class LessorController implements LessorContrInterface {
 	private UserRepository userRepository;
 
 	@Autowired
-	private PasswordEncoder encoder;
-
-	@Autowired
 	private TenantService tenantService;
 
 	@Autowired
@@ -282,7 +279,7 @@ public class LessorController implements LessorContrInterface {
 		// Create new user's account
         AverageUser user = new AverageUser(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), signUpRequest.getFirstName(), signUpRequest.getLastName(),
+                signUpRequest.getPassword(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
                 signUpRequest.getAfm(), signUpRequest.getPhone());
 
         tenantService.saveTenant(user);
