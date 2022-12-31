@@ -56,6 +56,17 @@ public class UserFrontFunc {
 	@DeleteMapping("/leases/{id}")
 	public void deleteLeaseById(@PathVariable int id) {
 		Lease lease = leaseService.findLease(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        boolean contains_user = false;
+        for (AverageUser u: lease.getUsers()) {
+        	if (u.getUsername().equals(logged_in_username)) {
+        		contains_user = true;
+        	}
+        }
+        if (!contains_user) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete lease of not logged in lessor!");         	
+        }
 		List <AverageUser> leaseUsers = lease.getUsers();
 		// removes lease from users (removes all references):
 		for (AverageUser u: leaseUsers) {
@@ -81,6 +92,17 @@ public class UserFrontFunc {
 	@PostMapping("/leases/agree/{id}")
 	public void agreeLease(@PathVariable int id) {
 		Lease l = leaseService.findLease(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        boolean contains_user = false;
+        for (AverageUser u: l.getUsers()) {
+        	if (u.getUsername().equals(logged_in_username)) {
+        		contains_user = true;
+        	}
+        }
+        if (!contains_user) {
+    		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot submit answer of not logged in tenant!");         	
+        }
         String title = l.getTitle();
         String dimos = l.getDimos();
         String sp_con = l.getSp_con();
