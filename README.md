@@ -3,7 +3,9 @@
 * Install postgres.
 
 * Install [docker](https://tinyurl.com/2m3bhahn).<br />
-
+##
+* This project runs on http://localhost:8080.
+To see all the methods available, please checkout the user manuals in [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing) and [2nd Derivable](https://docs.google.com/document/d/1zQ9ZFB1zW_16LlmPExFsPG2_oqWwOZkO9oOKpkt20Oo/edit?usp=sharing).
 --------------------------------
 ## Database Setup with Terminal
 ### Setup postgres database using terminal
@@ -72,8 +74,7 @@ Existing Users and Roles in pre-configured initial sql
 | lessor | pass123  | LESSOR      |
 | admin  | pass123  | ADMIN       |
  
-You can create users using /api/auth/signup in token - backend.
-You can create users using /registerTenant or /registerLessor in frontend.<br />
+You can create users using /api/auth/signup in token - backend.<br />
 
 ------------------------------------------------------------------
 ## Branches:
