@@ -59,6 +59,11 @@ public class SecurityConfig {
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/lessor/**").hasAnyRole("LESSOR","ADMIN")
                 .antMatchers("/tenant/**").hasAnyRole("TENANT","ADMIN")
+		        .antMatchers("/user/lessor/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/tenant/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/admin/{id}").hasRole("ADMIN")
+		        .antMatchers("/user/leases/{id}").hasRole("LESSOR")
+		        .antMatchers("/user/leases/agree/{id}").hasRole("TENANT")
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
