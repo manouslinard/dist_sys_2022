@@ -133,7 +133,7 @@ public class UserFormController {
 				tenantUsername = u.getUsername();
 			}
 		}
-		return new LeaseFormRequest(c.getTitle(), c.getAddress(), c.getTk(), c.getDimos(), c.getReason(), c.getCost(),
+		return new LeaseFormRequest(c.getTitle(), c.getAddress(), c.getTk(), c.getDimos(), c.getReason(), String.valueOf(c.getCost()),
 				c.getStartDate(), c.getEndDate(), c.getSp_con(), c.getDei(), tenantUsername, lessorUsername);
 	}
 
@@ -191,7 +191,10 @@ public class UserFormController {
 			tk = leaseFormRequest.getTk().toString();
 		}
 		String address = leaseFormRequest.getAddress();
-		double cost = leaseFormRequest.getCost();
+		double cost = 0;
+		if (!checkNullEmptyBlank(leaseFormRequest.getCost())) {
+			cost = Double.valueOf(leaseFormRequest.getCost());
+		}
 		String dei = null;
 		if (!checkNullEmptyBlank(leaseFormRequest.getDei())) {
 			dei = leaseFormRequest.getDei().toString();
@@ -272,8 +275,8 @@ public class UserFormController {
 		if (!checkNullEmptyBlank(leaseFormRequest.getTk())) {
 			oldLease.setTk(leaseFormRequest.getTk());
 		}
-		if (leaseFormRequest.getCost() > 0) {
-			oldLease.setCost(leaseFormRequest.getCost());
+		if (!checkNullEmptyBlank(leaseFormRequest.getCost())) {
+			oldLease.setCost(Double.valueOf(leaseFormRequest.getCost()));
 		}
 		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getTenant_username()))) {
 			for(AverageUser users:oldLease.getUsers()){

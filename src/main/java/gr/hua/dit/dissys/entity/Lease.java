@@ -38,7 +38,7 @@ public class Lease {
 	private String reason;
 
 	@Column(name = "cost")
-	@Positive(message = "Cost cannot be zero")
+	//@Positive(message = "Cost cannot be zero")
 	//@NotBlank(message = "Please enter the cost")
 	private double cost;
 

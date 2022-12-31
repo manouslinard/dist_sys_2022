@@ -23,7 +23,7 @@ public class LeaseFormRequest {
 	private String reason;
 
 	// @NotBlank(message = "Please enter the cost")
-	private double cost;
+	private String cost;
 
 	private String startDate;
 
@@ -52,7 +52,7 @@ public class LeaseFormRequest {
 		this.lease_id = lease_id;
 	}
 
-	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, double cost,
+	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, String cost,
 			String startDate, String endDate, String sp_con, String dei) {
 		this.title = title;
 		this.address = address;
@@ -66,7 +66,7 @@ public class LeaseFormRequest {
 		this.dei = dei;
 	}
 
-	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, double cost,
+	public LeaseFormRequest(String title, String address, String tk, String dimos, String reason, String cost,
 			String startDate, String endDate, String sp_con, String dei, String tenantUsername, String lessorUsername) {
 		this.title = title;
 		this.address = address;
@@ -140,11 +140,11 @@ public class LeaseFormRequest {
 		this.reason = reason;
 	}
 
-	public double getCost() {
+	public String getCost() {
 		return cost;
 	}
 
-	public void setCost(double cost) {
+	public void setCost(String cost) {
 		this.cost = cost;
 	}
 
