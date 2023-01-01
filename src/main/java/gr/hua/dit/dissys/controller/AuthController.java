@@ -6,6 +6,7 @@ import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.payload.request.LoginRequest;
 import gr.hua.dit.dissys.payload.request.SignupRequest;
+import gr.hua.dit.dissys.payload.response.AuthResponse;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,20 +63,29 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @PostMapping("/signin")
-//    public void authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-// 	
-//    	UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
-//
-//    	Authentication auth = authReq.authenticated(loginRequest, authReq, null);
-//        SecurityContextHolder.getContext().setAuthentication(auth);
-//
-////        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-////        List<String> roles = userDetails.getAuthorities().stream()
-////                .map(item -> item.getAuthority())
-////                .collect(Collectors.toList());
-//        System.out.println("DET: "+auth.toString());
-//    }
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+    	AverageUser user = userRepository.findByUsername(loginRequest.getUsername()).get();
+    	if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
+    		// bad credentials.
+    		 return ResponseEntity.ok(new MessageResponse("Bad Credentials."));
+    	}
+    	
+    	UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+
+    	
+    	Authentication auth = authReq.authenticated(loginRequest, authReq, user.getRoles().stream()
+    		    .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+    		    .collect(Collectors.toList()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return ResponseEntity.ok(new AuthResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRoles()));
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

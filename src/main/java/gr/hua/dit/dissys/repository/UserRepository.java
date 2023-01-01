@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<AverageUser, Integer> {
-	   Optional<UserRegistration> findByUsername(String username);
+	   Optional<AverageUser> findByUsername(String username);
 
 	    Boolean existsByUsername(String username);
 
