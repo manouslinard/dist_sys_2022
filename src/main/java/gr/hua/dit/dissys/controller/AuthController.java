@@ -89,6 +89,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    	
+    	if (signUpRequest.getRole().size() > 1) {
+    		return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Cannot have more than 1 roles!"));
+    	}
+    	
+    	
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
