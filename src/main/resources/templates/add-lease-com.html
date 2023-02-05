@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{page_layout/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Add Lease Comment</title>
+</head>
+<body>
+	<div layout:fragment="main-content">
+		<form class="row g-3" th:action="@{/leasecom}" th:object="${lease}"
+			method="post">
+			<div class="form-outline mb-4">
+				<label for="title" class="form-label">Requested Lease Title *</label> <input
+					type="text" th:field="*{title}" id="title" placeholder="Title"
+					class="form-control"> <span
+					th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+			</div>
+			<div class="form-outline mb-4">
+				<label for="tenant_com" class="form-label">Comment</label> <input
+					type="text" th:field="*{tenant_com}" id="tenant_com" placeholder="Comment"
+					class="form-control"> <span
+					th:if="${#fields.hasErrors('tenant_com')}" th:errors="*{tenant_com}"></span>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit Comment</button>
+		</form>
+	</div>
+</body>
+</html>
