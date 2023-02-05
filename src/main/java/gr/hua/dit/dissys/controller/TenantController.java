@@ -56,19 +56,23 @@ public class TenantController implements TenantContrInterface {
 		return false;
 	}
 
-	private void isTenantAdmin(String lessorUsername, String error_msg) {
+	private void isTenantAdmin(String tenantUsername, String error_msg, boolean allowAdmins) {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String logged_in_username = ((LoginRequest)principal).getUsername();
-		if (!isAdmin(logged_in_username) && !lessorUsername.equals(logged_in_username)) {
+		boolean isAdmin = false;
+        if(allowAdmins) {
+        	isAdmin = isAdmin(logged_in_username);
+        }
+		if (!isAdmin && !tenantUsername.equals(logged_in_username)) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, error_msg);         	
-		}		
+		}
 	}
 
 	
 	@Override
 	@GetMapping("/{tenantUsername}/leases/{lid}")
 	public Lease getTenantLease(@PathVariable String tenantUsername, @PathVariable int lid) {
-		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!", false);
 		List<Lease> leases = getAllTenantLeases(tenantUsername);
 		for (Lease lease : leases) {
 			if (lease.getId() == lid) {
@@ -81,7 +85,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/leases")
 	public List<Lease> getAllTenantLeases(@PathVariable String tenantUsername) {
-		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!", false);
 		AverageUser tenant = (AverageUser) tenantService.findTenant(tenantUsername);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
@@ -98,7 +102,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/contracts")
 	public List<Contract> getAllTenantContracts(@PathVariable String tenantUsername) {
-		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!", false);
 		AverageUser tenant = tenantService.findTenant(tenantUsername);
 		return tenant.getUserContracts();
 	}
@@ -106,7 +110,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable String tenantUsername, @PathVariable int cid) {
-		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!", false);
 		AverageUser tenant = tenantService.findTenant(tenantUsername);
 		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
@@ -120,7 +124,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
 	public ResponseEntity<MessageResponse> submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
-		isTenantAdmin(tenantUsername, "Cannot answer leases of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot answer leases of not logged in tenant!", false);
 		Lease lease = getTenantLease(tenantUsername, lid);
 		lease.setTenantAgree(tenantAnswer.getHasAgreed());
 		lease.setTenantCom(tenantAnswer.getTenantComment());
@@ -152,14 +156,14 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}")
 	public AverageUser get(@PathVariable String tenantUsername) {
-		isTenantAdmin(tenantUsername, "Cannot view info of not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot view info of not logged in tenant!", true);
 		return tenantService.findTenant(tenantUsername);
 	}
 
 	@Override
 	@DeleteMapping("/{tenantUsername}")
 	public ResponseEntity<MessageResponse> delete(@PathVariable String tenantUsername) {
-		isTenantAdmin(tenantUsername, "Cannot delete not logged in tenant!");
+		isTenantAdmin(tenantUsername, "Cannot delete not logged in tenant!", true);
 		AverageUser t = tenantService.findTenant(tenantUsername);
 		tenantService.deleteTenantById(t.getId());
 		return ResponseEntity.ok(new MessageResponse("Requested tenant deleted."));
