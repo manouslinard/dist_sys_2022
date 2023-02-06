@@ -5,12 +5,14 @@ import gr.hua.dit.dissys.entity.ERole;
 import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.entity.Role;
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.payload.request.LoginRequest;
 import gr.hua.dit.dissys.payload.request.SignupRequest;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.repository.ContractRepository;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
+import gr.hua.dit.dissys.service.AdminService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -18,6 +20,8 @@ import gr.hua.dit.dissys.service.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,6 +57,31 @@ public class LessorController implements LessorContrInterface {
 	@Autowired
 	private ContractRepository contractRepository;
 
+	@Autowired
+	private AdminService adminService;
+	
+	private boolean isAdmin(String username) {
+		List <AverageUser> admins = adminService.getAdmins();
+		for (AverageUser a: admins) {
+			if(a.getUsername().equals(username))
+				return true;
+		}
+		return false;
+	}
+
+	private void isLessorAdmin(String lessorUsername, String error_msg, boolean allowAdmins) {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String logged_in_username = ((LoginRequest)principal).getUsername();
+		boolean isAdmin = false;
+        if(allowAdmins) {
+        	isAdmin = isAdmin(logged_in_username);
+        }
+		if (!isAdmin && !lessorUsername.equals(logged_in_username)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, error_msg);         	
+		}
+	}
+
+	
 	@Override
 	@GetMapping("/getAllTenants")
 	public List<AverageUser> getAllTenants() {
@@ -62,6 +91,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}/leases")
 	public List<Lease> getAllLessorLeases(@PathVariable String lessorUsername) {
+		isLessorAdmin(lessorUsername, "Cannot access leases of not logged in lessor!", false);
 		AverageUser l = (AverageUser) lessorService.findLessor(lessorUsername);
 		if (l == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
@@ -72,6 +102,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}/leases/{lid}")
 	public Lease getLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		isLessorAdmin(lessorUsername, "Cannot access leases of not logged in lessor!", false);
 		List<Lease> lessorLeases = getAllLessorLeases(lessorUsername);
 		for (Lease lease : lessorLeases) {
 			if (lease.getId() == lid) {
@@ -84,6 +115,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@DeleteMapping("{lessorUsername}/leases/{lid}")
 	public ResponseEntity<MessageResponse> deleteLessorLease(@PathVariable String lessorUsername, @PathVariable int lid) {
+		isLessorAdmin(lessorUsername, "Cannot delete leases of not logged in lessor!", false);
 		Lease lease = getLessorLease(lessorUsername, lid);
 		List <AverageUser> leaseUsers = lease.getUsers();
 		// removes lease from users (removes all references):
@@ -115,7 +147,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@PutMapping("/{lessorUsername}/leases/{lid}")
 	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
-
+		isLessorAdmin(lessorUsername, "Cannot update leases of not logged in lessor!", false);
 		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
@@ -173,7 +205,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@PostMapping("/{lessorUsername}/{tenantUsername}/createLease")
 	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable String tenantUsername) {
-
+		isLessorAdmin(lessorUsername, "Cannot create lease of not logged in lessor!", true);
 		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
@@ -211,6 +243,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}/contracts")
 	public List<Contract> getAllLessorContracts(@PathVariable String lessorUsername) {
+		isLessorAdmin(lessorUsername, "Cannot access contracts of not logged in lessor!", false);
 		AverageUser lessor= lessorService.findLessor(lessorUsername);
 		return lessor.getUserContracts();
 	}
@@ -233,6 +266,7 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}/contracts/{cid}")
 	public Contract getLessorContract(@PathVariable String lessorUsername, @PathVariable int cid) {
+		isLessorAdmin(lessorUsername, "Cannot access contracts of not logged in lessor!", false);
 		AverageUser lessor= lessorService.findLessor(lessorUsername);
 		List<Contract> contracts= lessor.getUserContracts();
 
@@ -247,12 +281,14 @@ public class LessorController implements LessorContrInterface {
 	@Override
 	@GetMapping("/{lessorUsername}")
 	public AverageUser get(@PathVariable String lessorUsername) {
+		isLessorAdmin(lessorUsername, "Cannot view info of not logged in lessor!", true);
 		return lessorService.findLessor(lessorUsername);
 	}
 
 	@Override
 	@DeleteMapping("/{lessorUsername}")
 	public ResponseEntity<MessageResponse> delete(@PathVariable String lessorUsername) {
+		isLessorAdmin(lessorUsername, "Cannot delete not logged in lessor!", true);
 		lessorService.deleteLessor(lessorUsername);
 		return ResponseEntity.ok(new MessageResponse("Requested lessor deleted."));
 	}
