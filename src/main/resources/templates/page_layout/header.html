@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header class="mb-auto" th:fragment="header">
+    <div>
+        <h3 class="float-md-start mb-0">Cover</h3>
+        <nav class="nav nav-masthead justify-content-center float-md-end">
+            <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="/" th:href="@{/}">Home</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/lessorlist" th:href="@{/lessorlist}">Lessor List</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" aria-current="page" href="/tenantlist" th:href="@{/tenantlist}">Tenant List</a>
+            <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/lessorform" th:href="@{/lessorform}">Lessorform</a>
+            <a sec:authorize="hasAnyRole('ADMIN','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Tenantform</a>
+            <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/adminform" th:href="@{/adminform}">Adminform</a>
+            <a sec:authorize="hasRole('ADMIN')" class="nav-link fw-bold py-1 px-0" href="/adminlist" th:href="@{/adminlist}">Admin List</a>
+            <a sec:authorize="hasRole('LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaseform" th:href="@{/leaseform}">Lease Form</a>
+            <a sec:authorize="hasRole('LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaseupdate" th:href="@{/leaseupdate}">Lease Update</a>
+            <a sec:authorize="hasAnyRole('TENANT','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/leaselist" th:href="@{/leaselist}">Lease List</a>
+            <a sec:authorize="hasAnyRole('TENANT','LESSOR')" class="nav-link fw-bold py-1 px-0" href="/contractlist" th:href="@{/contractlist}">Contract List</a>
+            <a sec:authorize="hasRole('TENANT')" class="nav-link fw-bold py-1 px-0" href="/leasecom" th:href="@{/leasecom}">Comment</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/logout" th:href="@{/logout}">Logout</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/login" th:href="@{/login}">Login</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerTenant" th:href="@{/registerTenant}">Register as Tenant</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/registerLessor" th:href="@{/registerLessor}">Register as Lessor</a>
+            <!--  <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/lessorform" th:href="@{/lessorform}">Register as Lessor</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link fw-bold py-1 px-0" href="/tenantform" th:href="@{/tenantform}">Register as Tenant</a> -->
+        </nav>
+    </div>
+</header>
+
+</body>
+</html>

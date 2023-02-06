@@ -1,10 +1,12 @@
 package gr.hua.dit.dissys.controller;
 
 
+import gr.hua.dit.dissys.payload.request.LoginRequest;
 import gr.hua.dit.dissys.payload.request.TenantAnswer;
 import gr.hua.dit.dissys.payload.response.MessageResponse;
 import gr.hua.dit.dissys.entity.UserRegistration;
 import gr.hua.dit.dissys.repository.LeaseRepository;
+import gr.hua.dit.dissys.service.AdminService;
 import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
@@ -13,6 +15,8 @@ import gr.hua.dit.dissys.service.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,9 +45,35 @@ public class TenantController implements TenantContrInterface {
 	@Autowired
 	private LeaseRepository leaseRepository;
 
+	@Autowired
+	private AdminService adminService;
+	
+	private boolean isAdmin(String username) {
+		List <UserRegistration> admins = adminService.getAdmins();
+		for (UserRegistration a: admins) {
+			if(a.getUsername().equals(username))
+				return true;
+		}
+		return false;
+	}
+
+	private void isTenantAdmin(String tenantUsername, String error_msg, boolean allowAdmins) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String logged_in_username = auth.getName();
+        boolean isAdmin = false;
+        if(allowAdmins) {
+        	isAdmin = isAdmin(logged_in_username);
+        }
+		if (!isAdmin && !tenantUsername.equals(logged_in_username)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, error_msg);         	
+		}
+	}
+	
+	
 	@Override
 	@GetMapping("/{tenantUsername}/leases/{lid}")
 	public Lease getTenantLease(@PathVariable String tenantUsername, @PathVariable int lid) {
+		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!", false);
 		List<Lease> leases = getAllTenantLeases(tenantUsername);
 		for (Lease lease : leases) {
 			if (lease.getId() == lid) {
@@ -56,6 +86,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/leases")
 	public List<Lease> getAllTenantLeases(@PathVariable String tenantUsername) {
+		isTenantAdmin(tenantUsername, "Cannot access leases of not logged in tenant!", false);
 		UserRegistration tenant = (UserRegistration) tenantService.findTenant(tenantUsername);
 		if (tenant == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
@@ -72,6 +103,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/contracts")
 	public List<Contract> getAllTenantContracts(@PathVariable String tenantUsername) {
+		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!", false);
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
 		return tenant.getUserContracts();
 	}
@@ -79,6 +111,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}/contracts/{cid}")
 	public Contract getTenantContract(@PathVariable String tenantUsername, @PathVariable int cid) {
+		isTenantAdmin(tenantUsername, "Cannot access contracts of not logged in tenant!", false);
 		UserRegistration tenant = tenantService.findTenant(tenantUsername);
 		List<Contract> contracts =tenant.getUserContracts();
 		for(Contract loop:contracts){
@@ -92,6 +125,7 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@PostMapping("/{tenantUsername}/leases/{lid}/answer")
 	public ResponseEntity<MessageResponse> submitTenantAnswer(@Valid @RequestBody TenantAnswer tenantAnswer, @PathVariable String tenantUsername, @PathVariable int lid) {
+		isTenantAdmin(tenantUsername, "Cannot answer leases of not logged in tenant!", false);
 		Lease lease = getTenantLease(tenantUsername, lid);
 		lease.setTenantAgree(tenantAnswer.getHasAgreed());
 		lease.setTenantCom(tenantAnswer.getTenantComment());
@@ -123,12 +157,14 @@ public class TenantController implements TenantContrInterface {
 	@Override
 	@GetMapping("/{tenantUsername}")
 	public UserRegistration get(@PathVariable String tenantUsername) {
+		isTenantAdmin(tenantUsername, "Cannot view info of not logged in tenant!", true);
 		return tenantService.findTenant(tenantUsername);
 	}
 
 	@Override
 	@DeleteMapping("/{tenantUsername}")
 	public ResponseEntity<MessageResponse> delete(@PathVariable String tenantUsername) {
+		isTenantAdmin(tenantUsername, "Cannot delete not logged in tenant!", true);
 		tenantService.deleteTenant(tenantUsername);
 		return ResponseEntity.ok(new MessageResponse("Requested tenant deleted."));
 	}

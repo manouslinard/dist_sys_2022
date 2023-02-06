@@ -9,6 +9,8 @@ public interface LeaseService {
     public List<Lease> getLeases();
     public void saveLease(Lease lease);
 
+    public Lease findLeaseByTitle(String leaseTitle);
+    
     public Lease findLease(int id);
 
     public void deleteLease(Lease lease);

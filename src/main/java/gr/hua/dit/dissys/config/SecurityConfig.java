@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+		        .antMatchers("/").permitAll()
                 .antMatchers("/lessor/**").hasAnyRole("LESSOR","ADMIN")
                 .antMatchers("/tenant/**").hasAnyRole("TENANT","ADMIN")
 		        .antMatchers("/user/lessor/{id}").hasRole("ADMIN")
@@ -64,6 +65,17 @@ public class SecurityConfig {
 		        .antMatchers("/user/admin/{id}").hasRole("ADMIN")
 		        .antMatchers("/user/leases/{id}").hasRole("LESSOR")
 		        .antMatchers("/user/leases/agree/{id}").hasRole("TENANT")
+		        .antMatchers("/registerTenant").permitAll()
+		        .antMatchers("/registerLessor").permitAll()
+		        .antMatchers("/lessorform").hasRole("ADMIN")
+		        .antMatchers("/tenantform").hasAnyRole("ADMIN", "LESSOR")
+		        .antMatchers("/adminform").hasRole("ADMIN")
+		        .antMatchers("/adminlist").hasRole("ADMIN")
+		        .antMatchers("/leaseform").hasRole("LESSOR")
+		        .antMatchers("/leaseupdate").hasRole("LESSOR")
+		        .antMatchers("/leaselist").hasAnyRole("LESSOR", "TENANT")
+		        .antMatchers("/contractlist").hasAnyRole("LESSOR", "TENANT")
+		        .antMatchers("/leasecom").hasRole("TENANT")
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
