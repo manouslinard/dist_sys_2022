@@ -1,0 +1,57 @@
+/* Add your CSS styles here */
+/* .header {
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	padding: 20px;
+} */
+
+/*background-image: url(/images/lease.png);*/
+
+.header {
+  background-image: url(/images/brightness.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.header-text {
+	margin: 0;
+}
+
+.subtext {
+	font-size: 14px;
+	font-style: italic;
+}
+
+.navigation {
+	background-color: #eee;
+	display: flex;
+	justify-content: space-around;
+	padding: 20px;
+}
+
+.nav-item {
+	color: #333;
+	text-decoration: none;
+}
+
+.card {
+	display: inline-block;
+	width: 300px;
+	height: 200px;
+	margin: 20px;
+	text-align: center;
+}
+
+.card img {
+	width: 60%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.card:hover {
+	transform:scale(1.1);
+}
+
+main {
+	padding: 20px;
+}
