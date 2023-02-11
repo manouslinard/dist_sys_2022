@@ -8,31 +8,159 @@
 <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 <script th:src="@{/js/app.js}"></script>
 </head>
-
 <body>
-	<header class="header">
-		<h1 class="header-text">Make A Lease</h1>
-		<p class="subtext">Create and sign leases online</p>
-	</header>
 	<nav class="navigation">
-		<a href="#" class="nav-item">Home</a> <a href="#" class="nav-item">About</a>
 		<a sec:authorize="!isAuthenticated()" href="/login"
 			th:href="@{/login}">Login</a> <a sec:authorize="isAuthenticated()"
 			class="nav-link fw-bold py-1 px-0" href="/logout"
-			th:href="@{/logout}">Logout</a> <a href="#" class="nav-item">Contact</a>
+			th:href="@{/logout}">Logout</a>
 	</nav>
-	<main>
-		<h2>Welcome to Make A Lease</h2>
-		<p>Create and sign leases online with ease.</p>
-		<div class="card">
-			<img th:src="@{/images/lease.png}" alt="your image">
-			<p>Image 1 description</p>
-		</div>
-		<div class="card">
-			<img th:src="@{/images/lease.png}" alt="your image">
-			<p>Image 2 description</p>
-		</div>
-	</main>
+	<div class="slidecontainer">
+		<input type="range" min="0" max="100" value="50" class="slider"
+			id="myRange">
+	</div>
+	<div sec:authorize="!isAuthenticated()">
+		<section class="section_center" id="skills">
+			<div class="logo hidden card front-skill"
+				style="top: 60px; width: 50%; height: 70vh;">
+				<h2>Register As Lessor</h2>
+				<br> <img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="logo hidden card tool-skill"
+				style="top: 60px; width: 50%; height: 70vh;">
+				<h2>Register As Tenant</h2>
+				<br> <img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+	<!-- Admin screen: -->
+	<div sec:authorize="hasRole('ADMIN')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" style="top: 50px">
+				<h2>Create Tenant</h2>
+				<img th:src="@{/images/add-tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill">
+				<h2>Create Lessor</h2>
+				<img th:src="@{/images/add-lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill">
+				<h2>Create Admin</h2>
+				<img th:src="@{/images/add-admin.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill">
+				<h2>View Admins</h2>
+				<img th:src="@{/images/admin.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+
+	<!-- Lessor screen -->
+	<div sec:authorize="hasRole('LESSOR')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" style="top: 50px">
+				<h2>Create Tenant</h2>
+				<img th:src="@{/images/add-tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card tool-skill">
+				<h2>View Leases</h2>
+				<img th:src="@{/images/lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill">
+				<h2>Create Lease</h2>
+				<img th:src="@{/images/add-lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill">
+				<h2>Update Lease</h2>
+				<img th:src="@{/images/edit-lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill">
+				<h2>View Contracts</h2>
+				<img th:src="@{/images/contract.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+
+	<!-- Tenant screen -->
+	<div sec:authorize="hasRole('TENANT')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" style="top: 50px">
+				<h2>View Leases</h2>
+				<img th:src="@{/images/lease.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill">
+				<h2>View Contracts</h2>
+				<img th:src="@{/images/contract.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill">
+				<h2>Comment on Lease</h2>
+				<img th:src="@{/images/comment.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" style="opacity: 0;">
+			</div>
+		</section>
+
+	</div>
+
+	<script>
+		// light-dark mode:
+		const cards = document.querySelectorAll('.card');
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		slider.addEventListener("input", function() {
+			if (slider.value < 50) {
+				lightMode();
+			} else {
+				darkMode();
+			}
+		});
+		
+		// fade-in animation:
+		const hiddenSections = document.querySelectorAll('.hidden');
+		let observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+		    	if (entry.isIntersecting) {
+		        	entry.target.classList.add('show');
+		         } else {
+		         	entry.target.classList.remove('show');
+		         }
+		 	});
+		});
+		hiddenSections.forEach(hiddenSection => {
+			observer.observe(hiddenSection);
+			//alert(hiddenSection);
+		});
+	</script>
 
 </body>
 </html>
