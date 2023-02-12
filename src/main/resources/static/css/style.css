@@ -245,6 +245,7 @@ img {
     align-items: center;
     border: 1px solid #454545;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .card img {
