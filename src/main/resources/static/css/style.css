@@ -133,8 +133,81 @@ img {
     /* text-decoration: none; */
     transition: all 0.2s ease-in-out;
 }
+
+
+form {
+  max-width: 500px;
+  margin: 60px auto;
+  margin-bottom: 5px;
+  padding: 30px;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px #000000;
+    animation: slideDown 0.5s ease-in-out;
+ 
+}
+
+.form-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+  color: black;
+  animation: slideDown 0.5s ease-in-out;
+}
+
+.table-form {
+  border-collapse: collapse;
+  animation: slideDown 0.5s ease-in-out;
+  overflow:hidden;
+  table-layout: fixed;
+  width:100%; box-shadow: None; margin-top: 0px; margin-bottom: 20px;	
+}
+
+.table-form th, .table-form tr {
+  color: #000000;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  animation: slideDown 0.5s ease-in-out;
+}
+
+.form-outline {
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #1e1d1d;
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button[type="submit"]:hover {
+  background-color: #333333;
+}
+
+.error {
+  color: #FF0000;
+  font-weight: bold;
+  margin-top: 5px;
+  display: block;
+}
+
 table {
-  margin: 120px auto; /* move the table down 50px and center it horizontally */
+  margin: 210px auto; /* move the table down 50px and center it horizontally */
   border-collapse: collapse;
   width: 80%;  
   box-shadow: 0px 0px 10px #000000;
@@ -148,7 +221,7 @@ th, td {
   padding: 8px;
   text-align: left;
   animation: fadeIn 0.5s ease-in-out;
-  word-wrap:break-word;
+  word-wrap:break-word;  
 }
 
 th {
@@ -229,6 +302,16 @@ th {
     padding: 30px;
 }
 
+.container-form {
+  display: flex;
+}
+      
+.container-label {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
+  font-weight: bold;
+}
 
 .slidecontainer {
     width: 100%;

@@ -1,67 +1,73 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{page_layout/layout}">
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Admin Form Page</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Create Admin</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
 </head>
 <body>
-	<div layout:fragment="main-content">
-		<form class="row g-3" th:action="@{/adminform}"
-			th:object="${admin}" method="post">
-			<div class="form-outline mb-4">
-				<label for="username" class="form-label">Username *</label> <input
-					type="text" th:field="*{username}" id="username"
-					placeholder="Username" class="form-control"> <span
-					th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="email" class="form-label">Email *</label> <input
-					type="email" th:field="*{email}" id="email" placeholder="Email"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="password" class="form-label">Password *</label> <input
-					type="password" th:field="*{password}" id="password"
-					placeholder="Password" class="form-control"> <span
-					th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-			</div>
-			<table class="form-outline mb-4">
-				<tr>
-					<td>First Name</td>
-					<td>Last Name</td>
-				</tr>
-				<tr>
-					<td><input type="text" th:field="*{firstName}" id="firstName"
-						placeholder="FirstName" class="form-control"> <span
-						th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-					</td>
-					<td><input type="text" th:field="*{lastName}" id="lastName"
-						placeholder="LastName" class="form-control"> <span
-						th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-					</td>
-				</tr>
-			</table>
-			<table>
-				<tr>
-					<td>Phone</td>
-					<td>AFM</td>
-				</tr>
-				<tr>
-					<td><input type="number" th:field="*{phone}" id="phone"
-						placeholder="Phone" class="form-control"> <span
-						th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
-					</td>
-					<td><input type="number" th:field="*{afm}" id="afm"
-						placeholder="AFM" class="form-control"> <span
-						th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}"></span></td>
-				</tr>
-			</table>
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-	</div>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<form th:action="@{/adminform}" th:object="${admin}"
+		method="post" id="subForm">
+		<div>
+			<label for="username" class="form-label">Admin Username *</label> <input
+				type="text" th:field="*{username}" id="username"
+				placeholder="Username" class="form-control"> <span
+				th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+		</div>
+		<div>
+			<label for="email" class="form-label">Email *</label> <input
+				type="email" th:field="*{email}" id="email" placeholder="Email"
+				class="form-control"> <span
+				th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+		</div>
+		<div>
+			<label for="password" class="form-label">Password *</label> <input
+				type="password" th:field="*{password}" id="password"
+				placeholder="Password" class="form-control"> <span
+				th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+		</div>
+		<table class="table-form">
+			<tr>
+				<td>First Name</td>
+				<td>Last Name</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{firstName}" id="firstName"
+					placeholder="FirstName" class="form-control"> <span
+					th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+				</td>
+				<td><input type="text" th:field="*{lastName}" id="lastName"
+					placeholder="LastName" class="form-control"> <span
+					th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+				</td>
+			</tr>
+			<tr>
+				<td>Phone</td>
+				<td>AFM</td>
+			</tr>
+			<tr>
+				<td><input type="number" th:field="*{phone}" id="phone"
+					placeholder="Phone" class="form-control"> <span
+					th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+				</td>
+				<td><input type="number" th:field="*{afm}" id="afm"
+					placeholder="AFM" class="form-control"> <span
+					th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}"></span></td>
+			</tr>
+		</table>
+		<button type="submit">Submit</button>
+	</form>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+		
+		initializeBrightnessSlider(slider);
+	</script>
 </body>
 </html>
