@@ -31,6 +31,55 @@ function darkMode() {
     });
 }
 
+/**
+ *  Fades in all input hiddenSections.
+ *  @param {HTMLElement} hiddenSections the hidden section to fade in.
+ */
+function fadeInAll(hiddenSections) {
+	let observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+	    	if (entry.isIntersecting) {
+	        	entry.target.classList.add('show');
+	         } else {
+	         	entry.target.classList.remove('show');
+	         }
+	 	});
+	});
+	hiddenSections.forEach(hiddenSection => {
+		observer.observe(hiddenSection);
+	});
+}
+
+/**
+ *  Initializes the brightness slider.
+ *  @param {HTMLElement} slider The slider of the page.
+ */
+function initializeBrightnessSlider(slider){
+	slider.oninput = function(){localStorage.setItem("sliderValue", this.value);}	
+	slider.addEventListener("input", function() {
+		if (slider.value < 50) {
+			lightMode();
+		} else {
+			darkMode();
+		}
+	});
+	
+	// Retrieve the value from local storage when the page loads -> changes to previous brightness
+	document.addEventListener("DOMContentLoaded", function() {
+	  var storedValue = localStorage.getItem("sliderValue");
+	  if (storedValue) {
+	    slider.value = storedValue;
+		if (slider.value < 50) {
+			lightMode();
+		} else {
+			darkMode();
+		}
+	  }
+	});
+	
+}
+
+// transitioning to next page:
 window.transitionToPage = function(href) {
     document.querySelector('body').style.opacity = 0
     setTimeout(function() { 
