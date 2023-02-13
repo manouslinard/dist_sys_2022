@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Slider Header</title>
+</head>
+<body>
+	<header>
+		<nav class="navigation">
+			<a sec:authorize="isAuthenticated()" href="/" th:href="@{/}">Home</a>
+			<a sec:authorize="!isAuthenticated()" href="/login"
+				th:href="@{/login}">Login</a> <a sec:authorize="isAuthenticated()"
+				href="/logout" th:href="@{/logout}">Logout</a>
+		</nav>
+		<div class="slidecontainer">
+			<input type="range" min="0" max="100" value="50" class="slider"
+				id="myRange">
+		</div>		
+	</header>
+</body>
+</html>
