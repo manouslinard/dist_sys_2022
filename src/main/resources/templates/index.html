@@ -164,6 +164,23 @@
 			}
 		});
 		
+		slider.oninput = function() {
+		  localStorage.setItem("sliderValue", this.value);
+		}
+
+		// Retrieve the value from local storage when the page loads
+		document.addEventListener("DOMContentLoaded", function() {
+		  var storedValue = localStorage.getItem("sliderValue");
+		  if (storedValue) {
+		    slider.value = storedValue;
+			if (slider.value < 50) {
+				lightMode();
+			} else {
+				darkMode();
+			}
+		  }
+		});
+		
 		// fade-in animation:
 		const hiddenSections = document.querySelectorAll('.hidden');
 		let observer = new IntersectionObserver((entries) => {
