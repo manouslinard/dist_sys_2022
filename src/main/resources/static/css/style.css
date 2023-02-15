@@ -137,22 +137,33 @@ img {
 
 form {
   max-width: 500px;
-  margin: 60px auto;
-  margin-bottom: 5px;
+  margin: 100px auto; /* added a value of 100px to move form down */
   padding: 30px;
   background-color: #FFFFFF;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px #000000;
-    animation: slideDown 0.5s ease-in-out;
- 
+  animation: slideDown 0.5s ease-in-out;
 }
 
-.form-label {
+.form-label-optional {
   font-weight: bold;
   margin-bottom: 10px;
   display: block;
   color: black;
   animation: slideDown 0.5s ease-in-out;
+}
+
+.form-label-required {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+  color: black;
+  animation: slideDown 0.5s ease-in-out;
+}
+
+.form-label-required::after {
+  content: " *";
+  color: #FF0000;
 }
 
 .table-form {
@@ -170,7 +181,7 @@ form {
 .form-control {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-radius: 5px;
   border: 1px solid #000000;
   animation: slideDown 0.5s ease-in-out;
@@ -200,10 +211,12 @@ button[type="submit"]:hover {
 }
 
 .error {
-  color: #FF0000;
-  font-weight: bold;
-  margin-top: 5px;
+  color: #FF0000; 
+  margin-bottom: 1px;
   display: block;
+  font-size: 10px;
+    animation: slideDown 0.5s ease-in-out;
+  
 }
 
 table {

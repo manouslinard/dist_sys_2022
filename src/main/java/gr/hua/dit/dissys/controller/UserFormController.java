@@ -33,6 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,6 +60,9 @@ public class UserFormController {
 	@Autowired
 	private AdminService adminService;
 
+	@Autowired
+	private UserRepository userRepository;
+	
 	@GetMapping("/")
 	public String index() {
 		return "index";
@@ -341,7 +345,25 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/adminform")
-	public String saveAdmin(@ModelAttribute("admin") AverageUser admin) {
+	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult) {
+	    if (userEmailExist(admin.getEmail())) {
+	        bindingResult.rejectValue("email", "error.user", "Email already in use.");
+	    }
+	    
+	    if(userUsernameExist(admin.getUsername())) {
+	        bindingResult.rejectValue("username", "error.user", "Username already in use.");	    	
+	    }
+	    
+	    if(admin.getAfm() != null) {
+		    if(admin.getAfm()!="" && !isValidAFM(admin.getAfm())) {
+		        bindingResult.rejectValue("afm", "error.user", "AFM should be exactly 11 digits.");	    	
+		    }
+	    }
+	    
+	    if (bindingResult.hasErrors()) {
+	        return "add-admin";
+	    }
+		
 		setBlankAttr(admin);
 		adminService.saveAdmin(admin);
 		return "redirect:/";
@@ -393,4 +415,19 @@ public class UserFormController {
 		return "redirect:/";
 	}
 
+
+	private boolean userEmailExist(String email) {
+		return userRepository.existsByEmail(email);
+	}
+
+	private boolean userUsernameExist(String username) {
+		return userRepository.existsByUsername(username);
+	}
+
+
+	private boolean isValidAFM(String str) {
+		// checks if input AFM is 11 digits:
+	    return str.matches("\\d{11}");
+	}
+	
 }
