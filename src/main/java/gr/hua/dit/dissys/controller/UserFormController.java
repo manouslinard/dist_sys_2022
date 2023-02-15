@@ -411,17 +411,27 @@ public class UserFormController {
 
 	
 	@PostMapping(path = "/leasecom")
-	public String saveComment(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String saveComment(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
-		}
-		Lease lease= leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
-	
-		lease.setTenantCom(leaseFormRequest.getTenant_com());
-		leaseService.saveLease(lease);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_in_username = auth.getName();
+		
+		AverageUser tenant = tenantService.findTenant(logged_in_username); 
+		
+		List<Lease> leases = tenant.getUserLeases();
+		
+		for(Lease l: leases) {
+			if(l.getTitle().equals(leaseFormRequest.getTitle())) {
+				l.setTenantCom(leaseFormRequest.getTenant_com());
+				leaseService.saveLease(l);
 
-		return "redirect:/";
+				return "redirect:/";
+			}
+		}
+		
+		bindingResult.rejectValue("title", "error.user", "Lease title not found.");
+		return "add-lease-com";
+		
 	}
 
 
