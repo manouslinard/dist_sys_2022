@@ -196,6 +196,15 @@ public class UserFormController {
 			}
 		} catch(ResponseStatusException r) {
 		}
+		
+		Contract c = null;
+		try {
+			c = contractService.findContractByTitle(leaseFormRequest.getTitle());
+			if(c != null) {
+				bindingResult.rejectValue("title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
+		}
 
 		AverageUser tenant = null;
 		try {

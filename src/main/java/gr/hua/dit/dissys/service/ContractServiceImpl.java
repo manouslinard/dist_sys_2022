@@ -3,9 +3,12 @@ package gr.hua.dit.dissys.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import gr.hua.dit.dissys.entity.Contract;
+import gr.hua.dit.dissys.entity.Lease;
 import gr.hua.dit.dissys.repository.ContractRepository;
 
 import javax.transaction.Transactional;
@@ -38,6 +41,17 @@ public class ContractServiceImpl implements ContractService{
 	@Transactional
 	public void deleteContract(int id) {
         contractRepository.deleteById(id);		
+	}
+
+	@Override
+	public Contract findContractByTitle(String contractTitle) {
+		List<Contract> contracts = contractRepository.findAll();
+		for(Contract c:contracts){
+			if(c.getTitle().equals(contractTitle)){
+				return c;
+			}
+		}
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lease not found");
 	}
 
 }

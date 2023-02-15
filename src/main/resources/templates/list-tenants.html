@@ -53,6 +53,13 @@
 		</script>
 
 	</div>
+	<div th:if="${ #lists.isEmpty(tenants)}">		
+		<table id="listTable">
+		<thead>
+			 <th scope="col">No Tenants found.</th>
+		</thead>
+		</table>
+	</div>
 	<script>
 		// light-dark mode:
 		let slider = document.getElementById("myRange");
