@@ -36,6 +36,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UserFormController {
@@ -335,15 +336,6 @@ public class UserFormController {
 		}
 	}
 
-	private boolean checkNullEmptyBlank(String strToCheck) {
-		// check whether the given string is null or empty or blank
-		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	@GetMapping("/adminlist")
 	public String showAdminList(Model model) {
 		List<AverageUser> admins = adminService.getAdmins();
@@ -457,5 +449,58 @@ public class UserFormController {
 		
 	    return null;
 	}
+	
+	
+	private boolean checkNullEmptyBlank(String strToCheck) {
+		// check whether the given string is null or empty or blank
+		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("errorMsg", "Your username and password are invalid.");
+
+        if (logout != null)
+            model.addAttribute("msg", "You have been logged out successfully.");
+
+        return "login";
+    }
+
+	
+	
+	
+//    @RequestMapping(value = "/registerTenant", method = RequestMethod.GET)
+//    public ModelAndView registerTenant() {
+//        return new ModelAndView("registration-tenant", "user", new AverageUser());
+//    }
+//
+//    @RequestMapping(value = "/registerTenant", method = RequestMethod.POST)
+//    public ModelAndView processRegisterTenant(@ModelAttribute("user") AverageUser userRegistration) {
+//    	// if user is tenant:
+//    	setBlankAttr(userRegistration);
+//    	tenantService.saveTenant(userRegistration);
+//        return new ModelAndView("redirect:/");
+//    }
+//
+//    @RequestMapping(value = "/registerLessor", method = RequestMethod.GET)
+//    public ModelAndView registerLessor() {
+//        return new ModelAndView("registration", "user", new AverageUser());
+//    }
+//
+//    @RequestMapping(value = "/registerLessor", method = RequestMethod.POST)
+//    public ModelAndView processRegisterLessor(@ModelAttribute("user") AverageUser userRegistration) {
+//    	// if user is lessor:
+//    	setBlankAttr(userRegistration);
+//    	//System.out.println(userRegistration.getPassword());
+//    	//System.out.println(userRegistration.getPhone() +", " + userRegistration.getAfm());
+//    	lessorService.saveLessor(userRegistration);
+//        return new ModelAndView("redirect:/");
+//    }
+        
 	
 }
