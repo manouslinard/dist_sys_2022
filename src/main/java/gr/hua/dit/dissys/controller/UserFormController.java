@@ -142,7 +142,11 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/lessorform")
-	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor) {
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) {
+		String s = checkRegisterErrors(lessor, bindingResult, "add-lessor");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(lessor);
 		lessorService.saveLessor(lessor);
 		return "redirect:/";
@@ -168,7 +172,11 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/tenantform")
-	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant) {
+	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult) {
+		String s = checkRegisterErrors(tenant, bindingResult, "add-tenant");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(tenant);
 		tenantService.saveTenant(tenant);
 		return "redirect:/";
@@ -346,24 +354,10 @@ public class UserFormController {
 
 	@PostMapping(path = "/adminform")
 	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult) {
-	    if (userEmailExist(admin.getEmail())) {
-	        bindingResult.rejectValue("email", "error.user", "Email already in use.");
-	    }
-	    
-	    if(userUsernameExist(admin.getUsername())) {
-	        bindingResult.rejectValue("username", "error.user", "Username already in use.");	    	
-	    }
-	    
-	    if(admin.getAfm() != null) {
-		    if(admin.getAfm()!="" && !isValidAFM(admin.getAfm())) {
-		        bindingResult.rejectValue("afm", "error.user", "AFM should be exactly 11 digits.");	    	
-		    }
-	    }
-	    
-	    if (bindingResult.hasErrors()) {
-	        return "add-admin";
-	    }
-		
+		String s = checkRegisterErrors(admin, bindingResult, "add-admin");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(admin);
 		adminService.saveAdmin(admin);
 		return "redirect:/";
@@ -424,10 +418,44 @@ public class UserFormController {
 		return userRepository.existsByUsername(username);
 	}
 
-
+	private boolean userAfmExist(String afm) {
+		List<AverageUser> all_users = userRepository.findAll();
+		for(AverageUser u: all_users) {
+			if(u.getAfm()!=null && u.getAfm().equals(afm)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean isValidAFM(String str) {
 		// checks if input AFM is 11 digits:
 	    return str.matches("\\d{11}");
+	}
+	
+	private String checkRegisterErrors(AverageUser user,  BindingResult bindingResult, String htmlPage) {
+		
+		if (userEmailExist(user.getEmail())) {
+	        bindingResult.rejectValue("email", "error.user", "Email already in use.");
+	    }
+	    
+	    if(userUsernameExist(user.getUsername())) {
+	        bindingResult.rejectValue("username", "error.user", "Username already in use.");	    	
+	    }
+	    
+	    if(user.getAfm() != null) {
+		    if(user.getAfm()!="" && !isValidAFM(user.getAfm())) {
+		        bindingResult.rejectValue("afm", "error.user", "AFM should be exactly 11 digits.");	    	
+		    } else if(user.getAfm()!="" && userAfmExist(user.getAfm())) {
+		        bindingResult.rejectValue("afm", "error.user", "AFM already in use.");
+		    }
+	    }
+	    
+	    if (bindingResult.hasErrors()) {
+	        return htmlPage;
+	    }
+		
+	    return null;
 	}
 	
 }

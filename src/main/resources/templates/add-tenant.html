@@ -1,79 +1,141 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{page_layout/layout}">
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Tenant Form Page</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Create Tenant</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
 </head>
 <body>
-	<div layout:fragment="main-content">
-		<form class="row g-3" th:action="@{/tenantform}" th:object="${tenant}"
-			method="post">
-			<div class="form-outline mb-4">
-				<label for="username" class="form-label">Username *</label> <input
-					type="text" th:field="*{username}" id="username"
-					placeholder="Username" class="form-control"> <span
-					th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="email" class="form-label">Email *</label> <input
-					type="email" th:field="*{email}" id="email" placeholder="Email"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="password" class="form-label">Password *</label> <input
-					type="password" th:field="*{password}" id="password"
-					placeholder="Password" class="form-control"> <span
-					th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-			</div>
-			<table class="form-outline mb-4">
-				<tr>
-					<td>First Name</td>
-					<td>Last Name</td>
-				</tr>
-				<tr>
-					<td><input type="text" th:field="*{firstName}" id="firstName"
-						placeholder="FirstName" class="form-control"> <span
-						th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-					</td>
-					<td><input type="text" th:field="*{lastName}" id="lastName"
-						placeholder="LastName" class="form-control"> <span
-						th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-					</td>
-				</tr>
-			</table>
-			<table>
-				<tr>
-					<td>Phone</td>
-					<td>AFM</td>
-				</tr>
-				<tr>
-					<td><input type="number" th:field="*{phone}" id="phone"
-						placeholder="Phone" class="form-control"> <span
-						th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
-					</td>
-					<td><input type="number" th:field="*{afm}" id="afm"
-						placeholder="AFM" class="form-control"> <span
-						th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}"></span></td>
-				</tr>
-			</table>
-			<!-- 
-	    <div class="form-outline mb-4">
-	        <label for="firstName" class="form-label">First Name</label>
-	        <input type="text" th:field="*{firstName}" id="firstName" placeholder="FirstName" class="form-control">
-	        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-	    </div>
-	    <div class="form-outline mb-4">
-	        <label for="lastName" class="form-label">Last Name</label>
-	        <input type="text" th:field="*{lastName}" id="name" placeholder="LastName" class="form-control">
-	        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-	    </div>
-	     -->
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-	</div>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<form th:action="@{/tenantform}" th:object="${tenant}" method="post"
+		id="subForm">
+		<div>
+			<label for="username" class="form-label-required">Tenant Username</label> <input
+				type="text" th:field="*{username}" id="username"
+				placeholder="Username" class="form-control">
+			<div id="username-error" class="error" style="display: none">Invalid
+				Username</div>
+			  <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
+			<br>
+		</div>
+		<div>
+			<label for="email" class="form-label-required">Email</label> <input
+				type="email" th:field="*{email}" id="email" placeholder="Email"
+				class="form-control">
+			<div id="email-error" class="error" style="display: none">Invalid
+				Email.</div>
+			  <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></span>
+			<br>
+		</div>
+		<div>
+			<label for="password" class="form-label-required">Password</label> <input
+				type="password" th:field="*{password}" id="password"
+				placeholder="Password" class="form-control"> 			
+				<div id="password-error" class="error" style="display: none; margin-bottom: 10px;">Invalid
+				Password.</div>
+		</div>
+		<table class="table-form">
+			<tr>
+				<td>First Name</td>
+				<td>Last Name</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{firstName}" id="firstName"
+					placeholder="FirstName" class="form-control"> <span
+					th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+				</td>
+				<td><input type="text" th:field="*{lastName}" id="lastName"
+					placeholder="LastName" class="form-control"> <span
+					th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+				</td>
+			</tr>
+			<tr>
+				<td>Phone</td>
+				<td>AFM</td>
+			</tr>
+			<tr>
+				<td><input type="number" th:field="*{phone}" id="phone"
+					placeholder="Phone" class="form-control"> <span
+					th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+				</td>
+				<td><input type="number" th:field="*{afm}" id="afm"
+					placeholder="AFM" class="form-control"> <span
+					th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}" class="error"></span></td>
+			</tr>
+		</table>
+		<button type="submit" id="submitButtonForm">Submit</button>
+	</form>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+
+		initializeBrightnessSlider(slider);
+
+		// check inputs:
+		var inputUsername = document.getElementById("username");
+		var inputEmail = document.getElementById("email");
+		var inputPassword = document.getElementById("password");
+		var submitButton = document.getElementById("submitButtonForm");
+
+		submitButton.addEventListener("click", function(e) {
+			  e.preventDefault();
+			  if (!isEmptyOrSpaces(inputUsername) && isValidEmail(inputEmail) && !isEmptyOrSpaces(inputPassword)) {
+				  form.submit();
+			  } else {
+				  if(isEmptyOrSpaces(inputUsername)) {
+						document.getElementById("username-error").style.display = "block";
+
+					  inputUsername.style.borderColor = "red";					  
+				  }
+				  if(isEmptyOrSpaces(inputEmail)) {
+						document.getElementById("email-error").style.display = "block";
+
+					  inputEmail.style.borderColor = "red";
+				  }
+				  if(isEmptyOrSpaces(inputPassword)) {
+						document.getElementById("password-error").style.display = "block";
+
+					  inputPassword.style.borderColor = "red";
+				  }
+			  }
+			});
+		
+		
+		inputUsername.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(inputUsername)) {
+				document.getElementById("username-error").style.display = "block";
+				inputUsername.style.borderColor = "red";
+			} else {
+				document.getElementById("username-error").style.display = "none";
+				inputUsername.style.borderColor = "black";
+			}
+		});
+
+		inputEmail.addEventListener("blur", function() {
+			if (!isValidEmail(inputEmail)) {
+				document.getElementById("email-error").style.display = "block";
+				inputEmail.style.borderColor = "red";
+			} else {
+				document.getElementById("email-error").style.display = "none";
+				inputEmail.style.borderColor = "black";
+			}
+		});
+
+		inputPassword.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(inputPassword)) {
+				document.getElementById("password-error").style.display = "block";
+				inputPassword.style.borderColor = "red";
+			} else {
+				document.getElementById("password-error").style.display = "none";
+				inputPassword.style.borderColor = "black";
+			}
+		});
+
+	</script>
 </body>
 </html>
