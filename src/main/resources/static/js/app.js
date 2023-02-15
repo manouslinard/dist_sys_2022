@@ -26,6 +26,31 @@ function isEmptyOrSpaces(str){
   return !str.value || str.value === null || str.value.match(/^ *$/) !== null || str.value.match(/\s/g) !== null;
 }
 
+function isDateSmaller(startDate, endDate) {
+	//alert(endDate.value);
+	if(!endDate.value||endDate.value === null||!startDate.value||startDate.value===null){
+		return true;
+	}
+  return new Date(startDate.value) <= new Date(endDate.value);
+}
+
+
+function isNotValidTitle(str){
+	if(str.value.startsWith(' ')){
+		return true;
+	}
+	
+  if (str.value.endsWith(' ')) {
+    return true;
+  }
+  if (!str.value) {
+	return true
+}
+if(str.value===null){
+	return true
+}
+  
+}
 
 function isValidEmail(email) {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

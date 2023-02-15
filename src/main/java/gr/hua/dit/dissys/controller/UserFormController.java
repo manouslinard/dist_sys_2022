@@ -185,14 +185,29 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/leaseform")
-	public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
+		
+		Lease l = null;
+		try {
+			l = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+			if(l != null) {
+				bindingResult.rejectValue("title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
 		}
-		if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
-		}
+
+		AverageUser tenant = null;
+		try {
+			tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+		} catch(ResponseStatusException r) {
+	        bindingResult.rejectValue("tenant_username", "error.user", "Tenant does not exist.");
+		}		
+		
+	    
+	    if (bindingResult.hasErrors()) {
+	        return "add-lease";
+	    }
 		String title = leaseFormRequest.getTitle();
 		String dimos = leaseFormRequest.getDimos();
 		String start_date = leaseFormRequest.getStartDate();
@@ -215,7 +230,6 @@ public class UserFormController {
 
 		Lease lease = new Lease(title, address, tk, dimos, reason, cost, start_date, end_date, sp_con, dei);
 
-		AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
 		tenant.getUserLeases().add(lease);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String lessor_username = auth.getName();
