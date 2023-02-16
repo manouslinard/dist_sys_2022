@@ -271,18 +271,59 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/leaseupdate")
-	public String updateLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String updateLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
-		}
-		if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
-		}
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String lessor_username = auth.getName();
 		AverageUser current_lessor = lessorService.findLessor(lessor_username);
-		Lease oldLease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+		
+		Lease oldLease = null;
+		
+		List<Lease> lessor_leases = current_lessor.getUserLeases();
+		for(Lease l: lessor_leases) {
+			if(l.getTitle().equals(leaseFormRequest.getTitle())) {
+				oldLease=l;
+				break;
+			}
+		}
+
+		if(oldLease == null) {
+			bindingResult.rejectValue("title", "error.user", "Title does not exist.");			
+		}
+		
+		Lease l = null;
+		try {
+			l = leaseService.findLeaseByTitle(leaseFormRequest.getNew_title());
+			if(l != null) {
+				bindingResult.rejectValue("new_title", "error.user", "Title already in use.");
+			}
+		} catch(ResponseStatusException r) {
+		}
+		
+		Contract c = null;
+		try {
+			c = contractService.findContractByTitle(leaseFormRequest.getNew_title());
+			if(c != null) {
+				bindingResult.rejectValue("new_title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
+		}
+				
+		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getTenant_username()))) {
+			try {
+				AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+			} catch(ResponseStatusException r) {
+		        bindingResult.rejectValue("tenant_username", "error.user", "Tenant does not exist.");
+			}
+			
+		}
+		
+		if (bindingResult.hasErrors()) {
+	        return "update-lease";
+	    }
+		
+		oldLease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
 
 		if (!checkNullEmptyBlank(leaseFormRequest.getAddress())) {
 			oldLease.setAddress(leaseFormRequest.getAddress());
@@ -323,7 +364,7 @@ public class UserFormController {
 			AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
 			tenant.getUserLeases().add(oldLease);
 		}
-
+		
 		leaseService.saveLease(oldLease);
 	//	lessor.getUserLeases().add(lease);
 

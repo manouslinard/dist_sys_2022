@@ -1,148 +1,198 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{page_layout/layout}">
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Update Lease Page</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Update Lease</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
 </head>
 <body>
-	<div layout:fragment="main-content">
-		<form class="row g-3" th:action="@{/leaseupdate}" th:object="${lease}"
-			method="post">
-			<div class="form-outline mb-4">
-				<label for="title" class="form-label">Requested Lease Title *</label> <input
-					type="text" th:field="*{title}" id="title" placeholder="Title"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="new_title" class="form-label">New Title</label> <input
-					type="text" th:field="*{new_title}" id="new_title" placeholder="New Title (Optional)"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('new_title')}" th:errors="*{new_title}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="tenant_username" class="form-label">New Tenant
-					Username</label> <input type="text" th:field="*{tenant_username}"
-					id="tenant_username" placeholder="New Tenant Username (Optional)"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('tenant_username')}"
-					th:errors="*{tenant_username}"></span>
-			</div>
-			<table class="form-outline mb-4" style="width: 100%">
-				<tr>
-					<td>Address</td>
-					<td style="width: 33%">Municipality</td>
-					<td style="width: 20%">Postal Code</td>
-				</tr>
-				<tr>
-					<td><input type="text" th:field="*{address}" id="address"
-						placeholder="Address" class="form-control"> <span
-						th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
-					</td>
-					<td><input type="text" th:field="*{dimos}" id="dimos"
-						placeholder="Municipality" class="form-control"> <span
-						th:if="${#fields.hasErrors('dimos')}" th:errors="*{dimos}"></span>
-					</td>
-					<td><input type="number" th:field="*{tk}" id="tk" min="0"
-						placeholder="Code" class="form-control"> <span
-						th:if="${#fields.hasErrors('tk')}" th:errors="*{tk}"></span></td>
-				</tr>
-			</table>
-			<table class="form-outline mb-4" style="width: 100%">
-				<tr>
-					<td style="width: 30%">Cost</td>
-					<td>Reason</td>
-				</tr>
-				<tr>
-					<td><input type="number" step="0.01" min="0"
-						th:field="*{cost}" id="cost" placeholder="Cost"
-						class="form-control"> <span
-						th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}"></span></td>
-					<td><input type="text" th:field="*{reason}" id="reason"
-						placeholder="Reason" class="form-control"> <span
-						th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></span>
-					</td>
-				</tr>
-			</table>
-			<table class="form-outline mb-4">
-				<tr>
-					<td>Start Date</td>
-					<td>End Date</td>
-				</tr>
-				<tr>
-					<td><input type="date" th:field="*{startDate}" id="startDate"
-						placeholder="Start Date" class="form-control"> <span
-						th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
-					</td>
-					<td><input type="date" th:field="*{endDate}" id="endDate"
-						placeholder="End Date" class="form-control"> <span
-						th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
-					</td>
-				</tr>
-			</table>
-			<table class="form-outline mb-4" style="width: 100%">
-				<tr>
-					<td>Special Condition</td>
-					<td style="width: 27%">Dei Number</td>
-				</tr>
-				<tr>
-					<td><input type="text" th:field="*{sp_con}" id="sp_con"
-						placeholder="Special Condition" class="form-control"> <span
-						th:if="${#fields.hasErrors('sp_con')}" th:errors="*{sp_con}"></span>
-					</td>
-					<td><input type="number" th:field="*{dei}" id="dei"
-						placeholder="Number" class="form-control" min="0"> <span
-						th:if="${#fields.hasErrors('dei')}" th:errors="*{dei}"></span></td>
-				</tr>
-			</table>
-			<!--<table class="form-outline mb-4">
-				<tr>
-					<td>First Name</td>
-					<td>Last Name</td>
-				</tr>
-				<tr>
-					<td><input type="text" th:field="*{firstName}" id="firstName"
-						placeholder="FirstName" class="form-control"> <span
-						th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-					</td>
-					<td><input type="text" th:field="*{lastName}" id="lastName"
-						placeholder="LastName" class="form-control"> <span
-						th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-					</td>
-				</tr>
-			</table>
-			<table>
-				<tr>
-					<td>Phone</td>
-					<td>AFM</td>
-				</tr>
-				<tr>
-					<td><input type="number" th:field="*{phone}" id="phone"
-						placeholder="Phone" class="form-control"> <span
-						th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
-					</td>
-					<td><input type="number" th:field="*{afm}" id="afm"
-						placeholder="AFM" class="form-control"> <span
-						th:if="${#fields.hasErrors('afm')}" th:errors="*{afm}"></span></td>
-				</tr>
-			</table> -->
-			<!-- 
-	    <div class="form-outline mb-4">
-	        <label for="firstName" class="form-label">First Name</label>
-	        <input type="text" th:field="*{firstName}" id="firstName" placeholder="FirstName" class="form-control">
-	        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-	    </div>
-	    <div class="form-outline mb-4">
-	        <label for="lastName" class="form-label">Last Name</label>
-	        <input type="text" th:field="*{lastName}" id="name" placeholder="LastName" class="form-control">
-	        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-	    </div>
-	     -->
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-	</div>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<form th:action="@{/leaseupdate}" th:object="${lease}" method="post"
+		id="subForm">
+		<div>
+			<label for="title" class="form-label-required">Requested Lease Title</label> <input
+				type="text" th:field="*{title}" id="title"
+				placeholder="Title" class="form-control">
+			<div id="title-error" class="error" style="display: none">Invalid
+				Title.</div>
+			  <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
+			<br>
+		</div>
+		<div>
+			<label for="new_title" class="form-label-optional">New Title</label> <input
+				type="text" th:field="*{new_title}" id="new_title"
+				placeholder="New Title (Optional)" class="form-control">
+			<div id="new-title-error" class="error" style="display: none">Invalid
+				Title.</div>
+			  <span th:if="${#fields.hasErrors('new_title')}" th:errors="*{new_title}" class="error"></span>
+			<br>
+		
+		</div>
+		<div>
+			<label for="tenant_username" class="form-label-optional">New Tenant Username</label> <input
+				type="text" th:field="*{tenant_username}" id="tenant_username"
+				placeholder="New Tenant Username (Optional)" class="form-control">
+			<div id="username-error" class="error" style="display: none">Invalid
+				Username.</div>
+			  <span th:if="${#fields.hasErrors('tenant_username')}" th:errors="*{tenant_username}" class="error"></span>
+			<br>
+		</div>
+		<table class="table-form">
+			<tr>
+				<td>Address</td>
+				<td style="width: 35%">Municipality</td>
+				<td style="width: 25%">Postal Code</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{address}" id="address"
+					placeholder="Address" class="form-control"> <span
+					th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+				</td>
+				<td><input type="text" th:field="*{dimos}" id="dimos"
+					placeholder="Municipality" class="form-control"> <span
+					th:if="${#fields.hasErrors('dimos')}" th:errors="*{dimos}"></span>
+				</td>
+				<td><input type="number" th:field="*{tk}" id="tk" min="0"
+					placeholder="Code" class="form-control"> <span
+					th:if="${#fields.hasErrors('tk')}" th:errors="*{tk}"></span></td>
+			</tr>
+		</table>
+		<table class="table-form">
+			<tr>
+				<td style="width: 30%">Cost</td>
+				<td>Reason</td>
+			</tr>
+			<tr>
+				<td><input type="number" step="0.01" min="0" th:field="*{cost}"
+					id="cost" placeholder="Cost" class="form-control"> <span
+					th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}"></span></td>
+				<td><input type="text" th:field="*{reason}" id="reason"
+					placeholder="Reason" class="form-control"> <span
+					th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></span>
+				</td>
+			</tr>
+		</table>
+		<table class="table-form">
+			<tr>
+				<td>Start Date</td>
+				<td>End Date</td>
+			</tr>
+			<tr>
+				<td><input type="date" th:field="*{startDate}" id="startDate"
+					placeholder="Start Date" class="form-control"> <span
+					th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+				</td>
+				<td><input type="date" th:field="*{endDate}" id="endDate"
+					placeholder="End Date" class="form-control"> <span
+					th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+				</td>
+			</tr>
+		</table>
+		<div id="startdate-error" class="error" style="display: none; margin-bottom: 13px;">Start date should be before end date.</div>
+		<table class="table-form">
+			<tr>
+				<td>Special Condition</td>
+				<td style="width: 27%">Dei Number</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{sp_con}" id="sp_con"
+					placeholder="Special Condition" class="form-control"> <span
+					th:if="${#fields.hasErrors('sp_con')}" th:errors="*{sp_con}"></span>
+				</td>
+				<td><input type="number" th:field="*{dei}" id="dei"
+					placeholder="Number" class="form-control" min="0"> <span
+					th:if="${#fields.hasErrors('dei')}" th:errors="*{dei}"></span></td>
+			</tr>
+		</table>
+		<button type="submit" id="submitButtonForm">Submit</button>
+	</form>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+
+		initializeBrightnessSlider(slider);
+
+		// check inputs:
+		var inputUsername = document.getElementById("tenant_username");
+		var inputTitle = document.getElementById("title");
+		var inputNewTitle = document.getElementById("new_title");
+		var inStartDate = document.getElementById("startDate");
+		var inEndDate = document.getElementById("endDate");
+		var submitButton = document.getElementById("submitButtonForm");
+
+		initSpanRemover([inputUsername, inputTitle, inputNewTitle]);
+		
+		submitButton.addEventListener("click", function(e) {
+			  e.preventDefault();
+			  if (!isNotValidTitle(inputTitle) && isDateSmaller(inStartDate,inEndDate)) {
+				  form.submit();
+			  } else {
+				  if(isNotValidTitle(inputTitle)) {
+					  document.getElementById("title-error").style.display = "block";
+					  inputTitle.style.borderColor = "red";
+				  }
+				  checkDates(inStartDate, inEndDate);
+			  }
+			});
+		
+		
+		inputUsername.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(inputUsername)) {
+				document.getElementById("username-error").style.display = "block";
+				inputUsername.style.borderColor = "red";
+			} else {
+				document.getElementById("username-error").style.display = "none";
+				inputUsername.style.borderColor = "black";
+			}
+		});
+
+		inputTitle.addEventListener("blur", function() {
+			if (isNotValidTitle(inputTitle)) {
+				document.getElementById("title-error").style.display = "block";
+				inputTitle.style.borderColor = "red";
+			} else {
+				document.getElementById("title-error").style.display = "none";
+				inputTitle.style.borderColor = "black";
+			}
+		});
+
+		inputNewTitle.addEventListener("blur", function() {
+			if (isNotValidTitle(inputNewTitle)) {
+				document.getElementById("new-title-error").style.display = "block";
+				inputNewTitle.style.borderColor = "red";
+			} else {
+				document.getElementById("new-title-error").style.display = "none";
+				inputNewTitle.style.borderColor = "black";
+			}
+		});
+		
+		inStartDate.addEventListener("blur", function() {
+			checkDates(inStartDate, inEndDate);
+		});
+		
+		inEndDate.addEventListener("blur", function() {
+			checkDates(inStartDate, inEndDate);
+		});
+		
+		function checkDates(startDate, endDate) {
+			if (!isDateSmaller(inStartDate,inEndDate)) {
+				document.getElementById("startdate-error").style.display = "block";
+				inEndDate.style.borderColor = "red";
+				document.getElementById("startdate-error").style.display = "block";
+				inStartDate.style.borderColor = "red";
+			} else {
+				document.getElementById("startdate-error").style.display = "none";
+				inEndDate.style.borderColor = "black";
+				document.getElementById("startdate-error").style.display = "none";
+				inStartDate.style.borderColor = "black";
+			}
+		}
+		
+	</script>
 </body>
 </html>

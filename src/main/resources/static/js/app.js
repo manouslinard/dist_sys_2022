@@ -57,6 +57,28 @@ function isValidEmail(email) {
   return re.test(String(email.value).toLowerCase());
 }
 
+function removeAllSpans(element) {
+  const spans = element.parentNode.querySelectorAll('span');
+  for (let i = 0; i < spans.length; i++) {
+    const span = spans[i];
+    span.parentNode.removeChild(span);
+  }
+}
+
+/**
+ *  Initializes auto-remove (removes when input changes) of spans of input element list.
+ *  @param {HTMLElement[]} elements an array of the wanted elements.
+ */
+function initSpanRemover(elements) {
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+	element.addEventListener("input", function(e){
+		removeAllSpans(element);			
+	});
+  }
+}
+
+
 
 function darkMode() {
     body.style.backgroundColor = "#333";

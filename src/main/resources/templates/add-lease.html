@@ -17,7 +17,7 @@
 				type="text" th:field="*{title}" id="title"
 				placeholder="Title" class="form-control">
 			<div id="title-error" class="error" style="display: none">Invalid
-				Title</div>
+				Title.</div>
 			  <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
 			<br>
 		</div>
@@ -26,7 +26,7 @@
 				type="text" th:field="*{tenant_username}" id="tenant_username"
 				placeholder="Tenant Username" class="form-control">
 			<div id="username-error" class="error" style="display: none">Invalid
-				Username</div>
+				Username.</div>
 			  <span th:if="${#fields.hasErrors('tenant_username')}" th:errors="*{tenant_username}" class="error"></span>
 			<br>
 		</div>

@@ -17,7 +17,7 @@
 				type="text" th:field="*{title}" id="title"
 				placeholder="Title" class="form-control">
 			<div id="title-error" class="error" style="display: none">Invalid
-				Title</div>
+				Title.</div>
 			  <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
 			<br>
 		</div>

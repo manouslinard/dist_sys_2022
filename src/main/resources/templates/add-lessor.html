@@ -17,7 +17,7 @@
 				type="text" th:field="*{username}" id="username"
 				placeholder="Username" class="form-control">
 			<div id="username-error" class="error" style="display: none">Invalid
-				Username</div>
+				Username.</div>
 			  <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
 			<br>
 		</div>
