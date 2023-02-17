@@ -128,6 +128,12 @@ img {
     transform: scale(1.06);
 }
 
+.navigation a.active {
+    color: #f48024;
+    /*pointer-events: none;*/
+    transform: scale(1.06);
+}
+
 .text-hover-color a {
     color: rgba(158, 157, 157, 0.92);
     /* text-decoration: none; */
