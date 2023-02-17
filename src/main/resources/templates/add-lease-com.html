@@ -41,6 +41,8 @@
 		var inputTitle = document.getElementById("title");
 		var submitButton = document.getElementById("submitButtonForm");
 
+		initSpanRemover([inputTitle]);
+		
 		submitButton.addEventListener("click", function(e) {
 			  e.preventDefault();
 			  if (!isNotValidTitle(inputTitle)) {

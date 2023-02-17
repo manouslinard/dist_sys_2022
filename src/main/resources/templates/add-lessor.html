@@ -82,6 +82,8 @@
 		var inputPassword = document.getElementById("password");
 		var submitButton = document.getElementById("submitButtonForm");
 
+		initSpanRemover([inputUsername, inputEmail]);
+		
 		submitButton.addEventListener("click", function(e) {
 			  e.preventDefault();
 			  if (!isEmptyOrSpaces(inputUsername) && isValidEmail(inputEmail) && !isEmptyOrSpaces(inputPassword)) {

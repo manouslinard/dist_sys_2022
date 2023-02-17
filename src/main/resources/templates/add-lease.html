@@ -118,6 +118,8 @@
 		var inEndDate = document.getElementById("endDate");
 		var submitButton = document.getElementById("submitButtonForm");
 
+		initSpanRemover([inputUsername, inputTitle]);
+		
 		submitButton.addEventListener("click", function(e) {
 			  e.preventDefault();
 			  if (!isEmptyOrSpaces(inputUsername) && !isNotValidTitle(inputTitle) && isDateSmaller(inStartDate,inEndDate)) {
