@@ -5,7 +5,7 @@
 * Install [docker](https://tinyurl.com/2m3bhahn).<br />
 ##
 * This project runs on http://localhost:8080.
-To see all the methods available, please checkout the user manuals in [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing) and [2nd Derivable](https://docs.google.com/document/d/1zQ9ZFB1zW_16LlmPExFsPG2_oqWwOZkO9oOKpkt20Oo/edit?usp=sharing).
+To see all the methods available, please checkout the user manuals in the [Final Derivable](https://docs.google.com/document/d/1WCegxCltcTQuTe6pABYdWdBc_Px4xWkqV1OJdaTyjwg/edit?usp=sharing).
 --------------------------------
 ## Database Setup with Terminal
 ### Setup postgres database using terminal
@@ -83,5 +83,4 @@ You can create users using /api/auth/signup in token - backend.<br />
 * [Backend Basic Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-basic) &rarr; Spring Boot Backend with Basic Auth, API endpoints provided to register users.
 
 ## Other Links:
-* [1st Derivable](https://docs.google.com/document/d/1bqAPtyo7gYjIALpuRU-l6SihqhNbUe778N-UDNJwpnI/edit?usp=sharing)
-* [2nd Derivable](https://docs.google.com/document/d/1zQ9ZFB1zW_16LlmPExFsPG2_oqWwOZkO9oOKpkt20Oo/edit?usp=sharing)
+* [Final Derivable](https://docs.google.com/document/d/1WCegxCltcTQuTe6pABYdWdBc_Px4xWkqV1OJdaTyjwg/edit?usp=sharing)
