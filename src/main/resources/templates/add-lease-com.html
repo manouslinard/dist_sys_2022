@@ -1,30 +1,71 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{page_layout/layout}">
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Add Lease Comment</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Comment Lease</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
 </head>
 <body>
-	<div layout:fragment="main-content">
-		<form class="row g-3" th:action="@{/leasecom}" th:object="${lease}"
-			method="post">
-			<div class="form-outline mb-4">
-				<label for="title" class="form-label">Requested Lease Title *</label> <input
-					type="text" th:field="*{title}" id="title" placeholder="Title"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
-			</div>
-			<div class="form-outline mb-4">
-				<label for="tenant_com" class="form-label">Comment</label> <input
-					type="text" th:field="*{tenant_com}" id="tenant_com" placeholder="Comment"
-					class="form-control"> <span
-					th:if="${#fields.hasErrors('tenant_com')}" th:errors="*{tenant_com}"></span>
-			</div>
-			<button type="submit" class="btn btn-primary">Submit Comment</button>
-		</form>
-	</div>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<form th:action="@{/leasecom}" th:object="${lease}" method="post"
+		id="subForm">
+		<div>
+			<label for="title" class="form-label-required">Requested Lease Title</label> <input
+				type="text" th:field="*{title}" id="title"
+				placeholder="Title" class="form-control">
+			<div id="title-error" class="error" style="display: none">Invalid
+				Title.</div>
+			  <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
+			<br>
+		</div>
+		<div>
+			<label for="tenant_com" class="form-label-optional">Comment</label> <input
+				type="text" th:field="*{tenant_com}" id="tenant_com" placeholder="Comment"
+				class="form-control"> <span
+				th:if="${#fields.hasErrors('tenant_com')}" th:errors="*{tenant_com}"></span>
+		</div>
+		<button type="submit" id="submitButtonForm">Submit Comment</button>
+	</form>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+
+		initializeBrightnessSlider(slider);
+
+		// check inputs:
+		var inputTitle = document.getElementById("title");
+		var submitButton = document.getElementById("submitButtonForm");
+
+		initSpanRemover([inputTitle]);
+		
+		submitButton.addEventListener("click", function(e) {
+			  e.preventDefault();
+			  if (!isNotValidTitle(inputTitle)) {
+				  form.submit();
+			  } else {
+				  if(isNotValidTitle(inputTitle)) {
+						document.getElementById("title-error").style.display = "block";
+					  inputTitle.style.borderColor = "red";
+				  }
+			  }
+			});
+		
+		inputTitle.addEventListener("blur", function() {
+			if (isNotValidTitle(inputTitle)) {
+				document.getElementById("title-error").style.display = "block";
+				inputTitle.style.borderColor = "red";
+			} else {
+				document.getElementById("title-error").style.display = "none";
+				inputTitle.style.borderColor = "black";
+			}
+		});
+
+	</script>
+
 </body>
 </html>

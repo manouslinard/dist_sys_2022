@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Slider Header</title>
+</head>
+<body>
+  <header>
+    <nav class="navigation">
+	  <a><span sec:authorize="isAuthenticated()" class="badge" sec:authentication="name" 
+	        onmouseover="showAuthority()" id="nameBadge">
+	  </span>
+	  <span sec:authorize="isAuthenticated()" class="badge" style="display:none" 
+	        id="authorityBadge" onmouseout="hideAuthority()" sec:authentication="principal.authorities">
+	  </span></a>
+        <a id="home-link" sec:authorize="isAuthenticated()" href="/" th:href="@{/}" class="active">Home</a>
+        <a sec:authorize="!isAuthenticated()" href="/login" th:href="@{/login}">Login</a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:href="@{/logout}">Logout</a>
+    </nav>
+    <div class="slidecontainer">
+      <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        if (window.location.pathname === "/") {
+          $("#home-link").addClass("active").attr("href", "javascript:void(0)");
+        } else {
+          $("#home-link").removeClass("active").attr("href", "/");
+        }
+      });
+      function showAuthority() {
+          document.getElementById("nameBadge").style.display = "none";
+    	  document.getElementById("authorityBadge").style.display = "inline-block";
+	  }
+      function hideAuthority() {
+          document.getElementById("authorityBadge").style.display = "none";
+          document.getElementById("nameBadge").style.display = "inline-block";
+      }
+    </script>
+  </header>
+</body>
+</html>

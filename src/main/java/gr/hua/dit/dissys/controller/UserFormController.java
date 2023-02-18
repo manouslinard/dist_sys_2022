@@ -33,8 +33,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UserFormController {
@@ -59,6 +61,9 @@ public class UserFormController {
 	@Autowired
 	private AdminService adminService;
 
+	@Autowired
+	private UserRepository userRepository;
+	
 	@GetMapping("/")
 	public String index() {
 		return "index";
@@ -138,7 +143,11 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/lessorform")
-	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor) {
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) {
+		String s = checkRegisterErrors(lessor, bindingResult, "add-lessor");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(lessor);
 		lessorService.saveLessor(lessor);
 		return "redirect:/";
@@ -164,7 +173,11 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/tenantform")
-	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant) {
+	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult) {
+		String s = checkRegisterErrors(tenant, bindingResult, "add-tenant");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(tenant);
 		tenantService.saveTenant(tenant);
 		return "redirect:/";
@@ -172,14 +185,38 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/leaseform")
-	public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String saveLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
+		
+		Lease l = null;
+		try {
+			l = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+			if(l != null) {
+				bindingResult.rejectValue("title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
 		}
-		if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
+		
+		Contract c = null;
+		try {
+			c = contractService.findContractByTitle(leaseFormRequest.getTitle());
+			if(c != null) {
+				bindingResult.rejectValue("title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
 		}
+
+		AverageUser tenant = null;
+		try {
+			tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+		} catch(ResponseStatusException r) {
+	        bindingResult.rejectValue("tenant_username", "error.user", "Tenant does not exist.");
+		}		
+		
+	    
+	    if (bindingResult.hasErrors()) {
+	        return "add-lease";
+	    }
 		String title = leaseFormRequest.getTitle();
 		String dimos = leaseFormRequest.getDimos();
 		String start_date = leaseFormRequest.getStartDate();
@@ -202,7 +239,6 @@ public class UserFormController {
 
 		Lease lease = new Lease(title, address, tk, dimos, reason, cost, start_date, end_date, sp_con, dei);
 
-		AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
 		tenant.getUserLeases().add(lease);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String lessor_username = auth.getName();
@@ -235,18 +271,59 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/leaseupdate")
-	public String updateLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String updateLease(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
-		}
-		if (!startEarlierThanEnd(leaseFormRequest.getStartDate(), leaseFormRequest.getEndDate())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
-		}
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String lessor_username = auth.getName();
 		AverageUser current_lessor = lessorService.findLessor(lessor_username);
-		Lease oldLease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
+		
+		Lease oldLease = null;
+		
+		List<Lease> lessor_leases = current_lessor.getUserLeases();
+		for(Lease l: lessor_leases) {
+			if(l.getTitle().equals(leaseFormRequest.getTitle())) {
+				oldLease=l;
+				break;
+			}
+		}
+
+		if(oldLease == null) {
+			bindingResult.rejectValue("title", "error.user", "Title does not exist.");			
+		}
+		
+		Lease l = null;
+		try {
+			l = leaseService.findLeaseByTitle(leaseFormRequest.getNew_title());
+			if(l != null) {
+				bindingResult.rejectValue("new_title", "error.user", "Title already in use.");
+			}
+		} catch(ResponseStatusException r) {
+		}
+		
+		Contract c = null;
+		try {
+			c = contractService.findContractByTitle(leaseFormRequest.getNew_title());
+			if(c != null) {
+				bindingResult.rejectValue("new_title", "error.user", "Title already in use.");				
+			}
+		} catch(ResponseStatusException r) {
+		}
+				
+		if (!checkNullEmptyBlank(String.valueOf(leaseFormRequest.getTenant_username()))) {
+			try {
+				AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
+			} catch(ResponseStatusException r) {
+		        bindingResult.rejectValue("tenant_username", "error.user", "Tenant does not exist.");
+			}
+			
+		}
+		
+		if (bindingResult.hasErrors()) {
+	        return "update-lease";
+	    }
+		
+		oldLease = leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
 
 		if (!checkNullEmptyBlank(leaseFormRequest.getAddress())) {
 			oldLease.setAddress(leaseFormRequest.getAddress());
@@ -287,7 +364,7 @@ public class UserFormController {
 			AverageUser tenant = tenantService.findTenant(leaseFormRequest.getTenant_username());
 			tenant.getUserLeases().add(oldLease);
 		}
-
+		
 		leaseService.saveLease(oldLease);
 	//	lessor.getUserLeases().add(lease);
 
@@ -323,15 +400,6 @@ public class UserFormController {
 		}
 	}
 
-	private boolean checkNullEmptyBlank(String strToCheck) {
-		// check whether the given string is null or empty or blank
-		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	@GetMapping("/adminlist")
 	public String showAdminList(Model model) {
 		List<AverageUser> admins = adminService.getAdmins();
@@ -341,7 +409,11 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/adminform")
-	public String saveAdmin(@ModelAttribute("admin") AverageUser admin) {
+	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult) {
+		String s = checkRegisterErrors(admin, bindingResult, "add-admin");
+		if (s!=null) {
+			return s;
+		}
 		setBlankAttr(admin);
 		adminService.saveAdmin(admin);
 		return "redirect:/";
@@ -380,17 +452,129 @@ public class UserFormController {
 
 	
 	@PostMapping(path = "/leasecom")
-	public String saveComment(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest) {
+	public String saveComment(@ModelAttribute("lease") LeaseFormRequest leaseFormRequest, BindingResult bindingResult) {
 		// System.out.println("Start Date: "+leaseFormRequest.getStartDate());
-		if (checkNullEmptyBlank(leaseFormRequest.getTitle())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title should not be blank.");
-		}
-		Lease lease= leaseService.findLeaseByTitle(leaseFormRequest.getTitle());
-	
-		lease.setTenantCom(leaseFormRequest.getTenant_com());
-		leaseService.saveLease(lease);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_in_username = auth.getName();
+		
+		AverageUser tenant = tenantService.findTenant(logged_in_username); 
+		
+		List<Lease> leases = tenant.getUserLeases();
+		
+		for(Lease l: leases) {
+			if(l.getTitle().equals(leaseFormRequest.getTitle())) {
+				l.setTenantCom(leaseFormRequest.getTenant_com());
+				leaseService.saveLease(l);
 
-		return "redirect:/";
+				return "redirect:/";
+			}
+		}
+		
+		bindingResult.rejectValue("title", "error.user", "Lease title not found.");
+		return "add-lease-com";
+		
 	}
 
+
+	private boolean userEmailExist(String email) {
+		return userRepository.existsByEmail(email);
+	}
+
+	private boolean userUsernameExist(String username) {
+		return userRepository.existsByUsername(username);
+	}
+
+	private boolean userAfmExist(String afm) {
+		List<AverageUser> all_users = userRepository.findAll();
+		for(AverageUser u: all_users) {
+			if(u.getAfm()!=null && u.getAfm().equals(afm)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isValidAFM(String str) {
+		// checks if input AFM is 11 digits:
+	    return str.matches("\\d{11}");
+	}
+	
+	private String checkRegisterErrors(AverageUser user,  BindingResult bindingResult, String htmlPage) {
+		
+		if (userEmailExist(user.getEmail())) {
+	        bindingResult.rejectValue("email", "error.user", "Email already in use.");
+	    }
+	    
+	    if(userUsernameExist(user.getUsername())) {
+	        bindingResult.rejectValue("username", "error.user", "Username already in use.");	    	
+	    }
+	    
+	    if(user.getAfm() != null) {
+		    if(user.getAfm()!="" && !isValidAFM(user.getAfm())) {
+		        bindingResult.rejectValue("afm", "error.user", "AFM should be exactly 11 digits.");	    	
+		    } else if(user.getAfm()!="" && userAfmExist(user.getAfm())) {
+		        bindingResult.rejectValue("afm", "error.user", "AFM already in use.");
+		    }
+	    }
+	    
+	    if (bindingResult.hasErrors()) {
+	        return htmlPage;
+	    }
+		
+	    return null;
+	}
+	
+	
+	private boolean checkNullEmptyBlank(String strToCheck) {
+		// check whether the given string is null or empty or blank
+		if (strToCheck == null || strToCheck.isEmpty() || strToCheck.isBlank()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("errorMsg", "Your username and password are invalid.");
+
+        if (logout != null)
+            model.addAttribute("msg", "You have been logged out successfully.");
+
+        return "login";
+    }
+
+	
+	
+	
+//    @RequestMapping(value = "/registerTenant", method = RequestMethod.GET)
+//    public ModelAndView registerTenant() {
+//        return new ModelAndView("registration-tenant", "user", new AverageUser());
+//    }
+//
+//    @RequestMapping(value = "/registerTenant", method = RequestMethod.POST)
+//    public ModelAndView processRegisterTenant(@ModelAttribute("user") AverageUser userRegistration) {
+//    	// if user is tenant:
+//    	setBlankAttr(userRegistration);
+//    	tenantService.saveTenant(userRegistration);
+//        return new ModelAndView("redirect:/");
+//    }
+//
+//    @RequestMapping(value = "/registerLessor", method = RequestMethod.GET)
+//    public ModelAndView registerLessor() {
+//        return new ModelAndView("registration", "user", new AverageUser());
+//    }
+//
+//    @RequestMapping(value = "/registerLessor", method = RequestMethod.POST)
+//    public ModelAndView processRegisterLessor(@ModelAttribute("user") AverageUser userRegistration) {
+//    	// if user is lessor:
+//    	setBlankAttr(userRegistration);
+//    	//System.out.println(userRegistration.getPassword());
+//    	//System.out.println(userRegistration.getPhone() +", " + userRegistration.getAfm());
+//    	lessorService.saveLessor(userRegistration);
+//        return new ModelAndView("redirect:/");
+//    }
+        
+	
 }

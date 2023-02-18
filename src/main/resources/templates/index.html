@@ -1,17 +1,166 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{page_layout/layout}">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Index Page</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Make A Lease</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
 </head>
 <body>
-<div layout:fragment="main-content">
- <h1>
-     Home Page!
- </h1>
-</div>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<div sec:authorize="!isAuthenticated()">
+		<section class="section_center" id="skills">
+			<div class="logo hidden card front-skill" id="reg-lessor"
+				style="top: 80px;">
+				<h2>Register As Lessor</h2>
+				<br> <img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="logo hidden card tool-skill" id="reg-tenant"
+				style="top: 80px;">
+				<h2>Register As Tenant</h2>
+				<br> <img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+	<!-- Admin screen: -->
+	<div sec:authorize="hasRole('ADMIN')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" href="/lessorlist"
+				onclick="window.location.href='/lessorlist'" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/tenantlist"
+				onclick="window.location.href='/tenantlist'" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/tenantform"
+				onclick="window.location.href='/tenantform'" style="top: 50px">
+				<h2>Create Tenant</h2>
+				<img th:src="@{/images/add-tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" href="/lessorform"
+				onclick="window.location.href='/lessorform'">
+				<h2>Create Lessor</h2>
+				<img th:src="@{/images/add-lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/adminform"
+				onclick="window.location.href='/adminform'">
+				<h2>Create Admin</h2>
+				<img th:src="@{/images/add-admin.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/adminlist"
+				onclick="window.location.href='/adminlist'">
+				<h2>View Admins</h2>
+				<img th:src="@{/images/admin.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+
+	<!-- Lessor screen -->
+	<div sec:authorize="hasRole('LESSOR')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" href="/lessorlist"
+				onclick="window.location.href='/lessorlist'" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/tenantlist"
+				onclick="window.location.href='/tenantlist'" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/tenantform"
+				onclick="window.location.href='/tenantform'" style="top: 50px">
+				<h2>Create Tenant</h2>
+				<img th:src="@{/images/add-tenant.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card tool-skill" href="/leaselist"
+				onclick="window.location.href='/leaselist'">
+				<h2>View Leases</h2>
+				<img th:src="@{/images/lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/leaseform"
+				onclick="window.location.href='/leaseform'">
+				<h2>Create Lease</h2>
+				<img th:src="@{/images/add-lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/leaseupdate"
+				onclick="window.location.href='/leaseupdate'">
+				<h2>Update Lease</h2>
+				<img th:src="@{/images/edit-lease.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/contractlist"
+				onclick="window.location.href='/contractlist'">
+				<h2>View Contracts</h2>
+				<img th:src="@{/images/contract.png}" alt="Not_Found">
+			</div>
+		</section>
+	</div>
+
+	<!-- Tenant screen -->
+	<div sec:authorize="hasRole('TENANT')">
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" href="/lessorlist"
+				onclick="window.location.href='/lessorlist'" style="top: 50px">
+				<h2>View Lessors</h2>
+				<img th:src="@{/images/lessor.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/tenantlist"
+				onclick="window.location.href='/tenantlist'" style="top: 50px">
+				<h2>View Tenants</h2>
+				<img th:src="@{/images/tenant.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" href="/leaselist"
+				onclick="window.location.href='/leaselist'" style="top: 50px">
+				<h2>View Leases</h2>
+				<img th:src="@{/images/lease.png}" alt="Not_Found">
+			</div>
+		</section>
+		<section class="row section_center" id="skills">
+			<div class="column logo hidden card front-skill" href="/contractlist"
+				onclick="window.location.href='/contractlist'">
+				<h2>View Contracts</h2>
+				<img th:src="@{/images/contract.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card back-skill" href="/leasecom"
+				onclick="window.location.href='/leasecom'">
+				<h2>Comment on Lease</h2>
+				<img th:src="@{/images/comment.png}" alt="Not_Found">
+			</div>
+			<div class="column logo hidden card tool-skill" style="opacity: 0;">
+			</div>
+		</section>
+
+	</div>
+
+	<script>
+		// light-dark mode:
+		const cards = document.querySelectorAll('.card');
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		
+		initializeBrightnessSlider(slider);
+		
+		// fade-in animation:
+		const hiddenSections = document.querySelectorAll('.hidden');
+		fadeInAll(hiddenSections);
+		
+		// for registering clients:
+		document.getElementById("reg-lessor").addEventListener("click", function(){
+			window.location.href = "/lessorform";
+		});
+		document.getElementById("reg-tenant").addEventListener("click", function(){
+			window.location.href = "/tenantform";
+		});
+	</script>
+
 </body>
 </html>
