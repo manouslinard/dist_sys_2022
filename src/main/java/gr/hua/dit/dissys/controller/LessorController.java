@@ -70,8 +70,8 @@ public class LessorController implements LessorContrInterface {
 	}
 
 	private void isLessorAdmin(String lessorUsername, String error_msg, boolean allowAdmins) {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String logged_in_username = ((LoginRequest)principal).getUsername();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_in_username = auth.getName();
 		boolean isAdmin = false;
         if(allowAdmins) {
         	isAdmin = isAdmin(logged_in_username);

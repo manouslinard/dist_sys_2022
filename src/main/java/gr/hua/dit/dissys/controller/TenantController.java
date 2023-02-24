@@ -15,6 +15,7 @@ import gr.hua.dit.dissys.service.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,8 +58,8 @@ public class TenantController implements TenantContrInterface {
 	}
 
 	private void isTenantAdmin(String tenantUsername, String error_msg, boolean allowAdmins) {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String logged_in_username = ((LoginRequest)principal).getUsername();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_in_username = auth.getName();
 		boolean isAdmin = false;
         if(allowAdmins) {
         	isAdmin = isAdmin(logged_in_username);
