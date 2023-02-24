@@ -27,6 +27,11 @@ public class AverageUser {
 	@Column(name = "id")
 	private int id;
 
+	@Column(name = "verification_code", length = 64)
+	private String verificationCode;
+
+	private boolean enabled;
+
 	@Column(name = "first_name")
 	//@NotBlank(message = "Please enter the first name")
 	//@Size(max = 30, message = "Name should not be greater than 30 characters")
@@ -199,6 +204,21 @@ public class AverageUser {
 		this.phone = phone;
 	}
 
+	public String getVerificationCode() {
+		return verificationCode;
+	}
+
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	/*
 	 * // add convenience methods for bi-directional relation public void add(Lease

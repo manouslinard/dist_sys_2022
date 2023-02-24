@@ -1,28 +1,22 @@
 package gr.hua.dit.dissys.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import gr.hua.dit.dissys.entity.AverageUser;
-import gr.hua.dit.dissys.entity.Contract;
-import gr.hua.dit.dissys.entity.ERole;
-import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.entity.*;
 import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
-import gr.hua.dit.dissys.service.AdminService;
-import gr.hua.dit.dissys.service.ContractService;
-import gr.hua.dit.dissys.service.LeaseService;
-import gr.hua.dit.dissys.service.LessorService;
-import gr.hua.dit.dissys.service.TenantService;
+import gr.hua.dit.dissys.repository.VerificationRep;
+import gr.hua.dit.dissys.service.*;
 
+import net.bytebuddy.utility.RandomString;
+import org.aspectj.apache.bcel.classfile.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,8 +32,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.MessagingException;
+import javax.swing.text.Utilities;
+
 @Controller
 public class UserFormController {
+
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private LessorService lessorService;
@@ -60,6 +60,9 @@ public class UserFormController {
 
 	@Autowired
 	private AdminService adminService;
+
+	@Autowired
+	private VerificationRep verificationRep;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -143,15 +146,39 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/lessorform")
-	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) {
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
 		String s = checkRegisterErrors(lessor, bindingResult, "add-lessor");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(lessor);
-		lessorService.saveLessor(lessor);
+		Random random = new Random();
+		int verificationCode = 10000 + random.nextInt(90000); // Generates a random number between 10000 and 99999
+		System.out.println(verificationCode);
+		String randomCode = String.valueOf(verificationCode);
+		lessor.setVerificationCode(randomCode);
+		lessor.setEnabled(false);
+		VerificationCode verification = new VerificationCode(randomCode,lessor.getFirstName(), lessor.getLastName(),lessor.getEmail(), lessor.getUsername(), encoder.encode(lessor.getPassword()), lessor.getAfm(), lessor.getPhone(),ERole.ROLE_LESSOR.name());
+		try{
+			lessorService.sendVerificationEmail(lessor);
+			verificationRep.save(verification);
+			return "verify_email";
+		}
+		catch(Exception e){
+			System.out.println("Email failed");
+		}
+//		lessorService.saveLessor(lessor);
 		return "redirect:/";
 
+	}
+
+	@GetMapping("/verify")
+	public String verifyUser(@Param("code") String code) {
+		if (lessorService.verify(code)) {
+			return "verify_success";
+		} else {
+			return "verify_fail";
+		}
 	}
 
 	@GetMapping("/tenantform")
@@ -575,6 +602,6 @@ public class UserFormController {
 //    	lessorService.saveLessor(userRegistration);
 //        return new ModelAndView("redirect:/");
 //    }
-        
+
 	
 }
