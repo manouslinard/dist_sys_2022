@@ -69,17 +69,19 @@
 		</table>
 		<table class="table-form">
 			<tr>
-				<td>Start Date</td>
-				<td>End Date</td>
+				<td class="table-cell-req">Start Date</td>
+				<td class="table-cell-req">End Date</td>
 			</tr>
 			<tr>
 				<td><input type="date" th:field="*{startDate}" id="startDate"
-					placeholder="Start Date" class="form-control"> <span
-					th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+					placeholder="Start Date" class="form-control"> 
+					<div id="startDate-error" class="error" style="display: none">Start Date should not be blank.</div>
+					<span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
 				</td>
 				<td><input type="date" th:field="*{endDate}" id="endDate"
-					placeholder="End Date" class="form-control"> <span
-					th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+					placeholder="End Date" class="form-control"> 
+					<div id="endDate-error" class="error" style="display: none">End Date should not be blank.</div>
+					<span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
 				</td>
 			</tr>
 		</table>
@@ -118,11 +120,11 @@
 		var inEndDate = document.getElementById("endDate");
 		var submitButton = document.getElementById("submitButtonForm");
 
-		initSpanRemover([inputUsername, inputTitle]);
+		initSpanRemover([inputUsername, inputTitle, startDate, endDate]);
 		
 		submitButton.addEventListener("click", function(e) {
 			  e.preventDefault();
-			  if (!isEmptyOrSpaces(inputUsername) && !isNotValidTitle(inputTitle) && isDateSmaller(inStartDate,inEndDate)) {
+			  if (!isEmptyOrSpaces(inputUsername) && !isNotValidTitle(inputTitle) && !isEmptyOrSpaces(inStartDate) && !isEmptyOrSpaces(inEndDate) && isDateSmaller(inStartDate,inEndDate)) {
 				  form.submit();
 			  } else {
 				  if(isEmptyOrSpaces(inputUsername)) {
@@ -132,6 +134,14 @@
 				  if(isNotValidTitle(inputTitle)) {
 						document.getElementById("title-error").style.display = "block";
 					  inputTitle.style.borderColor = "red";
+				  }
+				  if(isEmptyOrSpaces(inStartDate)) {
+						document.getElementById("startDate-error").style.display = "block";
+					  inStartDate.style.borderColor = "red";					  
+				  }
+				  if(isEmptyOrSpaces(inEndDate)) {
+						document.getElementById("endDate-error").style.display = "block";
+					  inEndDate.style.borderColor = "red";					  
 				  }
 				  checkDates(inStartDate, inEndDate);
 			  }
@@ -159,10 +169,24 @@
 		});
 
 		inStartDate.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(inStartDate)) {
+				document.getElementById("startDate-error").style.display = "block";
+				inStartDate.style.borderColor = "red";
+			} else {
+				document.getElementById("startDate-error").style.display = "none";
+				inStartDate.style.borderColor = "black";
+			}
 			checkDates(inStartDate, inEndDate);
 		});
 		
 		inEndDate.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(inEndDate)) {
+				document.getElementById("endDate-error").style.display = "block";
+				inEndDate.style.borderColor = "red";
+			} else {
+				document.getElementById("endDate-error").style.display = "none";
+				inEndDate.style.borderColor = "black";
+			}
 			checkDates(inStartDate, inEndDate);
 		});
 		

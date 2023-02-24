@@ -172,6 +172,11 @@ form {
   animation: slideDown 0.5s ease-in-out;
 }
 
+.table-cell-req::after {
+  content: " *";
+  color: #FF0000;	
+}
+
 .form-label-required {
   font-weight: bold;
   margin-bottom: 10px;

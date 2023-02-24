@@ -82,12 +82,14 @@
 			</tr>
 			<tr>
 				<td><input type="date" th:field="*{startDate}" id="startDate"
-					placeholder="Start Date" class="form-control"> <span
-					th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+					placeholder="Start Date" class="form-control"> 
+					<div id="startDate-error" class="error" style="display: none">Start Date should not be blank.</div>
+					<span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
 				</td>
 				<td><input type="date" th:field="*{endDate}" id="endDate"
-					placeholder="End Date" class="form-control"> <span
-					th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+					placeholder="End Date" class="form-control"> 
+					<div id="endDate-error" class="error" style="display: none">End Date should not be blank.</div>
+					<span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
 				</td>
 			</tr>
 		</table>
@@ -124,13 +126,23 @@
 		var inStartDate = document.getElementById("startDate");
 		var inEndDate = document.getElementById("endDate");
 		var submitButton = document.getElementById("submitButtonForm");
-
-		initSpanRemover([inputUsername, inputTitle, inputNewTitle]);
+		
+		initSpanRemover([inputUsername, inputTitle, inputNewTitle, inStartDate, inEndDate]);
 		
 		submitButton.addEventListener("click", function(e) {
 			  e.preventDefault();
 			  if (!isNotValidTitle(inputTitle) && isDateSmaller(inStartDate,inEndDate)) {
-				  form.submit();
+				  if(isEmptyOrSpaces(inStartDate) && !isEmptyOrSpaces(inEndDate)) {
+						document.getElementById("startDate-error").style.display = "block";
+					  inStartDate.style.borderColor = "red";					  
+				  }
+				  else if(!isEmptyOrSpaces(inStartDate) && isEmptyOrSpaces(inEndDate)) {
+						document.getElementById("endDate-error").style.display = "block";
+					  inEndDate.style.borderColor = "red";					  
+				  }
+				  else {
+						form.submit();
+				  }
 			  } else {
 				  if(isNotValidTitle(inputTitle)) {
 					  document.getElementById("title-error").style.display = "block";
