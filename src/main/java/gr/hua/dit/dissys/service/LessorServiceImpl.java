@@ -84,9 +84,9 @@ public class LessorServiceImpl implements LessorService {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(userRole);
 		lessor.setRoles(roles);
-		if (lessor.getPassword() != null) {
-			lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
-		}
+//		if (lessor.getPassword() != null) {
+//			lessor.setPassword(passwordEncoder.encode(lessor.getPassword()));
+//		}
 
 //		sendVerificationEmail(lessor);
 		userRepository.save(lessor);
@@ -147,10 +147,10 @@ public class LessorServiceImpl implements LessorService {
 		userRepository.delete(lessor);
 	}
 
-	public void sendVerificationEmail(AverageUser user) {
+	public void sendVerificationEmail(VerificationCode user) {
 		// Generate a verification token for the user
 		String token = UUID.randomUUID().toString();
-		userRepository.save(user);
+		//userRepository.save(user);
 
 		// Construct the verification email
 		String subject = "Please verify your email address";
@@ -167,17 +167,15 @@ public class LessorServiceImpl implements LessorService {
 	}
 
 	public boolean verify(String verificationCode) {
+		//System.out.println("VERIFICATION CODE: "+ verificationCode);
 		List<VerificationCode> users = verificationRep.findAll();
 		for (VerificationCode user : users) {
+			//System.out.println("VERIFY: "+user.getVerificationCode());
 			if (user.getVerificationCode().equals(verificationCode)) {
-				if (user == null) {
-					return false;
-				} else {
-					user.setVerificationCode(null);
-					AverageUser lessor = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
-					saveLessor(lessor);
-					return true;
-				}
+				AverageUser lessor = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
+				saveLessor(lessor);
+				verificationRep.delete(user);
+				return true;
 			}
 		}
 		return false;

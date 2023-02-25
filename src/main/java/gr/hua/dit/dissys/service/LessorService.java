@@ -1,6 +1,7 @@
 package gr.hua.dit.dissys.service;
 
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.entity.VerificationCode;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,7 @@ public interface LessorService {
     
     public void deleteLessor(String username);
 
-    public void sendVerificationEmail(AverageUser user);
+    public void sendVerificationEmail(VerificationCode user);
 
     public boolean verify(String verificationCode);
 }

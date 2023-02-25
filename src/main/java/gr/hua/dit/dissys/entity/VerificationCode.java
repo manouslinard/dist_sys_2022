@@ -32,7 +32,7 @@ public class VerificationCode {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "verification_code")
+    @Column(name = "verificationCode")
     private String verificationCode;
 
     @Column(name = "first_name")

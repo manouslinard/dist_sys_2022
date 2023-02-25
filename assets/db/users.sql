@@ -50,10 +50,7 @@ CREATE TABLE IF NOT exists avg_users (
     last_name character varying(30),
     password character varying(120),
     phone character varying(255),
-    username character varying(20) UNIQUE,
-    verification_code character varying(64) UNIQUE,
-    enabled boolean
-
+    username character varying(20) UNIQUE
 );
 
 

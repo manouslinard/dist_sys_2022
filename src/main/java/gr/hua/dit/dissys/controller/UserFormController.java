@@ -146,7 +146,7 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/lessorform")
-	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult, Model model) throws MessagingException, UnsupportedEncodingException {
 		String s = checkRegisterErrors(lessor, bindingResult, "add-lessor");
 		if (s!=null) {
 			return s;
@@ -156,13 +156,13 @@ public class UserFormController {
 		int verificationCode = 10000 + random.nextInt(90000); // Generates a random number between 10000 and 99999
 		System.out.println(verificationCode);
 		String randomCode = String.valueOf(verificationCode);
-		lessor.setVerificationCode(randomCode);
-		lessor.setEnabled(false);
 		VerificationCode verification = new VerificationCode(randomCode,lessor.getFirstName(), lessor.getLastName(),lessor.getEmail(), lessor.getUsername(), encoder.encode(lessor.getPassword()), lessor.getAfm(), lessor.getPhone(),ERole.ROLE_LESSOR.name());
 		try{
-			lessorService.sendVerificationEmail(lessor);
+			lessorService.sendVerificationEmail(verification);
 			verificationRep.save(verification);
-			return "verify_email";
+			VerificationCode v = new VerificationCode();
+			model.addAttribute("verification", v);
+			return "verify_lessor";
 		}
 		catch(Exception e){
 			System.out.println("Email failed");
@@ -170,15 +170,6 @@ public class UserFormController {
 //		lessorService.saveLessor(lessor);
 		return "redirect:/";
 
-	}
-
-	@GetMapping("/verify")
-	public String verifyUser(@Param("code") String code) {
-		if (lessorService.verify(code)) {
-			return "verify_success";
-		} else {
-			return "verify_fail";
-		}
 	}
 
 	@GetMapping("/tenantform")
@@ -454,6 +445,27 @@ public class UserFormController {
 		return "add-admin";
 	}
 
+	@PostMapping(path = "/verifylessor")
+	public String saveVerification(@ModelAttribute("verification") VerificationCode v, BindingResult bindingResult) {
+		//lessorService.verify(v.getVerificationCode());
+		if (lessorService.verify(v.getVerificationCode())) {
+			return "verify_success";
+		} else {
+	        bindingResult.rejectValue("verificationCode", "error.user", "Verification Code does not exist. If you successfully registered before, try login.");
+			return "verify_lessor";
+		}
+		//return "redirect:/";
+
+	}
+
+	@GetMapping("/verifylessor")
+	public String showVerification(Model model) {
+		VerificationCode v = new VerificationCode();
+		model.addAttribute("verification", v);
+		return "verify_lessor";
+	}
+
+		
 	private boolean startEarlierThanEnd(String startDate, String endDate) {
 		if (checkNullEmptyBlank(startDate) || checkNullEmptyBlank(endDate)) {
 			return true; // continues execution.
