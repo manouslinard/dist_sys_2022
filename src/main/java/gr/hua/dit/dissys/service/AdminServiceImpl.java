@@ -45,9 +45,9 @@ public class AdminServiceImpl implements AdminService{
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(userRole);		
 		admin.setRoles(roles);
-		if (admin.getPassword() != null) {
-			admin.setPassword(passwordEncoder.encode(admin.getPassword()));
-		}
+//		if (admin.getPassword() != null) {
+//			admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+//		}
         userRepository.save(admin);		
 		registerAdmin(admin);
 

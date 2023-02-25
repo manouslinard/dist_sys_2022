@@ -199,7 +199,6 @@ public class AverageUser {
 		this.phone = phone;
 	}
 
-
 	/*
 	 * // add convenience methods for bi-directional relation public void add(Lease
 	 * alease) { if(leases == null) { leases = new ArrayList<>(); }

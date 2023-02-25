@@ -1,29 +1,25 @@
 package gr.hua.dit.dissys.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import gr.hua.dit.dissys.entity.AverageUser;
-import gr.hua.dit.dissys.entity.Contract;
-import gr.hua.dit.dissys.entity.ERole;
-import gr.hua.dit.dissys.entity.Lease;
-import gr.hua.dit.dissys.entity.Role;
+import gr.hua.dit.dissys.entity.*;
 import gr.hua.dit.dissys.payload.request.LeaseFormRequest;
 import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
-import gr.hua.dit.dissys.service.AdminService;
-import gr.hua.dit.dissys.service.ContractService;
-import gr.hua.dit.dissys.service.LeaseService;
-import gr.hua.dit.dissys.service.LessorService;
-import gr.hua.dit.dissys.service.TenantService;
+import gr.hua.dit.dissys.repository.VerificationRep;
+import gr.hua.dit.dissys.service.*;
 
+import net.bytebuddy.utility.RandomString;
+import org.aspectj.apache.bcel.classfile.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,8 +34,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.MessagingException;
+import javax.swing.text.Utilities;
+import javax.transaction.Transactional;
+
 @Controller
 public class UserFormController {
+
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private LessorService lessorService;
@@ -62,7 +65,13 @@ public class UserFormController {
 	private AdminService adminService;
 
 	@Autowired
+	private VerificationRep verificationRep;
+
+	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private JavaMailSender mailSender;	
 	
 	@GetMapping("/")
 	public String index() {
@@ -143,23 +152,75 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/lessorform")
-	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult) {
+	public String saveLessor(@ModelAttribute("lessor") AverageUser lessor, BindingResult bindingResult, Model model) throws MessagingException, UnsupportedEncodingException {
 		String s = checkRegisterErrors(lessor, bindingResult, "add-lessor");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(lessor);
-		lessorService.saveLessor(lessor);
-		return "redirect:/";
+		return showVerificationForm(lessor, model, ERole.ROLE_LESSOR.name());
 
 	}
+	
+	private String showVerificationForm(AverageUser user, Model model, String role_name) {
+		String randomCode = null;
+		while(true) {
+			Random random = new Random();
+			int verificationCode = 10000 + random.nextInt(90000); // Generates a random number between 10000 and 99999
+			randomCode = String.valueOf(verificationCode);
+			VerificationCode code = verificationRep.findByVerificationCode(randomCode);
+			if (code == null) {
+				break;
+			}
+		}
+		VerificationCode verification = new VerificationCode(randomCode,user.getFirstName(), user.getLastName(),user.getEmail(), user.getUsername(), encoder.encode(user.getPassword()), user.getAfm(), user.getPhone(), role_name);
+		
+		long minTimestamp = -1;
+		int countTimestamps = 0;
+		List<VerificationCode> verCodes = verificationRep.findByEmail(user.getEmail());
+		if(verCodes != null) {
+			for(VerificationCode c: verCodes) {
+				if(minTimestamp > c.getTimeStamp() || minTimestamp < 0) {
+					minTimestamp = c.getTimeStamp();
+				}
+				countTimestamps += 1;
+			}
+		}
+		long currentTime = System.currentTimeMillis();
+		if ((currentTime - minTimestamp) < (1.5 * countTimestamps * 60 * 1000)) {
+		    // Calculate difference in minutes
+		    long diffMillis = (long) (1.5 * countTimestamps * 60 * 1000) - (currentTime - minTimestamp);
+		    long diffMinutes = diffMillis / (60 * 1000);
+		    long diffSeconds = (diffMillis / 1000) % 60;
+		    String diffTimeStr = String.format("New Verification can be generated in %d:%02d minutes.", diffMinutes, diffSeconds);
+		    model.addAttribute("diffMinutes", diffTimeStr);
 
+		    verification.setTimeStamp(currentTime);
+		    VerificationCode v = new VerificationCode();
+		    model.addAttribute("verification", v);
+		    return "verify_user";
+		}
+
+		
+		try{
+			verification.setTimeStamp(currentTime);
+			sendVerificationEmail(verification);
+			deleteOldVerificationCodes(verification.getEmail());
+			verificationRep.save(verification);
+			VerificationCode v = new VerificationCode();
+			model.addAttribute("verification", v);
+			return "verify_user";
+		}
+		catch(Exception e){
+			System.out.println("Email failed");
+		}
+//		lessorService.saveLessor(lessor);
+		return "redirect:/";
+	}
+	
 	@GetMapping("/tenantform")
 	public String showTenantForm(Model model) {
 		AverageUser tenant = new AverageUser();
-//        HashSet<Role> set= new HashSet();
-//        set.add(new Role(ERole.ROLE_TENANT));
-//        tenant.setRoles(set);
 		model.addAttribute("tenant", tenant);
 		return "add-tenant";
 	}
@@ -173,14 +234,13 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/tenantform")
-	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult) {
+	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult, Model model) {
 		String s = checkRegisterErrors(tenant, bindingResult, "add-tenant");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(tenant);
-		tenantService.saveTenant(tenant);
-		return "redirect:/";
+		return showVerificationForm(tenant, model, ERole.ROLE_TENANT.name());
 
 	}
 
@@ -409,15 +469,13 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/adminform")
-	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult) {
+	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult, Model model) {
 		String s = checkRegisterErrors(admin, bindingResult, "add-admin");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(admin);
-		adminService.saveAdmin(admin);
-		return "redirect:/";
-
+		return showVerificationForm(admin, model, ERole.ROLE_ADMIN.name());
 	}
 
 	@GetMapping("/adminform")
@@ -427,6 +485,33 @@ public class UserFormController {
 		return "add-admin";
 	}
 
+	@PostMapping(path = "/verifyuser")
+	public String saveVerification(@ModelAttribute("verification") VerificationCode v, BindingResult bindingResult) {
+		//lessorService.verify(v.getVerificationCode());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_username = auth.getName();
+		System.out.println(v.getEmail());
+		if (verify(v.getVerificationCode())) {
+			if(isUserAdmin(logged_username)) {
+				return "redirect:/";
+			}
+			return "verify_success";
+		} else {
+	        bindingResult.rejectValue("verificationCode", "error.user", "Verification Code does not exist. If you successfully registered before, try login.");
+			return "verify_user";
+		}
+		//return "redirect:/";
+
+	}
+
+	@GetMapping("/verifyuser")
+	public String showVerification(Model model) {
+		VerificationCode v = new VerificationCode();
+		model.addAttribute("verification", v);
+		return "verify_user";
+	}
+
+		
 	private boolean startEarlierThanEnd(String startDate, String endDate) {
 		if (checkNullEmptyBlank(startDate) || checkNullEmptyBlank(endDate)) {
 			return true; // continues execution.
@@ -545,7 +630,51 @@ public class UserFormController {
         return "login";
     }
 
+	private void sendVerificationEmail(VerificationCode user) {
+		// Generate a verification token for the user
+
+		// Construct the verification email
+		String subject = "Please verify your email address";
+		String text = "Please enter the following verification code to verify your email address: "
+				+ user.getVerificationCode();
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(user.getEmail());
+		message.setSubject(subject);
+		message.setText(text);
+
+		// Send the verification email
+		mailSender.send(message);
+
+	}
+
+	private boolean verify(String verificationCode) {
+		VerificationCode user = verificationRep.findByVerificationCode(verificationCode);
+		if(user == null) {
+			return false;
+		}
+		AverageUser ver_user = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
+		if(user.getRoles().equals(ERole.ROLE_LESSOR.name())) {
+			lessorService.saveLessor(ver_user);					
+		} else if(user.getRoles().equals(ERole.ROLE_TENANT.name())) {
+			tenantService.saveTenant(ver_user);
+		} else if(user.getRoles().equals(ERole.ROLE_ADMIN.name())) {
+			adminService.saveAdmin(ver_user);
+		} else {
+			// never reaches here, but just in case:
+			return false;
+		}
+		deleteOldVerificationCodes(user.getEmail());
+		return true;
+	}
 	
+	private void deleteOldVerificationCodes(String email) {
+		List<VerificationCode> users = verificationRep.findByEmail(email);
+		if(users != null) {
+			for (VerificationCode u: users) {
+				verificationRep.delete(u);			
+			}		
+		}
+	}
 	
 	
 //    @RequestMapping(value = "/registerTenant", method = RequestMethod.GET)
@@ -575,6 +704,21 @@ public class UserFormController {
 //    	lessorService.saveLessor(userRegistration);
 //        return new ModelAndView("redirect:/");
 //    }
-        
+
+	private boolean isUserAdmin(String username) {
+		AverageUser user = userRepository.findByUsername(username).orElse(null);
+		if(user == null) {
+			return false;
+		}
+		Iterator<Role> iterator = user.getRoles().iterator();
+		String role_admin = ERole.ROLE_ADMIN.name();
+		while (iterator.hasNext()) {
+		    Role element = iterator.next();
+		    if(element.getName().name().equals(role_admin)){
+		    	return true;
+		    }
+		}
+		return false;
+	}
 	
 }

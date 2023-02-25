@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Verify</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
+</head>
+<body>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<form th:action="@{/verifyuser}" th:object="${verification}" method="post"
+		id="subForm">
+		<input type="number" th:field="*{verificationCode}" id="verificationCode"
+				placeholder="Verification Code (Check Email)" class="form-control">
+				<div id="verification-error" class="error" style="display: none">Invalid
+				Verification Code.</div>
+		<span th:text="${diffMinutes}" class="error"></span>
+		<span th:if="${#fields.hasErrors('verificationCode')}" th:errors="*{verificationCode}" class="error"></span>
+		<br>
+		<button type="submit" id="submitButtonForm">Submit</button>
+	</form>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+
+		initializeBrightnessSlider(slider);
+
+		// check inputs:
+		var verCode = document.getElementById("verificationCode");
+		var submitButton = document.getElementById("submitButtonForm");
+		
+		initSpanRemover([verCode]);
+
+		submitButton.addEventListener("click", function(e) {
+			  e.preventDefault();
+			  if (!isEmptyOrSpaces(verCode)) {
+				  form.submit();
+			  } else {
+				  if(isEmptyOrSpaces(verCode)) {
+						document.getElementById("verification-error").style.display = "block";
+
+					  verCode.style.borderColor = "red";					  
+				  }
+				}
+			});
+		
+		
+		verCode.addEventListener("blur", function() {
+			if (isEmptyOrSpaces(verCode)) {
+				document.getElementById("verification-error").style.display = "block";
+				verCode.style.borderColor = "red";
+			} else {
+				document.getElementById("verification-error").style.display = "none";
+				verCode.style.borderColor = "black";
+			}
+		});
+
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0 user-scalable=no">
+<title>Verify</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/app.js}"></script>
+</head>
+<body>
+	<div th:replace="page_layout/slider-header :: header"></div>
+	<h1 style="text-align: center;margin-top: 50vh;transform: translateY(-50%);">Verification Success! Press <a href="/login" style="color: #f48024">login</a> to continue.</h1>
+	<script>
+		// light-dark mode:
+		let slider = document.getElementById("myRange");
+		let body = document.querySelector("body");
+		const form = document.getElementById("subForm");
+
+		initializeBrightnessSlider(slider);
+	</script>
+</body>
+</html>

@@ -1,7 +1,10 @@
 package gr.hua.dit.dissys.service;
 
 import gr.hua.dit.dissys.entity.AverageUser;
+import gr.hua.dit.dissys.entity.VerificationCode;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface LessorService {
@@ -16,4 +19,5 @@ public interface LessorService {
     public void deleteLessorById(int id);
     
     public void deleteLessor(String username);
+
 }

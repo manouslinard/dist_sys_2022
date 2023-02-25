@@ -51,7 +51,6 @@ CREATE TABLE IF NOT exists avg_users (
     password character varying(120),
     phone character varying(255),
     username character varying(20) UNIQUE
-    
 );
 
 
