@@ -56,7 +56,8 @@ public class VerificationCode {
     @Column(name = "password")
     private String password;
 
-
+    @Column(name = "timeStamp")
+    private long timeStamp;
 
     @Column(name = "afm")
     //@NotBlank(message = "Please enter your AFM")
@@ -73,7 +74,22 @@ public class VerificationCode {
 
     }
 
-    public String getVerificationCode() {
+    
+    public long getTimeStamp() {
+		return timeStamp;
+	}
+
+
+
+
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+
+
+
+
+	public String getVerificationCode() {
         return verificationCode;
     }
 

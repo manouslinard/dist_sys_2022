@@ -13,9 +13,10 @@
 	<form th:action="@{/verifyuser}" th:object="${verification}" method="post"
 		id="subForm">
 		<input type="number" th:field="*{verificationCode}" id="verificationCode"
-				placeholder="Verification Code" class="form-control">
+				placeholder="Verification Code (Check Email)" class="form-control">
 				<div id="verification-error" class="error" style="display: none">Invalid
 				Verification Code.</div>
+		<span th:text="${diffMinutes}" class="error"></span>
 		<span th:if="${#fields.hasErrors('verificationCode')}" th:errors="*{verificationCode}" class="error"></span>
 		<br>
 		<button type="submit" id="submitButtonForm">Submit</button>
@@ -58,6 +59,7 @@
 			}
 		});
 
+		
 	</script>
 </body>
 </html>

@@ -13,6 +13,7 @@
 	        id="authorityBadge" onmouseout="hideAuthority()" sec:authentication="principal.authorities">
 	  </span></a>
         <a id="home-link" sec:authorize="isAuthenticated()" href="/" th:href="@{/}" class="active">Home</a>
+        <a id="verify-link" href="/verifyuser" th:href="@{/verifyuser}">Verify</a>
         <a sec:authorize="!isAuthenticated()" href="/login" th:href="@{/login}">Login</a>
         <a sec:authorize="isAuthenticated()" href="/logout" th:href="@{/logout}">Logout</a>
     </nav>
@@ -28,6 +29,13 @@
           $("#home-link").removeClass("active").attr("href", "/");
         }
       });
+      $(document).ready(function() {
+          if (window.location.pathname === "/verifyuser") {
+            $("#verify-link").addClass("active").attr("href", "javascript:void(0)");
+          } else {
+            $("#verify-link").removeClass("active").attr("href", "/verifyuser");
+          }
+        });
       function showAuthority() {
           document.getElementById("nameBadge").style.display = "none";
     	  document.getElementById("authorityBadge").style.display = "inline-block";

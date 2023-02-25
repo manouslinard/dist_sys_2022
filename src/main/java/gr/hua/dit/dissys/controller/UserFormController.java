@@ -174,8 +174,38 @@ public class UserFormController {
 			}
 		}
 		VerificationCode verification = new VerificationCode(randomCode,user.getFirstName(), user.getLastName(),user.getEmail(), user.getUsername(), encoder.encode(user.getPassword()), user.getAfm(), user.getPhone(), role_name);
+		
+		long minTimestamp = -1;
+		int countTimestamps = 0;
+		List<VerificationCode> verCodes = verificationRep.findByEmail(user.getEmail());
+		if(verCodes != null) {
+			for(VerificationCode c: verCodes) {
+				if(minTimestamp > c.getTimeStamp() || minTimestamp < 0) {
+					minTimestamp = c.getTimeStamp();
+				}
+				countTimestamps += 1;
+			}
+		}
+		long currentTime = System.currentTimeMillis();
+		if ((currentTime - minTimestamp) < (1.5 * countTimestamps * 60 * 1000)) {
+		    // Calculate difference in minutes
+		    long diffMillis = (long) (1.5 * countTimestamps * 60 * 1000) - (currentTime - minTimestamp);
+		    long diffMinutes = diffMillis / (60 * 1000);
+		    long diffSeconds = (diffMillis / 1000) % 60;
+		    String diffTimeStr = String.format("New Verification can be generated in %d:%02d minutes.", diffMinutes, diffSeconds);
+		    model.addAttribute("diffMinutes", diffTimeStr);
+
+		    verification.setTimeStamp(currentTime);
+		    VerificationCode v = new VerificationCode();
+		    model.addAttribute("verification", v);
+		    return "verify_user";
+		}
+
+		
 		try{
+			verification.setTimeStamp(currentTime);
 			sendVerificationEmail(verification);
+			deleteOldVerificationCodes(verification.getEmail());
 			verificationRep.save(verification);
 			VerificationCode v = new VerificationCode();
 			model.addAttribute("verification", v);
@@ -633,11 +663,17 @@ public class UserFormController {
 			// never reaches here, but just in case:
 			return false;
 		}
-		List<VerificationCode> users = verificationRep.findByEmail(user.getEmail());
-		for (VerificationCode u: users) {
-			verificationRep.delete(u);			
-		}
+		deleteOldVerificationCodes(user.getEmail());
 		return true;
+	}
+	
+	private void deleteOldVerificationCodes(String email) {
+		List<VerificationCode> users = verificationRep.findByEmail(email);
+		if(users != null) {
+			for (VerificationCode u: users) {
+				verificationRep.delete(u);			
+			}		
+		}
 	}
 	
 	
