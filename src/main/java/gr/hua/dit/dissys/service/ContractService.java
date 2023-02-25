@@ -12,6 +12,8 @@ public interface ContractService {
     public Contract findContract(int id);
 
     public void deleteContract(int id);
+    
+	public Contract findContractByTitle(String contractTitle);
 	
 	
 }
