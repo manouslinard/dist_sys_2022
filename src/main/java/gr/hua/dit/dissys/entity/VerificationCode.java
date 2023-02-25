@@ -45,8 +45,7 @@ public class VerificationCode {
     //@Size(max = 30, message = "Name should not be greater than 30 characters")
     private String lastName;
 
-    @Column(name = "email", unique = true)
-
+    @Column(name = "email")
     //@Size(max = 50)
     private String email;
 
@@ -59,9 +58,8 @@ public class VerificationCode {
 
 
 
-    @Column(name = "afm", unique = true)
+    @Column(name = "afm")
     //@NotBlank(message = "Please enter your AFM")
-
     private String afm;
 
 

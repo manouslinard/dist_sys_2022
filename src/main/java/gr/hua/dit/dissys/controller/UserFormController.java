@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
 import javax.swing.text.Utilities;
+import javax.transaction.Transactional;
 
 @Controller
 public class UserFormController {
@@ -157,32 +158,39 @@ public class UserFormController {
 			return s;
 		}
 		setBlankAttr(lessor);
-		Random random = new Random();
-		int verificationCode = 10000 + random.nextInt(90000); // Generates a random number between 10000 and 99999
-		System.out.println(verificationCode);
-		String randomCode = String.valueOf(verificationCode);
-		VerificationCode verification = new VerificationCode(randomCode,lessor.getFirstName(), lessor.getLastName(),lessor.getEmail(), lessor.getUsername(), encoder.encode(lessor.getPassword()), lessor.getAfm(), lessor.getPhone(),ERole.ROLE_LESSOR.name());
+		return showVerificationForm(lessor, model, ERole.ROLE_LESSOR.name());
+
+	}
+	
+	private String showVerificationForm(AverageUser user, Model model, String role_name) {
+		String randomCode = null;
+		while(true) {
+			Random random = new Random();
+			int verificationCode = 10000 + random.nextInt(90000); // Generates a random number between 10000 and 99999
+			randomCode = String.valueOf(verificationCode);
+			VerificationCode code = verificationRep.findByVerificationCode(randomCode);
+			if (code == null) {
+				break;
+			}
+		}
+		VerificationCode verification = new VerificationCode(randomCode,user.getFirstName(), user.getLastName(),user.getEmail(), user.getUsername(), encoder.encode(user.getPassword()), user.getAfm(), user.getPhone(), role_name);
 		try{
 			sendVerificationEmail(verification);
 			verificationRep.save(verification);
 			VerificationCode v = new VerificationCode();
 			model.addAttribute("verification", v);
-			return "verify_lessor";
+			return "verify_user";
 		}
 		catch(Exception e){
 			System.out.println("Email failed");
 		}
 //		lessorService.saveLessor(lessor);
 		return "redirect:/";
-
 	}
-
+	
 	@GetMapping("/tenantform")
 	public String showTenantForm(Model model) {
 		AverageUser tenant = new AverageUser();
-//        HashSet<Role> set= new HashSet();
-//        set.add(new Role(ERole.ROLE_TENANT));
-//        tenant.setRoles(set);
 		model.addAttribute("tenant", tenant);
 		return "add-tenant";
 	}
@@ -196,14 +204,13 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/tenantform")
-	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult) {
+	public String saveTenant(@ModelAttribute("tenant") AverageUser tenant, BindingResult bindingResult, Model model) {
 		String s = checkRegisterErrors(tenant, bindingResult, "add-tenant");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(tenant);
-		tenantService.saveTenant(tenant);
-		return "redirect:/";
+		return showVerificationForm(tenant, model, ERole.ROLE_TENANT.name());
 
 	}
 
@@ -432,15 +439,13 @@ public class UserFormController {
 	}
 
 	@PostMapping(path = "/adminform")
-	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult) {
+	public String saveAdmin(@ModelAttribute("admin") AverageUser admin, BindingResult bindingResult, Model model) {
 		String s = checkRegisterErrors(admin, bindingResult, "add-admin");
 		if (s!=null) {
 			return s;
 		}
 		setBlankAttr(admin);
-		adminService.saveAdmin(admin);
-		return "redirect:/";
-
+		return showVerificationForm(admin, model, ERole.ROLE_ADMIN.name());
 	}
 
 	@GetMapping("/adminform")
@@ -450,29 +455,30 @@ public class UserFormController {
 		return "add-admin";
 	}
 
-	@PostMapping(path = "/verifylessor")
+	@PostMapping(path = "/verifyuser")
 	public String saveVerification(@ModelAttribute("verification") VerificationCode v, BindingResult bindingResult) {
 		//lessorService.verify(v.getVerificationCode());
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String logged_username = auth.getName();
-		if (verify(v.getVerificationCode(), ERole.ROLE_LESSOR.ordinal())) {
+		System.out.println(v.getEmail());
+		if (verify(v.getVerificationCode())) {
 			if(isUserAdmin(logged_username)) {
 				return "redirect:/";
 			}
 			return "verify_success";
 		} else {
 	        bindingResult.rejectValue("verificationCode", "error.user", "Verification Code does not exist. If you successfully registered before, try login.");
-			return "verify_lessor";
+			return "verify_user";
 		}
 		//return "redirect:/";
 
 	}
 
-	@GetMapping("/verifylessor")
+	@GetMapping("/verifyuser")
 	public String showVerification(Model model) {
 		VerificationCode v = new VerificationCode();
 		model.addAttribute("verification", v);
-		return "verify_lessor";
+		return "verify_user";
 	}
 
 		
@@ -611,29 +617,27 @@ public class UserFormController {
 
 	}
 
-	private boolean verify(String verificationCode, int role) {
-		if(role != ERole.ROLE_ADMIN.ordinal() && role != ERole.ROLE_LESSOR.ordinal() && role != ERole.ROLE_TENANT.ordinal()) {
+	private boolean verify(String verificationCode) {
+		VerificationCode user = verificationRep.findByVerificationCode(verificationCode);
+		if(user == null) {
 			return false;
 		}
-		List<VerificationCode> users = verificationRep.findAll();
-		for (VerificationCode user : users) {
-			if (user.getVerificationCode().equals(verificationCode)) {
-				AverageUser ver_user = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
-				if(role == ERole.ROLE_LESSOR.ordinal()) {
-					lessorService.saveLessor(ver_user);					
-				} else if(role == ERole.ROLE_TENANT.ordinal()) {
-					tenantService.saveTenant(ver_user);
-				} else if(role==ERole.ROLE_ADMIN.ordinal()) {
-					adminService.saveAdmin(ver_user);
-				} else {
-					// never reaches here, but just in case:
-					return false;
-				}
-				verificationRep.delete(user);
-				return true;
-			}
+		AverageUser ver_user = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
+		if(user.getRoles().equals(ERole.ROLE_LESSOR.name())) {
+			lessorService.saveLessor(ver_user);					
+		} else if(user.getRoles().equals(ERole.ROLE_TENANT.name())) {
+			tenantService.saveTenant(ver_user);
+		} else if(user.getRoles().equals(ERole.ROLE_ADMIN.name())) {
+			adminService.saveAdmin(ver_user);
+		} else {
+			// never reaches here, but just in case:
+			return false;
 		}
-		return false;
+		List<VerificationCode> users = verificationRep.findByEmail(user.getEmail());
+		for (VerificationCode u: users) {
+			verificationRep.delete(u);			
+		}
+		return true;
 	}
 	
 	
