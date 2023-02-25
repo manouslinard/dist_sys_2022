@@ -40,4 +40,16 @@ public class ContractServiceImpl implements ContractService{
         contractRepository.deleteById(id);		
 	}
 
+	@Override
+	@Transactional
+	public Contract findContractByTitle(String contractTitle) {
+		List<Contract> contracts = contractRepository.findAll();
+		for(Contract c:contracts){
+			if(c.getTitle().equals(contractTitle)){
+				return c;
+			}
+		}
+		return null;
+	}
+	
 }

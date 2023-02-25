@@ -13,5 +13,5 @@ public interface ContractService {
 
     public void deleteContract(int id);
 	
-	
+    public Contract findContractByTitle(String contractTitle);
 }

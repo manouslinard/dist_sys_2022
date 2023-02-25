@@ -43,13 +43,13 @@ public class Lease {
 	private double cost;
 
 	@Column(name = "start_date")
-	//@NotBlank(message = "Please enter the contract's start date")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@NotBlank(message = "Please enter the lease's start date")
+	@Size(max = 30, message = "Start Date should not be greater than 30 characters")
 	private String startDate;
 
 	@Column(name = "end_date")
-	//@NotBlank(message = "Please enter the last name")
-	@Size(max = 30, message = "Name should not be greater than 30 characters")
+	@NotBlank(message = "Please enter the lease's end date")
+	@Size(max = 30, message = "End Date should not be greater than 30 characters")
 	private String endDate;
 
 	// special conditions:
