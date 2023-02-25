@@ -14,6 +14,7 @@ import gr.hua.dit.dissys.repository.LeaseRepository;
 import gr.hua.dit.dissys.repository.RoleRepository;
 import gr.hua.dit.dissys.repository.UserRepository;
 import gr.hua.dit.dissys.service.AdminService;
+import gr.hua.dit.dissys.service.ContractService;
 import gr.hua.dit.dissys.service.LeaseService;
 import gr.hua.dit.dissys.service.LessorService;
 import gr.hua.dit.dissys.service.TenantService;
@@ -59,7 +60,7 @@ public class LessorController implements LessorContrInterface {
 	private RoleRepository roleRepository;
 
 	@Autowired
-	private ContractRepository contractRepository;
+	private ContractService contractService;
 	
 	@Autowired
 	private UserAuthServ userAuthServ;
@@ -154,6 +155,13 @@ public class LessorController implements LessorContrInterface {
 	@PutMapping("/{lessorUsername}/leases/{lid}")
 	public Lease updateLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable int lid) {
 		isLessorAdmin(lessorUsername, "Cannot update leases of not logged in lessor!", false);
+		
+		Contract c = contractService.findContractByTitle(lease.getTitle());
+		if(c != null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title already used.");
+		}
+		
+		
 		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
@@ -211,6 +219,12 @@ public class LessorController implements LessorContrInterface {
 	@PostMapping("/{lessorUsername}/{tenantUsername}/createLease")
 	public Lease createLease(@Valid @RequestBody Lease lease, @PathVariable String lessorUsername, @PathVariable String tenantUsername) {
 		isLessorAdmin(lessorUsername, "Cannot create lease of not logged in lessor!", true);
+
+		Contract c = contractService.findContractByTitle(lease.getTitle());
+		if(c != null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title already used.");
+		}
+		
 		if (!startEarlierThanEnd(lease.getStartDate(), lease.getEndDate())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start Date should be before End Date.");
 		}
