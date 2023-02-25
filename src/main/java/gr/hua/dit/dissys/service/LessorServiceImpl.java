@@ -44,11 +44,6 @@ public class LessorServiceImpl implements LessorService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private JavaMailSender mailSender;
-	@Autowired
-	private VerificationRep verificationRep;
-
 	@SuppressWarnings("unlikely-arg-type")
 	private boolean isLessor(Set<Role> userRoles) {
 		for (Role r : userRoles) {
@@ -147,38 +142,5 @@ public class LessorServiceImpl implements LessorService {
 		userRepository.delete(lessor);
 	}
 
-	public void sendVerificationEmail(VerificationCode user) {
-		// Generate a verification token for the user
-		String token = UUID.randomUUID().toString();
-		//userRepository.save(user);
-
-		// Construct the verification email
-		String subject = "Please verify your email address";
-		String text = "Please click the following link to verify your email address: "
-				+ user.getVerificationCode();
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(user.getEmail());
-		message.setSubject(subject);
-		message.setText(text);
-
-		// Send the verification email
-		mailSender.send(message);
-
-	}
-
-	public boolean verify(String verificationCode) {
-		//System.out.println("VERIFICATION CODE: "+ verificationCode);
-		List<VerificationCode> users = verificationRep.findAll();
-		for (VerificationCode user : users) {
-			//System.out.println("VERIFY: "+user.getVerificationCode());
-			if (user.getVerificationCode().equals(verificationCode)) {
-				AverageUser lessor = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
-				saveLessor(lessor);
-				verificationRep.delete(user);
-				return true;
-			}
-		}
-		return false;
-	}
 }
 

@@ -18,6 +18,8 @@ import org.aspectj.apache.bcel.classfile.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -66,6 +68,9 @@ public class UserFormController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private JavaMailSender mailSender;	
 	
 	@GetMapping("/")
 	public String index() {
@@ -158,7 +163,7 @@ public class UserFormController {
 		String randomCode = String.valueOf(verificationCode);
 		VerificationCode verification = new VerificationCode(randomCode,lessor.getFirstName(), lessor.getLastName(),lessor.getEmail(), lessor.getUsername(), encoder.encode(lessor.getPassword()), lessor.getAfm(), lessor.getPhone(),ERole.ROLE_LESSOR.name());
 		try{
-			lessorService.sendVerificationEmail(verification);
+			sendVerificationEmail(verification);
 			verificationRep.save(verification);
 			VerificationCode v = new VerificationCode();
 			model.addAttribute("verification", v);
@@ -448,7 +453,12 @@ public class UserFormController {
 	@PostMapping(path = "/verifylessor")
 	public String saveVerification(@ModelAttribute("verification") VerificationCode v, BindingResult bindingResult) {
 		//lessorService.verify(v.getVerificationCode());
-		if (lessorService.verify(v.getVerificationCode())) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String logged_username = auth.getName();
+		if (verify(v.getVerificationCode(), ERole.ROLE_LESSOR.ordinal())) {
+			if(isUserAdmin(logged_username)) {
+				return "redirect:/";
+			}
 			return "verify_success";
 		} else {
 	        bindingResult.rejectValue("verificationCode", "error.user", "Verification Code does not exist. If you successfully registered before, try login.");
@@ -584,7 +594,47 @@ public class UserFormController {
         return "login";
     }
 
-	
+	private void sendVerificationEmail(VerificationCode user) {
+		// Generate a verification token for the user
+
+		// Construct the verification email
+		String subject = "Please verify your email address";
+		String text = "Please enter the following verification code to verify your email address: "
+				+ user.getVerificationCode();
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(user.getEmail());
+		message.setSubject(subject);
+		message.setText(text);
+
+		// Send the verification email
+		mailSender.send(message);
+
+	}
+
+	private boolean verify(String verificationCode, int role) {
+		if(role != ERole.ROLE_ADMIN.ordinal() && role != ERole.ROLE_LESSOR.ordinal() && role != ERole.ROLE_TENANT.ordinal()) {
+			return false;
+		}
+		List<VerificationCode> users = verificationRep.findAll();
+		for (VerificationCode user : users) {
+			if (user.getVerificationCode().equals(verificationCode)) {
+				AverageUser ver_user = new AverageUser(user.getUsername(), user.getEmail(),user.getPassword(), user.getFirstName(), user.getLastName(),user.getAfm(),user.getPhone());
+				if(role == ERole.ROLE_LESSOR.ordinal()) {
+					lessorService.saveLessor(ver_user);					
+				} else if(role == ERole.ROLE_TENANT.ordinal()) {
+					tenantService.saveTenant(ver_user);
+				} else if(role==ERole.ROLE_ADMIN.ordinal()) {
+					adminService.saveAdmin(ver_user);
+				} else {
+					// never reaches here, but just in case:
+					return false;
+				}
+				verificationRep.delete(user);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 //    @RequestMapping(value = "/registerTenant", method = RequestMethod.GET)
@@ -615,5 +665,20 @@ public class UserFormController {
 //        return new ModelAndView("redirect:/");
 //    }
 
+	private boolean isUserAdmin(String username) {
+		AverageUser user = userRepository.findByUsername(username).orElse(null);
+		if(user == null) {
+			return false;
+		}
+		Iterator<Role> iterator = user.getRoles().iterator();
+		String role_admin = ERole.ROLE_ADMIN.name();
+		while (iterator.hasNext()) {
+		    Role element = iterator.next();
+		    if(element.getName().name().equals(role_admin)){
+		    	return true;
+		    }
+		}
+		return false;
+	}
 	
 }

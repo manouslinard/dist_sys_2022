@@ -20,7 +20,4 @@ public interface LessorService {
     
     public void deleteLessor(String username);
 
-    public void sendVerificationEmail(VerificationCode user);
-
-    public boolean verify(String verificationCode);
 }
