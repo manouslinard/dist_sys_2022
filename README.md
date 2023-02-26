@@ -6,6 +6,8 @@
 ##
 * This project runs on http://localhost:8080.
 To see all the methods available, please checkout the user manuals in the [Final Derivable](https://docs.google.com/document/d/1WCegxCltcTQuTe6pABYdWdBc_Px4xWkqV1OJdaTyjwg/edit?usp=sharing).
+
+* Also, this project (and specifically the [frontend branch](https://github.com/manouslinard/dist_sys_2022/tree/frontend)) was deployed in microsoft azure. Here is a [video](https://youtu.be/MKoX_YZdJ6A) showcasing it.
 --------------------------------
 ## Database Setup with Terminal
 ### Setup postgres database using terminal
@@ -73,14 +75,22 @@ Existing Users and Roles in pre-configured initial sql
 | tenant | pass123  | TENANT      |
 | lessor | pass123  | LESSOR      |
 | admin  | pass123  | ADMIN       |
- 
-You can create users using /api/auth/signup in token - backend.<br />
+
+You can create users using /lessorform or /tenantform in frontend.<br />
+
+You can create users using /api/auth/signup in backend branches.
 
 ------------------------------------------------------------------
 ## Branches:
 * [Backend Token Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-token-auth) &rarr; Spring Boot Backend with JWT Authentication, API endpoints provided to register users.
-* [Frontend](https://github.com/manouslinard/dist_sys_2022/tree/frontend) &rarr; Thymeleaf Frontend with Basic Authentication.
+
+* [Frontend](https://github.com/manouslinard/dist_sys_2022/tree/frontend) &rarr; Thymeleaf Frontend with Basic Authentication (this branch is used in cloud showcase [video](https://youtu.be/MKoX_YZdJ6A)).
+
 * [Backend Basic Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-basic) &rarr; Spring Boot Backend with Basic Auth, API endpoints provided to register users.
 
 ## Other Links:
 * [Final Derivable](https://docs.google.com/document/d/1WCegxCltcTQuTe6pABYdWdBc_Px4xWkqV1OJdaTyjwg/edit?usp=sharing)
+
+* [Slides Presentation](https://docs.google.com/presentation/d/1CUTl6mo8J4fOGDSb1fRYQxZbYcFc6SVyyXbBNU9DVKk/edit?usp=sharing)
+
+* [Cloud Showcase Video](https://youtu.be/MKoX_YZdJ6A)
