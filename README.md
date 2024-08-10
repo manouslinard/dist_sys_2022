@@ -5,7 +5,7 @@
 * Install [docker](https://tinyurl.com/2m3bhahn).<br />
 ##
 * This project runs on http://localhost:8080.
-To see all the methods available, please checkout the user manuals in the [Final Derivable](/files/Final_Derivable_ENG.pdf) (translated automatically in English, original version is written in Greek and can be found [here](/files/Final_Derivable_GR.pdf)).
+To see all the methods available, please checkout the user manuals in the [Final Derivable](https://github.com/manouslinard/dist_sys_2022/blob/main/files/Final_Derivable_ENG.pdf) (translated automatically in English, original version is written in Greek and can be found [here](https://github.com/manouslinard/dist_sys_2022/blob/main/files/Final_Derivable_GR.pdf)).
 
 * Also, this project (and specifically the [frontend branch](https://github.com/manouslinard/dist_sys_2022/tree/frontend)) was deployed in microsoft azure. Here is a [video](https://youtu.be/MKoX_YZdJ6A) showcasing it.
 --------------------------------
@@ -89,12 +89,12 @@ You can create users using /api/auth/signup in backend branches.
 * [Backend Basic Auth](https://github.com/manouslinard/dist_sys_2022/tree/backend-basic) &rarr; Spring Boot Backend with Basic Auth, API endpoints provided to register users.
 
 ## Other Links:
-* [Final Derivable GREEK](/files/Final_Derivable_GR.pdf)
+* [Final Derivable GREEK](https://github.com/manouslinard/dist_sys_2022/blob/main/files/Final_Derivable_GR.pdf)
 
-* [Slides Presentation GREEK](/files/DisSys_Presentation_GR.pdf)
+* [Slides Presentation GREEK](https://github.com/manouslinard/dist_sys_2022/blob/main/files/DisSys_Presentation_GR.pdf)
 
-* [Final Derivable ENGLISH (auto-translation)](/files/Final_Derivable_ENG.pdf)
+* [Final Derivable ENGLISH (auto-translation)](https://github.com/manouslinard/dist_sys_2022/blob/main/files/Final_Derivable_ENG.pdf)
 
-* [Slides Presentation ENGLISH (auto-translation)](/files/DisSys_Presentation_ENG.pdf)
+* [Slides Presentation ENGLISH (auto-translation)](https://github.com/manouslinard/dist_sys_2022/blob/main/files/DisSys_Presentation_ENG.pdf)
 
 * [Cloud Showcase Video](https://youtu.be/MKoX_YZdJ6A)
